@@ -1,0 +1,23 @@
+--- 1	Tue Aug  8 18:46:30 2017
++++ 2	Tue Aug  8 20:36:57 2017
+@@ -1,0 +2 @@
++* unified:  highlights clusters of changes in an inline format.
+@@ -3,2 +4,14 @@
+-Simple is better than complex.
+-Complex is better than complicated.
++
++
++xCompx is bettejskdjfa
++
++asdkljfalkf
++
++highlights interline changes
++
++adfjalkf
++
++
++rse lists every line and
++than complicated.
++is better than dense.
+@@ -6 +18,0 @@
+-Sparse is better than dense.
