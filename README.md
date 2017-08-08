@@ -7,7 +7,7 @@ A simple yet effective python parser for unified diff file
 ```
 ./udiff_parser.py d.diff
 ```
-
+And the result just been dumped right in file ```d.json```
 
 # Do some modification
 
