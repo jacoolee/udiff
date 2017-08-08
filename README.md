@@ -14,7 +14,7 @@ And the result just been dumped right in file ```d.json```
 * make some modification on file 1, 2
 * generate the diff file
 ```
-./diff.py -u -l0 1 1 > d.diff
+./diff.py -u -l0 1 2 > d.diff
 ```
 * parse and see the diff result
 ```
