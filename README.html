@@ -1,14 +1,26 @@
-```
-https://www.gnu.org/software/diffutils/manual/html_node/Example-Unified.html
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>README.html</title>
+
+</head>
+
+<body>
+
+<pre><code>https://www.gnu.org/software/diffutils/manual/html_node/Example-Unified.html
 https://www.gnu.org/software/diffutils/manual/html_node/Detailed-Unified.html
 https://en.wikipedia.org/wiki/Diff#Unified_format
 
 ----------------------------------------------------------------
 
-diff -u lao tzu > lao.tzu.diff
+diff -u lao tzu &gt; lao.tzu.diff
 
---- lao	2024-12-05 22:37:08
-+++ tzu	2024-12-06 14:44:00
+--- lao 2024-12-05 22:37:08
++++ tzu 2024-12-06 14:44:00
 @@ -1,7 +1,6 @@
 -The Way that can be told of is not the eternal Way;
 -The name that can be named is not the eternal name.
@@ -31,8 +43,8 @@ diff -u lao tzu > lao.tzu.diff
 
 ./inteprete.py lao.tzu.diff
 
-      --- lao	2024-12-05 22:37:08
-      +++ tzu	2024-12-06 14:44:00
+      --- lao   2024-12-05 22:37:08
+      +++ tzu   2024-12-06 14:44:00
       @@ -1,7 +1,6 @@
 01    -The Way that can be told of is not the eternal Way;
 02    -The name that can be named is not the eternal name.
@@ -57,9 +69,11 @@ diff -u lao tzu > lao.tzu.diff
 
 ----------------------------------------------------------------
 
-./gen_new_by_old_file_and_diff_file.py lao lao.tzu.json > tzu.gen
+./gen_new_by_old_file_and_diff_file.py lao lao.tzu.json &gt; tzu.gen
 
 ----------------------------------------------------------------
 
-diff tzu tzu.gen
-```
+diff tzu tzu.gen</code></pre>
+
+</body>
+</html>
