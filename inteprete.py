@@ -1,8 +1,12 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import json
+from __future__ import unicode_literals
 import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
+
+import json
 
 if len(sys.argv) < 1:
     print __file__, "diff_file [output_file]"
@@ -41,11 +45,17 @@ for l in f.readlines():
         # reset ln_old, ln_new
         # not performance-friendly, but works
         index_minus = l.index('-')
-        index_comma = l.index(',')
-        ln_old = int(l[index_minus+1:index_comma])
+        index_comma_base_on_minus = l[index_minus:].find(',')
+        if index_comma_base_on_minus == -1:
+            index_comma_base_on_minus = l[index_minus:].find(' ')
+
+        ln_old = int(l[index_minus+1:index_minus+index_comma_base_on_minus])
 
         index_plus = l.index('+')
-        index_comma_base_on_plus = l[index_plus:].index(',')
+        index_comma_base_on_plus = l[index_plus:].find(',')
+        if index_comma_base_on_plus == -1:
+            index_comma_base_on_plus = l[index_plus:].find(' ')
+
         ln_new = int(l[index_plus+1:index_plus+index_comma_base_on_plus])
 
         print "ln_old:", ln_old, 'ln_new:', ln_new

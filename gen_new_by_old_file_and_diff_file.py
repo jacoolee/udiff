@@ -1,8 +1,12 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import json
+from __future__ import unicode_literals
 import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
+
+import json
 
 if len(sys.argv) < 2:
     print __file__, "old_file diff_meta_file"
