@@ -41,11 +41,12 @@ diff -u lao tzu &gt; lao.tzu.diff
 
 ----------------------------------------------------------------
 
-./inteprete.py lao.tzu.diff
+./parse.py lao.tzu.diff lao.tzu.json
 
       --- lao   2024-12-05 22:37:08
       +++ tzu   2024-12-06 14:44:00
       @@ -1,7 +1,6 @@
+ln_old: 1 ln_new: 1
 01    -The Way that can be told of is not the eternal Way;
 02    -The name that can be named is not the eternal name.
 03 01  The Nameless is the origin of Heaven and Earth;
@@ -56,16 +57,14 @@ diff -u lao tzu &gt; lao.tzu.diff
 06 05    so we may see their subtlety,
 07 06  And let there always be being,
       @@ -9,3 +8,6 @@
+ln_old: 9 ln_new: 8
 09 08  The two are the same,
 10 09  But after they are produced,
 11 10    they have different names.
    11 +They both may be called deep and profound.
    12 +Deeper and more profound,
    13 +The door of all subtleties!
-
-----------------------------------------------------------------
-
-./parse.py lao.tzu.diff lao.tzu.json
+[[&quot;M&quot;, 1, 1, null], [&quot;L&quot;, 1, null, &quot;The Way that can be told of is not the eternal Way;&quot;], [&quot;L&quot;, 2, null, &quot;The name that can be named is not the eternal name.&quot;], [&quot;L&quot;, 3, 1, &quot;The Nameless is the origin of Heaven and Earth;&quot;], [&quot;L&quot;, 4, null, &quot;The Named is the mother of all things.&quot;], [&quot;L&quot;, null, 2, &quot;The named is the mother of all things.&quot;], [&quot;L&quot;, null, 3, &quot;&quot;], [&quot;L&quot;, 5, 4, &quot;Therefore let there always be non-being,&quot;], [&quot;L&quot;, 6, 5, &quot;  so we may see their subtlety,&quot;], [&quot;L&quot;, 7, 6, &quot;And let there always be being,&quot;], [&quot;M&quot;, 9, 8, null], [&quot;L&quot;, 9, 8, &quot;The two are the same,&quot;], [&quot;L&quot;, 10, 9, &quot;But after they are produced,&quot;], [&quot;L&quot;, 11, 10, &quot;  they have different names.&quot;], [&quot;L&quot;, null, 11, &quot;They both may be called deep and profound.&quot;], [&quot;L&quot;, null, 12, &quot;Deeper and more profound,&quot;], [&quot;L&quot;, null, 13, &quot;The door of all subtleties!&quot;]]
 
 ----------------------------------------------------------------
 

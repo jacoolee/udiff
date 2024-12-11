@@ -7,6 +7,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 import json
+import re
 
 if len(sys.argv) < 1:
     print __file__, "diff_file [output_file]"
@@ -36,51 +37,39 @@ for l in f.readlines():
     l = l.replace('\n', '')
 
     if l.startswith('---'):
-        # print "      %s"%(l)
+        print "      %s"%(l)
         continue
     if l.startswith('+++'):
-        # print "      %s"%(l)
+        print "      %s"%(l)
         continue
     if l.startswith('@@'):
-        # print "      %s"%(l)
+        print "      %s"%(l)
 
-        # reset ln_old, ln_new
-        # not performance-friendly, but works
-        index_minus = l.index('-')
-        index_comma_base_on_minus = l[index_minus:].find(',')
-        if index_comma_base_on_minus == -1:
-            index_comma_base_on_minus = l[index_minus:].find(' ')
+        start, start_count, end, end_count = re.match('@@ -(\d+),?(\d+)? \+(\d+),?(\d+)? @@', l).groups()
+        ln_old = int(start)
+        ln_new = int(end)
 
-        ln_old = int(l[index_minus+1:index_minus+index_comma_base_on_minus])
-
-        index_plus = l.index('+')
-        index_comma_base_on_plus = l[index_plus:].find(',')
-        if index_comma_base_on_plus == -1:
-            index_comma_base_on_plus = l[index_plus:].find(' ')
-
-        ln_new = int(l[index_plus+1:index_plus+index_comma_base_on_plus])
-
-        # print "ln_old:", ln_old, 'ln_new:', ln_new
+        print "ln_old:", ln_old, 'ln_new:', ln_new
         r.append(['M', ln_old, ln_new, None])
         continue
 
     if l.startswith(' '):
-        # print "%02d %02d %s"%(ln_old, ln_new, l)
+        print "%02d %02d %s"%(ln_old, ln_new, l)
         r.append(['L', ln_old, ln_new, l[1:]])
         ln_old = ln_old + 1
         ln_new = ln_new + 1
 
     elif l.startswith('-'):
         r.append(['L', ln_old, None, l[1:]])
-        # print "%02d    %s"%(ln_old, l)
+        print "%02d    %s"%(ln_old, l)
         ln_old = ln_old + 1
 
     elif l.startswith('+'):
         r.append(['L', None, ln_new, l[1:]])
-        # print "   %02d %s"%(ln_new, l)
+        print "   %02d %s"%(ln_new, l)
         ln_new = ln_new + 1
     else:
-        # print 'ERROR: should never happen', ln_old, ln_new
+        print 'ERROR: should never happen', ln_old, ln_new
         pass
 
 if output_file:
