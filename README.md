@@ -56,9 +56,14 @@ ln_old: 9 ln_new: 8
 
 ----------------------------------------------------------------
 
-./gen_new_by_old_file_and_diff_file.py lao lao.tzu.json > tzu.gen
+./gen_new_by_old_file_and_diff_json_file.py lao lao.tzu.json > tzu.gen
+
+diff tzu tzu.gen
 
 ----------------------------------------------------------------
 
-diff tzu tzu.gen
+./view.py lao lao.tzu.json # same as `./view.py lao lao.tzu.json --txt`
+
+./view.py lao lao.tzu.json --html > /tmp/x.html
+
 ```

@@ -9,14 +9,14 @@ sys.setdefaultencoding('utf8')
 import json
 
 def usage():
-    print __file__, "old_file diff_meta_file [--html] [--txt]"
+    print __file__, "old_file diff_json_file [--html] [--txt]"
     sys.exit(-1)
 
 if len(sys.argv) < 2:
     usage()
 
 old_file = None
-diff_meta_file = None
+diff_json_file = None
 option_render_txt = False
 option_render_html = False
 
@@ -34,9 +34,9 @@ for i in sys.argv[1:]:
     if old_file is None: # old_file comes first
         old_file = i
     else:
-        diff_meta_file = i
+        diff_json_file = i
 
-if old_file is None or diff_meta_file is None:
+if old_file is None or diff_json_file is None:
     usage()
 
 if not option_render_txt and not option_render_html:
@@ -45,7 +45,7 @@ if not option_render_txt and not option_render_html:
 # https://en.wikipedia.org/wiki/Diff#Unified_format
 # https://www.gnu.org/software/diffutils/manual/html_node/Detailed-Unified.html
 diff_meta = None
-with open(diff_meta_file, "r") as f:
+with open(diff_json_file, "r") as f:
     diff_meta = json.load(f)
 
 ops = diff_meta
