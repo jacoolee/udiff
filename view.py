@@ -124,6 +124,17 @@ def render(ln_old, s_old, mark, ln_new=None, s_new=None, fli_max_len=3, fls_max_
 
 idx = 0
 total = len(ops)
+
+if total == 0:
+    for i in xrange(1, ln_old_total+1):
+        l = l_map[i]
+        render(i, l, ' ', i, l)
+
+    if option_render_html:
+        print '</table>'
+
+    sys.exit(0)
+
 while idx < total:
 
     op = ops[idx]
