@@ -64,6 +64,6 @@ diff tzu tzu.gen
 
 ./view.py lao lao.tzu.json # same as `./view.py lao lao.tzu.json --txt`
 
-./view.py lao lao.tzu.json --html > /tmp/x.html
+./view.py lao lao.tzu.json --html > ./lao.tzu.html
 
 ```
