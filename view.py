@@ -61,8 +61,8 @@ for l in f.readlines():
     l_map[ln] = l
 ln_old_total = ln
 
-ln_old_last = 1
-ln_new_last = 1
+ln_old_last = 0
+ln_new_last = 0
 
 if option_render_html:
     print """
