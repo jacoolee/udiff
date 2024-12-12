@@ -59,6 +59,7 @@ for l in f.readlines():
 
     l = l.replace('\n', '')
     l_map[ln] = l
+ln_old_total = ln
 
 ln_old_last = 1
 ln_new_last = 1
@@ -182,6 +183,11 @@ while idx < total:
         idx += 1
         continue
 
+# padding last parts (not included in hunk) if exists from old file
+if ln_old_last > 0:             # means have been re-assigned by 'L' type meta
+    for i in xrange(ln_old_last+1, ln_old_total+1):
+        l = l_map[i]
+        render(i, l, ' ', i, l)
 
 if option_render_html:
     print '</table>'
