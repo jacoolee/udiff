@@ -310,7 +310,7 @@ if ln_old_last > 0:             # means have been re-assigned by 'L' type meta
     for i in xrange(ln_old_last+1, ln_old_total+1):
         n += 1
         l = l_map[i]
-        render(i, l, MARK_NONE)
+        render(i, l, MARK_SAME, ln_new_last+n, l)
 
 if option_render_html:
     print '</table>'
