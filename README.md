@@ -52,7 +52,6 @@ ln_old: 9 ln_new: 8
    11 +They both may be called deep and profound.
    12 +Deeper and more profound,
    13 +The door of all subtleties!
-[["M", 1, 1, null], ["L", 1, null, "The Way that can be told of is not the eternal Way;"], ["L", 2, null, "The name that can be named is not the eternal name."], ["L", 3, 1, "The Nameless is the origin of Heaven and Earth;"], ["L", 4, null, "The Named is the mother of all things."], ["L", null, 2, "The named is the mother of all things."], ["L", null, 3, ""], ["L", 5, 4, "Therefore let there always be non-being,"], ["L", 6, 5, "  so we may see their subtlety,"], ["L", 7, 6, "And let there always be being,"], ["M", 9, 8, null], ["L", 9, 8, "The two are the same,"], ["L", 10, 9, "But after they are produced,"], ["L", 11, 10, "  they have different names."], ["L", null, 11, "They both may be called deep and profound."], ["L", null, 12, "Deeper and more profound,"], ["L", null, 13, "The door of all subtleties!"]]
 
 ----------------------------------------------------------------
 
@@ -64,6 +63,6 @@ diff tzu tzu.gen
 
 ./view.py lao lao.tzu.json # same as `./view.py lao lao.tzu.json --txt`
 
-./view.py lao lao.tzu.json --html > ./lao.tzu.html
+./view.py lao lao.tzu.json --html > ./lao.tzu.view.html
 
 ```

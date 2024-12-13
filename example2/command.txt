@@ -1,0 +1,4 @@
+diff -u view.py.old view.py.new > view.py.old.view.py.new.diff
+../parse.py view.py.old.view.py.new.diff view.py.old.view.py.new.diff.json
+../view.py view.py.old view.py.old.view.py.new.diff.json > view.py.old.view.py.new.diff.json.txt
+../view.py view.py.old view.py.old.view.py.new.diff.json --html > view.py.old.view.py.new.diff.json.html

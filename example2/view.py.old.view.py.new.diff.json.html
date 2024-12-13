@@ -1,0 +1,757 @@
+
+<style>
+table {-webkit-border-horizontal-spacing: 0; -webkit-border-vertical-spacing: 0; font-family: monospace; }
+td {white-space: pre; border-bottom: solid 1px gray; padding-left: 5px; }
+.type-mark {display: none; }
+.mod {background-color: yellow; color: black; }
+.del {background-color: red; color: white;}
+.sam {}
+.add {background-color: green; color: white;}
+</style>
+
+<table>
+<tr><td>meta: ln_old:</td><td>1</td><td>ln_new:</td><td>1</td></tr>
+<tr><td>1</td><td>1</td><td> </td><td>#! /usr/bin/env python</td></tr>
+<tr><td>2</td><td>2</td><td> </td><td># -*- coding: utf-8 -*-</td></tr>
+<tr><td>3</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>3</td><td>+</td><td></td></tr>
+<tr><td>4</td><td>4</td><td> </td><td>from __future__ import unicode_literals</td></tr>
+<tr><td>5</td><td>5</td><td> </td><td>import sys</td></tr>
+<tr><td>6</td><td>6</td><td> </td><td>reload(sys)</td></tr>
+<tr><td>7</td><td>7</td><td> </td><td>sys.setdefaultencoding(&#39utf8&#39)</td></tr>
+<tr><td>8</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>8</td><td>+</td><td></td></tr>
+<tr><td>9</td><td>9</td><td> </td><td>import json</td></tr>
+<tr><td>10</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>10</td><td>+</td><td></td></tr>
+<tr><td>11</td><td>11</td><td> </td><td>def usage():</td></tr>
+<tr><td>12</td><td>12</td><td> </td><td>    print __file__, &quotold_file diff_json_file [--html] [--txt]&quot</td></tr>
+<tr><td>13</td><td>13</td><td> </td><td>    sys.exit(-1)</td></tr>
+<tr><td>14</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>14</td><td>+</td><td></td></tr>
+<tr><td></td><td>15</td><td>+</td><td>def _fli(i=None, max_len=5):</td></tr>
+<tr><td></td><td>16</td><td>+</td><td>    if i is None:</td></tr>
+<tr><td></td><td>17</td><td>+</td><td>        return &#39 &#39*max_len</td></tr>
+<tr><td></td><td>18</td><td>+</td><td></td></tr>
+<tr><td></td><td>19</td><td>+</td><td>    fmt = &#39%&#39+str(max_len)+&#39d&#39</td></tr>
+<tr><td></td><td>20</td><td>+</td><td>    return fmt%(i)</td></tr>
+<tr><td></td><td>21</td><td>+</td><td></td></tr>
+<tr><td></td><td>22</td><td>+</td><td># string with fixed length</td></tr>
+<tr><td></td><td>23</td><td>+</td><td>def _fls(txt=None, max_len=63):</td></tr>
+<tr><td></td><td>24</td><td>+</td><td>    _txt = txt or &#39&#39</td></tr>
+<tr><td></td><td>25</td><td>+</td><td>    if len(_txt) &lt max_len:</td></tr>
+<tr><td></td><td>26</td><td>+</td><td>        return _txt + &#39 &#39*(max_len-len(_txt))</td></tr>
+<tr><td></td><td>27</td><td>+</td><td>    return _txt[0:max_len]</td></tr>
+<tr><td></td><td>28</td><td>+</td><td></td></tr>
+<tr><td></td><td>29</td><td>+</td><td>def html_escape(txt):</td></tr>
+<tr><td></td><td>30</td><td>+</td><td>    # https://stackoverflow.com/questions/7381974/which-characters-need-to-be-escaped-in-html#7382028</td></tr>
+<tr><td></td><td>31</td><td>+</td><td>    return txt\</td></tr>
+<tr><td></td><td>32</td><td>+</td><td>        .replace(&#39&amp&#39, &#39&ampamp&#39)\</td></tr>
+<tr><td></td><td>33</td><td>+</td><td>        .replace(&#39&gt&#39, &#39&ampgt&#39)\</td></tr>
+<tr><td></td><td>34</td><td>+</td><td>        .replace(&#39&lt&#39, &#39&amplt&#39)\</td></tr>
+<tr><td></td><td>35</td><td>+</td><td>        .replace(&#39&quot&#39, &#39&ampquot&#39)\</td></tr>
+<tr><td></td><td>36</td><td>+</td><td>        .replace(&quot&#39&quot, &#39&amp#39&#39)</td></tr>
+<tr><td></td><td>37</td><td>+</td><td></td></tr>
+<tr><td></td><td>38</td><td>+</td><td>def render(ln_old, s_old, mark, ln_new=None, s_new=None, fli_max_len=5, fls_max_length=63):</td></tr>
+<tr><td></td><td>39</td><td>+</td><td>    if option_render_txt:</td></tr>
+<tr><td></td><td>40</td><td>+</td><td>        print \</td></tr>
+<tr><td></td><td>41</td><td>+</td><td>            _fli(ln_old, max_len=fli_max_len), _fls(s_old, max_len=fls_max_length), \</td></tr>
+<tr><td></td><td>42</td><td>+</td><td>            mark, \</td></tr>
+<tr><td></td><td>43</td><td>+</td><td>            _fli(ln_new, max_len=fli_max_len), _fls(s_new, max_len=fls_max_length)</td></tr>
+<tr><td></td><td>44</td><td>+</td><td></td></tr>
+<tr><td></td><td>45</td><td>+</td><td>    elif option_render_html:</td></tr>
+<tr><td></td><td>46</td><td>+</td><td>        if mark == &#39 &#39:</td></tr>
+<tr><td></td><td>47</td><td>+</td><td>            tr_cls = &#39sam&#39</td></tr>
+<tr><td></td><td>48</td><td>+</td><td>        elif mark == &#39+&#39:</td></tr>
+<tr><td></td><td>49</td><td>+</td><td>            tr_cls = &#39add&#39</td></tr>
+<tr><td></td><td>50</td><td>+</td><td>        elif mark == &#39-&#39:</td></tr>
+<tr><td></td><td>51</td><td>+</td><td>            tr_cls = &#39del&#39</td></tr>
+<tr><td></td><td>52</td><td>+</td><td>        elif mark == &#39|&#39:</td></tr>
+<tr><td></td><td>53</td><td>+</td><td>            tr_cls = &#39mod&#39</td></tr>
+<tr><td></td><td>54</td><td>+</td><td>        else:</td></tr>
+<tr><td></td><td>55</td><td>+</td><td>            tr_cls = &#39&#39</td></tr>
+<tr><td></td><td>56</td><td>+</td><td></td></tr>
+<tr><td></td><td>57</td><td>+</td><td>        print &quot&lttr class=&#39%s&#39&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lt/tr&gt&quot%(</td></tr>
+<tr><td></td><td>58</td><td>+</td><td>            tr_cls,</td></tr>
+<tr><td></td><td>59</td><td>+</td><td>            _fli(ln_old, max_len=fli_max_len),</td></tr>
+<tr><td></td><td>60</td><td>+</td><td>            html_escape(_fls(s_old, max_len=fls_max_length)),</td></tr>
+<tr><td></td><td>61</td><td>+</td><td>            mark,</td></tr>
+<tr><td></td><td>62</td><td>+</td><td>            _fli(ln_new, max_len=fli_max_len),</td></tr>
+<tr><td></td><td>63</td><td>+</td><td>            html_escape(_fls(s_new, max_len=fls_max_length))</td></tr>
+<tr><td></td><td>64</td><td>+</td><td>        )</td></tr>
+<tr><td></td><td>65</td><td>+</td><td></td></tr>
+<tr><td></td><td>66</td><td>+</td><td>    else:</td></tr>
+<tr><td></td><td>67</td><td>+</td><td>        pass</td></tr>
+<tr><td></td><td>68</td><td>+</td><td></td></tr>
+<tr><td></td><td>69</td><td>+</td><td>################################################################</td></tr>
+<tr><td></td><td>70</td><td>+</td><td># main</td></tr>
+<tr><td></td><td>71</td><td>+</td><td></td></tr>
+<tr><td>15</td><td>72</td><td> </td><td>if len(sys.argv) &lt 2:</td></tr>
+<tr><td>16</td><td>73</td><td> </td><td>    usage()</td></tr>
+<tr><td>17</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>74</td><td>+</td><td></td></tr>
+<tr><td>18</td><td>75</td><td> </td><td>old_file = None</td></tr>
+<tr><td>19</td><td>76</td><td> </td><td>diff_json_file = None</td></tr>
+<tr><td>20</td><td>77</td><td> </td><td>option_render_txt = False</td></tr>
+<tr><td>21</td><td>78</td><td> </td><td>option_render_html = False</td></tr>
+<tr><td>22</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>79</td><td>+</td><td></td></tr>
+<tr><td>23</td><td>80</td><td> </td><td>for i in sys.argv[1:]:</td></tr>
+<tr><td>24</td><td>81</td><td> </td><td>    if i.startswith(&#39-&#39):</td></tr>
+<tr><td>25</td><td>82</td><td> </td><td>        if i == &#39--html&#39:</td></tr>
+<tr><td>meta: ln_old:</td><td>29</td><td>ln_new:</td><td>86</td></tr>
+<tr><td>29</td><td>86</td><td> </td><td>        else:</td></tr>
+<tr><td>30</td><td>87</td><td> </td><td>            pass</td></tr>
+<tr><td>31</td><td>88</td><td> </td><td>        continue</td></tr>
+<tr><td>32</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>89</td><td>+</td><td></td></tr>
+<tr><td>33</td><td>90</td><td> </td><td>    # files</td></tr>
+<tr><td>34</td><td>91</td><td> </td><td>    if old_file is None: # old_file comes first</td></tr>
+<tr><td>35</td><td>92</td><td> </td><td>        old_file = i</td></tr>
+<tr><td>36</td><td>93</td><td> </td><td>    else:</td></tr>
+<tr><td>37</td><td>94</td><td> </td><td>        diff_json_file = i</td></tr>
+<tr><td>38</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>95</td><td>+</td><td></td></tr>
+<tr><td>39</td><td>96</td><td> </td><td>if old_file is None or diff_json_file is None:</td></tr>
+<tr><td>40</td><td>97</td><td> </td><td>    usage()</td></tr>
+<tr><td>41</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>98</td><td>+</td><td></td></tr>
+<tr><td>42</td><td>99</td><td> </td><td>if not option_render_txt and not option_render_html:</td></tr>
+<tr><td>43</td><td>100</td><td> </td><td>    option_render_txt = True</td></tr>
+<tr><td>44</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>101</td><td>+</td><td></td></tr>
+<tr><td>45</td><td>102</td><td> </td><td># https://en.wikipedia.org/wiki/Diff#Unified_format</td></tr>
+<tr><td>46</td><td>103</td><td> </td><td># https://www.gnu.org/software/diffutils/manual/html_node/Detailed-Unified.html</td></tr>
+<tr><td>47</td><td>104</td><td> </td><td>diff_meta = None</td></tr>
+<tr><td>48</td><td>105</td><td> </td><td>with open(diff_json_file, &quotr&quot) as f:</td></tr>
+<tr><td>49</td><td>106</td><td> </td><td>    diff_meta = json.load(f)</td></tr>
+<tr><td>50</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>107</td><td>+</td><td></td></tr>
+<tr><td>51</td><td>108</td><td> </td><td>ops = diff_meta</td></tr>
+<tr><td>52</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>109</td><td>+</td><td></td></tr>
+<tr><td>53</td><td>110</td><td> </td><td>f = open(old_file, &quotr&quot)</td></tr>
+<tr><td>54</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>111</td><td>+</td><td></td></tr>
+<tr><td>55</td><td>112</td><td> </td><td>l_map = {}</td></tr>
+<tr><td>56</td><td>113</td><td> </td><td>ln = 0</td></tr>
+<tr><td>57</td><td>114</td><td> </td><td>for l in f.readlines():</td></tr>
+<tr><td>58</td><td>115</td><td> </td><td>    ln += 1                     # ln starts from 1</td></tr>
+<tr><td>59</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>116</td><td>+</td><td></td></tr>
+<tr><td>60</td><td>117</td><td> </td><td>    l = l.replace(&#39\n&#39, &#39&#39)</td></tr>
+<tr><td>61</td><td>118</td><td> </td><td>    l_map[ln] = l</td></tr>
+<tr><td>62</td><td>119</td><td> </td><td>ln_old_total = ln</td></tr>
+<tr><td>63</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>120</td><td>+</td><td></td></tr>
+<tr><td>64</td><td>121</td><td> </td><td>ln_old_last = 0</td></tr>
+<tr><td>65</td><td>122</td><td> </td><td>ln_new_last = 0</td></tr>
+<tr><td>66</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>123</td><td>+</td><td></td></tr>
+<tr><td>67</td><td>124</td><td> </td><td>if option_render_html:</td></tr>
+<tr><td>68</td><td>125</td><td> </td><td>    print &quot&quot&quot</td></tr>
+<tr><td>69</td><td>126</td><td> </td><td>&ltstyle&gt</td></tr>
+<tr><td>70</td><td>127</td><td> </td><td>table {-webkit-border-horizontal-spacing: 0; -webkit-border-vertical-spacing: 0; font-family: monospace; }</td></tr>
+<tr><td>71</td><td></td><td>-</td><td>td {border-bottom: solid 1px gray; padding-left: 5px; }</td></tr>
+<tr><td></td><td>128</td><td>+</td><td>td {white-space: pre; border-bottom: solid 1px gray; padding-left: 5px; }</td></tr>
+<tr><td>72</td><td>129</td><td> </td><td>.type-mark {display: none; }</td></tr>
+<tr><td>73</td><td>130</td><td> </td><td>.mod {background-color: yellow; color: black; }</td></tr>
+<tr><td>74</td><td>131</td><td> </td><td>.del {background-color: red; color: white;}</td></tr>
+<tr><td>meta: ln_old:</td><td>76</td><td>ln_new:</td><td>133</td></tr>
+<tr><td>76</td><td>133</td><td> </td><td>.add {background-color: green; color: white;}</td></tr>
+<tr><td>77</td><td>134</td><td> </td><td>&lt/style&gt</td></tr>
+<tr><td>78</td><td>135</td><td> </td><td>&quot&quot&quot</td></tr>
+<tr><td></td><td>136</td><td>+</td><td></td></tr>
+<tr><td></td><td>137</td><td>+</td><td>if option_render_html:</td></tr>
+<tr><td>79</td><td>138</td><td> </td><td>    print &#39&lttable&gt&#39</td></tr>
+<tr><td>80</td><td></td><td>-</td><td> </td></tr>
+<tr><td>81</td><td></td><td>-</td><td>def _fli(i=None, max_len=3):</td></tr>
+<tr><td>82</td><td></td><td>-</td><td>    if i is None:</td></tr>
+<tr><td>83</td><td></td><td>-</td><td>        return &#39 &#39*max_len</td></tr>
+<tr><td>84</td><td></td><td>-</td><td> </td></tr>
+<tr><td>85</td><td></td><td>-</td><td>    fmt = &#39%&#39+str(max_len)+&#39d&#39</td></tr>
+<tr><td>86</td><td></td><td>-</td><td>    return fmt%(i)</td></tr>
+<tr><td>87</td><td></td><td>-</td><td> </td></tr>
+<tr><td>88</td><td></td><td>-</td><td># string with fixed length</td></tr>
+<tr><td>89</td><td></td><td>-</td><td>def _fls(txt=None, max_len=63):</td></tr>
+<tr><td>90</td><td></td><td>-</td><td>    _txt = txt or &#39&#39</td></tr>
+<tr><td>91</td><td></td><td>-</td><td>    if len(_txt) &lt max_len:</td></tr>
+<tr><td>92</td><td></td><td>-</td><td>        return _txt + &#39 &#39*(max_len-len(_txt))</td></tr>
+<tr><td>93</td><td></td><td>-</td><td>    return _txt[0:max_len]</td></tr>
+<tr><td>94</td><td></td><td>-</td><td> </td></tr>
+<tr><td>95</td><td></td><td>-</td><td>def render(ln_old, s_old, mark, ln_new=None, s_new=None, fli_max_len=3, fls_max_length=63):</td></tr>
+<tr><td>96</td><td></td><td>-</td><td>    if option_render_txt:</td></tr>
+<tr><td>97</td><td></td><td>-</td><td>        print \</td></tr>
+<tr><td>98</td><td></td><td>-</td><td>            _fli(ln_old, max_len=fli_max_len), _fls(s_old, max_len=fls_max_length), \</td></tr>
+<tr><td>99</td><td></td><td>-</td><td>            mark, \</td></tr>
+<tr><td>100</td><td></td><td>-</td><td>            _fli(ln_new, max_len=fli_max_len), _fls(s_new, max_len=fls_max_length)</td></tr>
+<tr><td>101</td><td></td><td>-</td><td> </td></tr>
+<tr><td>102</td><td></td><td>-</td><td>    elif option_render_html:</td></tr>
+<tr><td>103</td><td></td><td>-</td><td>        if mark == &#39 &#39:</td></tr>
+<tr><td>104</td><td></td><td>-</td><td>            tr_cls = &#39sam&#39</td></tr>
+<tr><td>105</td><td></td><td>-</td><td>        elif mark == &#39&gt&#39:</td></tr>
+<tr><td>106</td><td></td><td>-</td><td>            tr_cls = &#39add&#39</td></tr>
+<tr><td>107</td><td></td><td>-</td><td>        elif mark == &#39&lt&#39:</td></tr>
+<tr><td>108</td><td></td><td>-</td><td>            tr_cls = &#39del&#39</td></tr>
+<tr><td>109</td><td></td><td>-</td><td>        elif mark == &#39|&#39:</td></tr>
+<tr><td>110</td><td></td><td>-</td><td>            tr_cls = &#39mod&#39</td></tr>
+<tr><td></td><td>139</td><td>+</td><td></td></tr>
+<tr><td></td><td>140</td><td>+</td><td>    for op in ops:</td></tr>
+<tr><td></td><td>141</td><td>+</td><td>        typ, ln_old, ln_new, l = op</td></tr>
+<tr><td></td><td>142</td><td>+</td><td>        if typ == 2:</td></tr>
+<tr><td></td><td>143</td><td>+</td><td>            print &#39&lttr&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lt/tr&gt&#39%(&#39meta: ln_old:&#39, str(ln_old), &#39ln_new:&#39, str(ln_new))</td></tr>
+<tr><td></td><td>144</td><td>+</td><td>        elif typ == -1:</td></tr>
+<tr><td></td><td>145</td><td>+</td><td>            print &#39&lttr&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lt/tr&gt&#39%(ln_old, &#39&#39, &#39-&#39, html_escape(l))</td></tr>
+<tr><td></td><td>146</td><td>+</td><td>        elif typ == 0:</td></tr>
+<tr><td></td><td>147</td><td>+</td><td>            print &#39&lttr&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lt/tr&gt&#39%(ln_old, ln_new, &#39 &#39, html_escape(l))</td></tr>
+<tr><td></td><td>148</td><td>+</td><td>        elif typ == 1:</td></tr>
+<tr><td></td><td>149</td><td>+</td><td>            print &#39&lttr&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lt/tr&gt&#39%(&#39&#39, ln_new, &#39+&#39, html_escape(l))</td></tr>
+<tr><td>111</td><td>150</td><td> </td><td>        else:</td></tr>
+<tr><td>112</td><td></td><td>-</td><td>            print &#39ERROR&#39, &#39show never happen&#39</td></tr>
+<tr><td>113</td><td></td><td>-</td><td>            tr_cls = &#39&#39</td></tr>
+<tr><td>114</td><td></td><td>-</td><td> </td></tr>
+<tr><td>115</td><td></td><td>-</td><td>        print &quot&lttr class=&#39%s&#39&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lt/tr&gt&quot%(</td></tr>
+<tr><td>116</td><td></td><td>-</td><td>            tr_cls,</td></tr>
+<tr><td>117</td><td></td><td>-</td><td>            _fli(ln_old, max_len=fli_max_len), _fls(s_old, max_len=fls_max_length),</td></tr>
+<tr><td>118</td><td></td><td>-</td><td>            mark,</td></tr>
+<tr><td>119</td><td></td><td>-</td><td>            _fli(ln_new, max_len=fli_max_len), _fls(s_new, max_len=fls_max_length)</td></tr>
+<tr><td>120</td><td></td><td>-</td><td>        )</td></tr>
+<tr><td>121</td><td></td><td>-</td><td> </td></tr>
+<tr><td>122</td><td></td><td>-</td><td>    else:</td></tr>
+<tr><td>123</td><td></td><td>-</td><td>        pass</td></tr>
+<tr><td>124</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>151</td><td>+</td><td>            pass</td></tr>
+<tr><td></td><td>152</td><td>+</td><td></td></tr>
+<tr><td></td><td>153</td><td>+</td><td>    print &#39&lt/table&gt&#39</td></tr>
+<tr><td></td><td>154</td><td>+</td><td>    print &#39&ltbr/&gt&#39</td></tr>
+<tr><td></td><td>155</td><td>+</td><td></td></tr>
+<tr><td></td><td>156</td><td>+</td><td>if option_render_html:</td></tr>
+<tr><td></td><td>157</td><td>+</td><td>    print &#39&lttable&gt&#39</td></tr>
+<tr><td></td><td>158</td><td>+</td><td></td></tr>
+<tr><td>125</td><td>159</td><td> </td><td>idx = 0</td></tr>
+<tr><td>126</td><td>160</td><td> </td><td>total = len(ops)</td></tr>
+<tr><td>127</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>161</td><td>+</td><td></td></tr>
+<tr><td>128</td><td>162</td><td> </td><td>if total == 0:</td></tr>
+<tr><td>129</td><td>163</td><td> </td><td>    for i in xrange(1, ln_old_total+1):</td></tr>
+<tr><td>130</td><td>164</td><td> </td><td>        l = l_map[i]</td></tr>
+<tr><td>131</td><td>165</td><td> </td><td>        render(i, l, &#39 &#39, i, l)</td></tr>
+<tr><td>132</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>166</td><td>+</td><td></td></tr>
+<tr><td>133</td><td>167</td><td> </td><td>    if option_render_html:</td></tr>
+<tr><td>134</td><td>168</td><td> </td><td>        print &#39&lt/table&gt&#39</td></tr>
+<tr><td>135</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>169</td><td>+</td><td></td></tr>
+<tr><td>136</td><td>170</td><td> </td><td>    sys.exit(0)</td></tr>
+<tr><td>137</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>171</td><td>+</td><td></td></tr>
+<tr><td>138</td><td>172</td><td> </td><td>while idx &lt total:</td></tr>
+<tr><td>139</td><td></td><td>-</td><td> </td></tr>
+<tr><td>140</td><td>173</td><td> </td><td>    op = ops[idx]</td></tr>
+<tr><td>141</td><td>174</td><td> </td><td>    typ, ln_old, ln_new, l = op</td></tr>
+<tr><td>142</td><td></td><td>-</td><td> </td></tr>
+<tr><td>143</td><td></td><td>-</td><td>    if typ == &#39M&#39:</td></tr>
+<tr><td>144</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>175</td><td>+</td><td></td></tr>
+<tr><td></td><td>176</td><td>+</td><td>    if typ == 2:                # hunk meta line</td></tr>
+<tr><td>145</td><td>177</td><td> </td><td>        # fill up lines missing between hunks</td></tr>
+<tr><td></td><td>178</td><td>+</td><td>        n = 0</td></tr>
+<tr><td>146</td><td>179</td><td> </td><td>        for i in xrange(int(ln_old_last+1), int(ln_old)):</td></tr>
+<tr><td></td><td>180</td><td>+</td><td>            n += 1</td></tr>
+<tr><td>147</td><td>181</td><td> </td><td>            l = l_map[i]</td></tr>
+<tr><td>148</td><td></td><td>-</td><td>            render(ln_old, l, &#39 &#39, ln_new, l)</td></tr>
+<tr><td>149</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>182</td><td>+</td><td>            render(ln_old_last+n, l, &#39&#39, ln_new_last + n, l)</td></tr>
+<tr><td></td><td>183</td><td>+</td><td></td></tr>
+<tr><td>150</td><td>184</td><td> </td><td>        idx += 1</td></tr>
+<tr><td>151</td><td>185</td><td> </td><td>        continue</td></tr>
+<tr><td>152</td><td></td><td>-</td><td> </td></tr>
+<tr><td>153</td><td></td><td>-</td><td>    # &#39L&#39</td></tr>
+<tr><td>154</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>186</td><td>+</td><td></td></tr>
+<tr><td></td><td>187</td><td>+</td><td>    # else, data lines</td></tr>
+<tr><td>155</td><td>188</td><td> </td><td>    if ln_old is not None:</td></tr>
+<tr><td>156</td><td>189</td><td> </td><td>        ln_old_last = ln_old</td></tr>
+<tr><td>157</td><td>190</td><td> </td><td>    if ln_new is not None:</td></tr>
+<tr><td>158</td><td>191</td><td> </td><td>        ln_new_last = ln_new</td></tr>
+<tr><td>159</td><td></td><td>-</td><td> </td></tr>
+<tr><td>160</td><td></td><td>-</td><td>    is_flsame = ln_old and ln_new</td></tr>
+<tr><td>161</td><td></td><td>-</td><td>    is_minus = not is_flsame and ln_old and not ln_new</td></tr>
+<tr><td>162</td><td></td><td>-</td><td>    is_plus = not is_flsame and not ln_old and ln_new</td></tr>
+<tr><td>163</td><td></td><td>-</td><td> </td></tr>
+<tr><td>164</td><td></td><td>-</td><td>    if is_minus:</td></tr>
+<tr><td>165</td><td></td><td>-</td><td> </td></tr>
+<tr><td>166</td><td></td><td>-</td><td>        if idx+1 == total:      # last one</td></tr>
+<tr><td>167</td><td></td><td>-</td><td>            render(ln_old, op[3], &#39&lt&#39)</td></tr>
+<tr><td>168</td><td></td><td>-</td><td>            break</td></tr>
+<tr><td>169</td><td></td><td>-</td><td> </td></tr>
+<tr><td>170</td><td></td><td>-</td><td>        # KEY: probe next op if current is &#39-&#39 to see if it&#39s &#39+&#39</td></tr>
+<tr><td>171</td><td></td><td>-</td><td>        next_op = ops[idx+1]</td></tr>
+<tr><td>172</td><td></td><td>-</td><td>        next_typ, next_ln_old, next_ln_new, next_l = next_op</td></tr>
+<tr><td>173</td><td></td><td>-</td><td> </td></tr>
+<tr><td>174</td><td></td><td>-</td><td>        next_is_flsame = next_ln_old and next_ln_new</td></tr>
+<tr><td>175</td><td></td><td>-</td><td>        next_is_minus = not next_is_flsame and next_ln_old and not next_ln_new</td></tr>
+<tr><td>176</td><td></td><td>-</td><td>        next_is_plus = not next_is_flsame and not next_ln_old and next_ln_new</td></tr>
+<tr><td>177</td><td></td><td>-</td><td> </td></tr>
+<tr><td>178</td><td></td><td>-</td><td>        if next_is_plus:</td></tr>
+<tr><td>179</td><td></td><td>-</td><td>            render(ln_old, op[3], &#39|&#39, ln_new or ln_new_last+1, next_op[3])</td></tr>
+<tr><td>180</td><td></td><td>-</td><td>            idx += 2</td></tr>
+<tr><td></td><td>192</td><td>+</td><td></td></tr>
+<tr><td></td><td>193</td><td>+</td><td>    if typ == -1:               # minus &#39-&#39</td></tr>
+<tr><td></td><td>194</td><td>+</td><td>        # consume consequent &#39-&#39 as much as possible</td></tr>
+<tr><td></td><td>195</td><td>+</td><td>        idx2 = idx + 1</td></tr>
+<tr><td></td><td>196</td><td>+</td><td>        while idx2 &lt total and ops[idx2][0] == -1:</td></tr>
+<tr><td></td><td>197</td><td>+</td><td>            idx2 += 1</td></tr>
+<tr><td></td><td>198</td><td>+</td><td></td></tr>
+<tr><td></td><td>199</td><td>+</td><td>        if idx2 == total:       # idx2 exceeds ops, which means, all from idx is &#39-&#39</td></tr>
+<tr><td></td><td>200</td><td>+</td><td>            for _op in ops[idx: idx2]:</td></tr>
+<tr><td></td><td>201</td><td>+</td><td>                _typ, _lno, _lnn, _l = _op</td></tr>
+<tr><td></td><td>202</td><td>+</td><td></td></tr>
+<tr><td></td><td>203</td><td>+</td><td>                if _lno: ln_old_last = _lno</td></tr>
+<tr><td></td><td>204</td><td>+</td><td>                if _lnn: ln_new_last = _lnn</td></tr>
+<tr><td></td><td>205</td><td>+</td><td></td></tr>
+<tr><td></td><td>206</td><td>+</td><td>                render(_lno, _l, &#39-&#39)</td></tr>
+<tr><td></td><td>207</td><td>+</td><td></td></tr>
+<tr><td></td><td>208</td><td>+</td><td>            # print &#39dia: idx2 = %d, total = %d&#39%(idx2, total)</td></tr>
+<tr><td></td><td>209</td><td>+</td><td>            break               # all done, just break main loop</td></tr>
+<tr><td></td><td>210</td><td>+</td><td></td></tr>
+<tr><td></td><td>211</td><td>+</td><td>        if ops[idx2][0] == 0:   # idx2 points to first &#39 &#39 after bunch of &#39-&#39</td></tr>
+<tr><td></td><td>212</td><td>+</td><td>            for _op in ops[idx: idx2]:</td></tr>
+<tr><td></td><td>213</td><td>+</td><td>                _typ, _lno, _lnn, _l = _op</td></tr>
+<tr><td></td><td>214</td><td>+</td><td></td></tr>
+<tr><td></td><td>215</td><td>+</td><td>                if _lno: ln_old_last = _lno</td></tr>
+<tr><td></td><td>216</td><td>+</td><td>                if _lnn: ln_new_last = _lnn</td></tr>
+<tr><td></td><td>217</td><td>+</td><td></td></tr>
+<tr><td></td><td>218</td><td>+</td><td>                render(_lno, _l, &#39-&#39)</td></tr>
+<tr><td></td><td>219</td><td>+</td><td></td></tr>
+<tr><td></td><td>220</td><td>+</td><td>            # go on to next round</td></tr>
+<tr><td></td><td>221</td><td>+</td><td>            idx = idx2</td></tr>
+<tr><td>181</td><td>222</td><td> </td><td>            continue</td></tr>
+<tr><td>182</td><td></td><td>-</td><td>        else:</td></tr>
+<tr><td>183</td><td></td><td>-</td><td>            render(ln_old, op[3], &#39&lt&#39)</td></tr>
+<tr><td>184</td><td></td><td>-</td><td>            idx += 1</td></tr>
+<tr><td>185</td><td></td><td>-</td><td>            continue</td></tr>
+<tr><td>186</td><td></td><td>-</td><td> </td></tr>
+<tr><td>187</td><td></td><td>-</td><td>    if is_plus:</td></tr>
+<tr><td>188</td><td></td><td>-</td><td>        render(ln_old, &#39&#39, &#39&gt&#39, ln_new, op[3])</td></tr>
+<tr><td></td><td>223</td><td>+</td><td></td></tr>
+<tr><td></td><td>224</td><td>+</td><td>        if ops[idx2][0] == 1:   # idx2 points to first &#39+&#39 after bunch of &#39-&#39</td></tr>
+<tr><td></td><td>225</td><td>+</td><td>            # consume consequent &#39+&#39 as much as possible</td></tr>
+<tr><td></td><td>226</td><td>+</td><td>            idx3 = idx2 + 1</td></tr>
+<tr><td></td><td>227</td><td>+</td><td>            while idx3 &lt total and ops[idx3][0] == 1:</td></tr>
+<tr><td></td><td>228</td><td>+</td><td>                idx3 += 1</td></tr>
+<tr><td></td><td>229</td><td>+</td><td></td></tr>
+<tr><td></td><td>230</td><td>+</td><td>            # either idx3 is last op, or points to &#39 &#39, &#39-&#39,</td></tr>
+<tr><td></td><td>231</td><td>+</td><td>            # we all terminate this round</td></tr>
+<tr><td></td><td>232</td><td>+</td><td></td></tr>
+<tr><td></td><td>233</td><td>+</td><td>            n_minus = idx2 - idx</td></tr>
+<tr><td></td><td>234</td><td>+</td><td>            n_plus = idx3 - idx2</td></tr>
+<tr><td></td><td>235</td><td>+</td><td></td></tr>
+<tr><td></td><td>236</td><td>+</td><td>            if n_minus &lt= n_plus:</td></tr>
+<tr><td></td><td>237</td><td>+</td><td>                # cosume both n_minus count of &#39-&#39 ops and n_minus count of &#39+&#39 ops</td></tr>
+<tr><td></td><td>238</td><td>+</td><td>                for _i in xrange(0, n_minus):</td></tr>
+<tr><td></td><td>239</td><td>+</td><td>                    _, _lno_l, _lnn_l, _l_l = ops[idx+_i]</td></tr>
+<tr><td></td><td>240</td><td>+</td><td>                    _, _lno_r, _lnn_r, _l_r = ops[idx2+_i]</td></tr>
+<tr><td></td><td>241</td><td>+</td><td></td></tr>
+<tr><td></td><td>242</td><td>+</td><td>                    if _lno_l: ln_old_last = _lno_l</td></tr>
+<tr><td></td><td>243</td><td>+</td><td>                    if _lnn_r: ln_new_last = _lnn_r</td></tr>
+<tr><td></td><td>244</td><td>+</td><td></td></tr>
+<tr><td></td><td>245</td><td>+</td><td>                    render(_lno_l, _l_l, &#39|&#39, _lnn_r, _l_r)</td></tr>
+<tr><td></td><td>246</td><td>+</td><td></td></tr>
+<tr><td></td><td>247</td><td>+</td><td>                for _op in ops[idx2+n_minus:idx3]: # idx3 not cosumned</td></tr>
+<tr><td></td><td>248</td><td>+</td><td>                    _typ, _lno, _lnn, _l = _op</td></tr>
+<tr><td></td><td>249</td><td>+</td><td></td></tr>
+<tr><td></td><td>250</td><td>+</td><td>                    if _lno: ln_old_last = _lno</td></tr>
+<tr><td></td><td>251</td><td>+</td><td>                    if _lnn: ln_new_last = _lnn</td></tr>
+<tr><td></td><td>252</td><td>+</td><td></td></tr>
+<tr><td></td><td>253</td><td>+</td><td>                    render(None, &#39&#39, &#39+&#39, _lnn, _l)</td></tr>
+<tr><td></td><td>254</td><td>+</td><td></td></tr>
+<tr><td></td><td>255</td><td>+</td><td>                # go on to next round</td></tr>
+<tr><td></td><td>256</td><td>+</td><td>                idx = idx3</td></tr>
+<tr><td></td><td>257</td><td>+</td><td>                continue</td></tr>
+<tr><td></td><td>258</td><td>+</td><td></td></tr>
+<tr><td></td><td>259</td><td>+</td><td>            else:               # n_minus &gt n_plus</td></tr>
+<tr><td></td><td>260</td><td>+</td><td>                for _op in ops[idx:idx+n_minus-n_plus]:</td></tr>
+<tr><td></td><td>261</td><td>+</td><td>                    _typ, _lno, _lnn, _l = _op</td></tr>
+<tr><td></td><td>262</td><td>+</td><td></td></tr>
+<tr><td></td><td>263</td><td>+</td><td>                    if _lno: ln_old_last = _lno</td></tr>
+<tr><td></td><td>264</td><td>+</td><td>                    if _lnn: ln_new_last = _lnn</td></tr>
+<tr><td></td><td>265</td><td>+</td><td></td></tr>
+<tr><td></td><td>266</td><td>+</td><td>                    render(_lno, _l, &#39-&#39)</td></tr>
+<tr><td></td><td>267</td><td>+</td><td></td></tr>
+<tr><td></td><td>268</td><td>+</td><td>                # cosume both n_plus count of &#39-&#39 ops and n_minus count of &#39+&#39 ops</td></tr>
+<tr><td></td><td>269</td><td>+</td><td>                _idx = idx+n_minus-n_plus</td></tr>
+<tr><td></td><td>270</td><td>+</td><td>                for _i in xrange(0, n_plus):</td></tr>
+<tr><td></td><td>271</td><td>+</td><td>                    _, _lno_l, _lnn_l, _l_l = ops[_idx+_i]</td></tr>
+<tr><td></td><td>272</td><td>+</td><td>                    _, _lno_r, _lnn_r, _l_r = ops[idx2+_i]</td></tr>
+<tr><td></td><td>273</td><td>+</td><td></td></tr>
+<tr><td></td><td>274</td><td>+</td><td>                    if _lno_l: ln_old_last = _lno_l</td></tr>
+<tr><td></td><td>275</td><td>+</td><td>                    if _lnn_r: ln_new_last = _lnn_r</td></tr>
+<tr><td></td><td>276</td><td>+</td><td></td></tr>
+<tr><td></td><td>277</td><td>+</td><td>                    render(_lno_l, _l_l, &#39|&#39, _lnn_r, _l_r)</td></tr>
+<tr><td></td><td>278</td><td>+</td><td></td></tr>
+<tr><td></td><td>279</td><td>+</td><td></td></tr>
+<tr><td></td><td>280</td><td>+</td><td>                # go on to next round</td></tr>
+<tr><td></td><td>281</td><td>+</td><td>                idx = idx3</td></tr>
+<tr><td></td><td>282</td><td>+</td><td>                continue</td></tr>
+<tr><td></td><td>283</td><td>+</td><td></td></tr>
+<tr><td></td><td>284</td><td>+</td><td>    if typ == 1:                # plus &#39+&#39</td></tr>
+<tr><td></td><td>285</td><td>+</td><td>        render(ln_old, &#39&#39, &#39+&#39, ln_new, op[3])</td></tr>
+<tr><td>189</td><td>286</td><td> </td><td>        idx += 1</td></tr>
+<tr><td>190</td><td>287</td><td> </td><td>        continue</td></tr>
+<tr><td>191</td><td></td><td>-</td><td> </td></tr>
+<tr><td>192</td><td></td><td>-</td><td>    if is_flsame:</td></tr>
+<tr><td></td><td>288</td><td>+</td><td></td></tr>
+<tr><td></td><td>289</td><td>+</td><td>    if typ == 0:                # space/same &#39 &#39</td></tr>
+<tr><td>193</td><td>290</td><td> </td><td>        render(ln_old, op[3], &#39 &#39, ln_new, op[3])</td></tr>
+<tr><td>194</td><td>291</td><td> </td><td>        idx += 1</td></tr>
+<tr><td>195</td><td>292</td><td> </td><td>        continue</td></tr>
+<tr><td>196</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>293</td><td>+</td><td></td></tr>
+<tr><td>197</td><td>294</td><td> </td><td># padding last parts (not included in hunk) if exists from old file</td></tr>
+<tr><td>198</td><td>295</td><td> </td><td>if ln_old_last &gt 0:             # means have been re-assigned by &#39L&#39 type meta</td></tr>
+<tr><td></td><td>296</td><td>+</td><td>    n = 0</td></tr>
+<tr><td>199</td><td>297</td><td> </td><td>    for i in xrange(ln_old_last+1, ln_old_total+1):</td></tr>
+<tr><td></td><td>298</td><td>+</td><td>        n += 1</td></tr>
+<tr><td>200</td><td>299</td><td> </td><td>        l = l_map[i]</td></tr>
+<tr><td>201</td><td></td><td>-</td><td>        render(i, l, &#39 &#39, i, l)</td></tr>
+<tr><td>202</td><td></td><td>-</td><td> </td></tr>
+<tr><td></td><td>300</td><td>+</td><td>        render(i, l, &#39&#39)</td></tr>
+<tr><td></td><td>301</td><td>+</td><td></td></tr>
+<tr><td>203</td><td>302</td><td> </td><td>if option_render_html:</td></tr>
+<tr><td>204</td><td>303</td><td> </td><td>    print &#39&lt/table&gt&#39</td></tr>
+</table>
+<br/>
+<table>
+<tr class='sam'><td>    1</td><td>#! /usr/bin/env python                                         </td><td> </td><td>    1</td><td>#! /usr/bin/env python                                         </td></tr>
+<tr class='sam'><td>    2</td><td># -*- coding: utf-8 -*-                                        </td><td> </td><td>    2</td><td># -*- coding: utf-8 -*-                                        </td></tr>
+<tr class='mod'><td>    3</td><td>                                                               </td><td>|</td><td>    3</td><td>                                                               </td></tr>
+<tr class='sam'><td>    4</td><td>from __future__ import unicode_literals                        </td><td> </td><td>    4</td><td>from __future__ import unicode_literals                        </td></tr>
+<tr class='sam'><td>    5</td><td>import sys                                                     </td><td> </td><td>    5</td><td>import sys                                                     </td></tr>
+<tr class='sam'><td>    6</td><td>reload(sys)                                                    </td><td> </td><td>    6</td><td>reload(sys)                                                    </td></tr>
+<tr class='sam'><td>    7</td><td>sys.setdefaultencoding(&#39utf8&#39)                                 </td><td> </td><td>    7</td><td>sys.setdefaultencoding(&#39utf8&#39)                                 </td></tr>
+<tr class='mod'><td>    8</td><td>                                                               </td><td>|</td><td>    8</td><td>                                                               </td></tr>
+<tr class='sam'><td>    9</td><td>import json                                                    </td><td> </td><td>    9</td><td>import json                                                    </td></tr>
+<tr class='mod'><td>   10</td><td>                                                               </td><td>|</td><td>   10</td><td>                                                               </td></tr>
+<tr class='sam'><td>   11</td><td>def usage():                                                   </td><td> </td><td>   11</td><td>def usage():                                                   </td></tr>
+<tr class='sam'><td>   12</td><td>    print __file__, &quotold_file diff_json_file [--html] [--txt]&quot </td><td> </td><td>   12</td><td>    print __file__, &quotold_file diff_json_file [--html] [--txt]&quot </td></tr>
+<tr class='sam'><td>   13</td><td>    sys.exit(-1)                                               </td><td> </td><td>   13</td><td>    sys.exit(-1)                                               </td></tr>
+<tr class='mod'><td>   14</td><td>                                                               </td><td>|</td><td>   14</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   15</td><td>def _fli(i=None, max_len=5):                                   </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   16</td><td>    if i is None:                                              </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   17</td><td>        return &#39 &#39*max_len                                     </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   18</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   19</td><td>    fmt = &#39%&#39+str(max_len)+&#39d&#39                                 </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   20</td><td>    return fmt%(i)                                             </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   21</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   22</td><td># string with fixed length                                     </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   23</td><td>def _fls(txt=None, max_len=63):                                </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   24</td><td>    _txt = txt or &#39&#39                                           </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   25</td><td>    if len(_txt) &lt max_len:                                    </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   26</td><td>        return _txt + &#39 &#39*(max_len-len(_txt))                  </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   27</td><td>    return _txt[0:max_len]                                     </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   28</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   29</td><td>def html_escape(txt):                                          </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   30</td><td>    # https://stackoverflow.com/questions/7381974/which-charact</td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   31</td><td>    return txt\                                                </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   32</td><td>        .replace(&#39&amp&#39, &#39&ampamp&#39)\                                 </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   33</td><td>        .replace(&#39&gt&#39, &#39&ampgt&#39)\                                  </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   34</td><td>        .replace(&#39&lt&#39, &#39&amplt&#39)\                                  </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   35</td><td>        .replace(&#39&quot&#39, &#39&ampquot&#39)\                                </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   36</td><td>        .replace(&quot&#39&quot, &#39&amp#39&#39)                                  </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   37</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   38</td><td>def render(ln_old, s_old, mark, ln_new=None, s_new=None, fli_ma</td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   39</td><td>    if option_render_txt:                                      </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   40</td><td>        print \                                                </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   41</td><td>            _fli(ln_old, max_len=fli_max_len), _fls(s_old, max_</td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   42</td><td>            mark, \                                            </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   43</td><td>            _fli(ln_new, max_len=fli_max_len), _fls(s_new, max_</td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   44</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   45</td><td>    elif option_render_html:                                   </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   46</td><td>        if mark == &#39 &#39:                                        </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   47</td><td>            tr_cls = &#39sam&#39                                     </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   48</td><td>        elif mark == &#39+&#39:                                      </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   49</td><td>            tr_cls = &#39add&#39                                     </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   50</td><td>        elif mark == &#39-&#39:                                      </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   51</td><td>            tr_cls = &#39del&#39                                     </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   52</td><td>        elif mark == &#39|&#39:                                      </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   53</td><td>            tr_cls = &#39mod&#39                                     </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   54</td><td>        else:                                                  </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   55</td><td>            tr_cls = &#39&#39                                        </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   56</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   57</td><td>        print &quot&lttr class=&#39%s&#39&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt</td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   58</td><td>            tr_cls,                                            </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   59</td><td>            _fli(ln_old, max_len=fli_max_len),                 </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   60</td><td>            html_escape(_fls(s_old, max_len=fls_max_length)),  </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   61</td><td>            mark,                                              </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   62</td><td>            _fli(ln_new, max_len=fli_max_len),                 </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   63</td><td>            html_escape(_fls(s_new, max_len=fls_max_length))   </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   64</td><td>        )                                                      </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   65</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   66</td><td>    else:                                                      </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   67</td><td>        pass                                                   </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   68</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   69</td><td>###############################################################</td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   70</td><td># main                                                         </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   71</td><td>                                                               </td></tr>
+<tr class='sam'><td>   15</td><td>if len(sys.argv) &lt 2:                                          </td><td> </td><td>   72</td><td>if len(sys.argv) &lt 2:                                          </td></tr>
+<tr class='sam'><td>   16</td><td>    usage()                                                    </td><td> </td><td>   73</td><td>    usage()                                                    </td></tr>
+<tr class='mod'><td>   17</td><td>                                                               </td><td>|</td><td>   74</td><td>                                                               </td></tr>
+<tr class='sam'><td>   18</td><td>old_file = None                                                </td><td> </td><td>   75</td><td>old_file = None                                                </td></tr>
+<tr class='sam'><td>   19</td><td>diff_json_file = None                                          </td><td> </td><td>   76</td><td>diff_json_file = None                                          </td></tr>
+<tr class='sam'><td>   20</td><td>option_render_txt = False                                      </td><td> </td><td>   77</td><td>option_render_txt = False                                      </td></tr>
+<tr class='sam'><td>   21</td><td>option_render_html = False                                     </td><td> </td><td>   78</td><td>option_render_html = False                                     </td></tr>
+<tr class='mod'><td>   22</td><td>                                                               </td><td>|</td><td>   79</td><td>                                                               </td></tr>
+<tr class='sam'><td>   23</td><td>for i in sys.argv[1:]:                                         </td><td> </td><td>   80</td><td>for i in sys.argv[1:]:                                         </td></tr>
+<tr class='sam'><td>   24</td><td>    if i.startswith(&#39-&#39):                                      </td><td> </td><td>   81</td><td>    if i.startswith(&#39-&#39):                                      </td></tr>
+<tr class='sam'><td>   25</td><td>        if i == &#39--html&#39:                                      </td><td> </td><td>   82</td><td>        if i == &#39--html&#39:                                      </td></tr>
+<tr class=''><td>   26</td><td>            option_render_html = True                          </td><td></td><td>   83</td><td>            option_render_html = True                          </td></tr>
+<tr class=''><td>   27</td><td>        elif i == &#39--txt&#39:                                     </td><td></td><td>   84</td><td>        elif i == &#39--txt&#39:                                     </td></tr>
+<tr class=''><td>   28</td><td>            option_render_txt = True                           </td><td></td><td>   85</td><td>            option_render_txt = True                           </td></tr>
+<tr class='sam'><td>   29</td><td>        else:                                                  </td><td> </td><td>   86</td><td>        else:                                                  </td></tr>
+<tr class='sam'><td>   30</td><td>            pass                                               </td><td> </td><td>   87</td><td>            pass                                               </td></tr>
+<tr class='sam'><td>   31</td><td>        continue                                               </td><td> </td><td>   88</td><td>        continue                                               </td></tr>
+<tr class='mod'><td>   32</td><td>                                                               </td><td>|</td><td>   89</td><td>                                                               </td></tr>
+<tr class='sam'><td>   33</td><td>    # files                                                    </td><td> </td><td>   90</td><td>    # files                                                    </td></tr>
+<tr class='sam'><td>   34</td><td>    if old_file is None: # old_file comes first                </td><td> </td><td>   91</td><td>    if old_file is None: # old_file comes first                </td></tr>
+<tr class='sam'><td>   35</td><td>        old_file = i                                           </td><td> </td><td>   92</td><td>        old_file = i                                           </td></tr>
+<tr class='sam'><td>   36</td><td>    else:                                                      </td><td> </td><td>   93</td><td>    else:                                                      </td></tr>
+<tr class='sam'><td>   37</td><td>        diff_json_file = i                                     </td><td> </td><td>   94</td><td>        diff_json_file = i                                     </td></tr>
+<tr class='mod'><td>   38</td><td>                                                               </td><td>|</td><td>   95</td><td>                                                               </td></tr>
+<tr class='sam'><td>   39</td><td>if old_file is None or diff_json_file is None:                 </td><td> </td><td>   96</td><td>if old_file is None or diff_json_file is None:                 </td></tr>
+<tr class='sam'><td>   40</td><td>    usage()                                                    </td><td> </td><td>   97</td><td>    usage()                                                    </td></tr>
+<tr class='mod'><td>   41</td><td>                                                               </td><td>|</td><td>   98</td><td>                                                               </td></tr>
+<tr class='sam'><td>   42</td><td>if not option_render_txt and not option_render_html:           </td><td> </td><td>   99</td><td>if not option_render_txt and not option_render_html:           </td></tr>
+<tr class='sam'><td>   43</td><td>    option_render_txt = True                                   </td><td> </td><td>  100</td><td>    option_render_txt = True                                   </td></tr>
+<tr class='mod'><td>   44</td><td>                                                               </td><td>|</td><td>  101</td><td>                                                               </td></tr>
+<tr class='sam'><td>   45</td><td># https://en.wikipedia.org/wiki/Diff#Unified_format            </td><td> </td><td>  102</td><td># https://en.wikipedia.org/wiki/Diff#Unified_format            </td></tr>
+<tr class='sam'><td>   46</td><td># https://www.gnu.org/software/diffutils/manual/html_node/Detai</td><td> </td><td>  103</td><td># https://www.gnu.org/software/diffutils/manual/html_node/Detai</td></tr>
+<tr class='sam'><td>   47</td><td>diff_meta = None                                               </td><td> </td><td>  104</td><td>diff_meta = None                                               </td></tr>
+<tr class='sam'><td>   48</td><td>with open(diff_json_file, &quotr&quot) as f:                           </td><td> </td><td>  105</td><td>with open(diff_json_file, &quotr&quot) as f:                           </td></tr>
+<tr class='sam'><td>   49</td><td>    diff_meta = json.load(f)                                   </td><td> </td><td>  106</td><td>    diff_meta = json.load(f)                                   </td></tr>
+<tr class='mod'><td>   50</td><td>                                                               </td><td>|</td><td>  107</td><td>                                                               </td></tr>
+<tr class='sam'><td>   51</td><td>ops = diff_meta                                                </td><td> </td><td>  108</td><td>ops = diff_meta                                                </td></tr>
+<tr class='mod'><td>   52</td><td>                                                               </td><td>|</td><td>  109</td><td>                                                               </td></tr>
+<tr class='sam'><td>   53</td><td>f = open(old_file, &quotr&quot)                                        </td><td> </td><td>  110</td><td>f = open(old_file, &quotr&quot)                                        </td></tr>
+<tr class='mod'><td>   54</td><td>                                                               </td><td>|</td><td>  111</td><td>                                                               </td></tr>
+<tr class='sam'><td>   55</td><td>l_map = {}                                                     </td><td> </td><td>  112</td><td>l_map = {}                                                     </td></tr>
+<tr class='sam'><td>   56</td><td>ln = 0                                                         </td><td> </td><td>  113</td><td>ln = 0                                                         </td></tr>
+<tr class='sam'><td>   57</td><td>for l in f.readlines():                                        </td><td> </td><td>  114</td><td>for l in f.readlines():                                        </td></tr>
+<tr class='sam'><td>   58</td><td>    ln += 1                     # ln starts from 1             </td><td> </td><td>  115</td><td>    ln += 1                     # ln starts from 1             </td></tr>
+<tr class='mod'><td>   59</td><td>                                                               </td><td>|</td><td>  116</td><td>                                                               </td></tr>
+<tr class='sam'><td>   60</td><td>    l = l.replace(&#39\n&#39, &#39&#39)                                    </td><td> </td><td>  117</td><td>    l = l.replace(&#39\n&#39, &#39&#39)                                    </td></tr>
+<tr class='sam'><td>   61</td><td>    l_map[ln] = l                                              </td><td> </td><td>  118</td><td>    l_map[ln] = l                                              </td></tr>
+<tr class='sam'><td>   62</td><td>ln_old_total = ln                                              </td><td> </td><td>  119</td><td>ln_old_total = ln                                              </td></tr>
+<tr class='mod'><td>   63</td><td>                                                               </td><td>|</td><td>  120</td><td>                                                               </td></tr>
+<tr class='sam'><td>   64</td><td>ln_old_last = 0                                                </td><td> </td><td>  121</td><td>ln_old_last = 0                                                </td></tr>
+<tr class='sam'><td>   65</td><td>ln_new_last = 0                                                </td><td> </td><td>  122</td><td>ln_new_last = 0                                                </td></tr>
+<tr class='mod'><td>   66</td><td>                                                               </td><td>|</td><td>  123</td><td>                                                               </td></tr>
+<tr class='sam'><td>   67</td><td>if option_render_html:                                         </td><td> </td><td>  124</td><td>if option_render_html:                                         </td></tr>
+<tr class='sam'><td>   68</td><td>    print &quot&quot&quot                                                  </td><td> </td><td>  125</td><td>    print &quot&quot&quot                                                  </td></tr>
+<tr class='sam'><td>   69</td><td>&ltstyle&gt                                                        </td><td> </td><td>  126</td><td>&ltstyle&gt                                                        </td></tr>
+<tr class='sam'><td>   70</td><td>table {-webkit-border-horizontal-spacing: 0; -webkit-border-ver</td><td> </td><td>  127</td><td>table {-webkit-border-horizontal-spacing: 0; -webkit-border-ver</td></tr>
+<tr class='mod'><td>   71</td><td>td {border-bottom: solid 1px gray; padding-left: 5px; }        </td><td>|</td><td>  128</td><td>td {white-space: pre; border-bottom: solid 1px gray; padding-le</td></tr>
+<tr class='sam'><td>   72</td><td>.type-mark {display: none; }                                   </td><td> </td><td>  129</td><td>.type-mark {display: none; }                                   </td></tr>
+<tr class='sam'><td>   73</td><td>.mod {background-color: yellow; color: black; }                </td><td> </td><td>  130</td><td>.mod {background-color: yellow; color: black; }                </td></tr>
+<tr class='sam'><td>   74</td><td>.del {background-color: red; color: white;}                    </td><td> </td><td>  131</td><td>.del {background-color: red; color: white;}                    </td></tr>
+<tr class=''><td>   75</td><td>.sam {}                                                        </td><td></td><td>  132</td><td>.sam {}                                                        </td></tr>
+<tr class='sam'><td>   76</td><td>.add {background-color: green; color: white;}                  </td><td> </td><td>  133</td><td>.add {background-color: green; color: white;}                  </td></tr>
+<tr class='sam'><td>   77</td><td>&lt/style&gt                                                       </td><td> </td><td>  134</td><td>&lt/style&gt                                                       </td></tr>
+<tr class='sam'><td>   78</td><td>&quot&quot&quot                                                            </td><td> </td><td>  135</td><td>&quot&quot&quot                                                            </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  136</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  137</td><td>if option_render_html:                                         </td></tr>
+<tr class='sam'><td>   79</td><td>    print &#39&lttable&gt&#39                                            </td><td> </td><td>  138</td><td>    print &#39&lttable&gt&#39                                            </td></tr>
+<tr class='del'><td>   80</td><td>                                                               </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>   81</td><td>def _fli(i=None, max_len=3):                                   </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>   82</td><td>    if i is None:                                              </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>   83</td><td>        return &#39 &#39*max_len                                     </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>   84</td><td>                                                               </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>   85</td><td>    fmt = &#39%&#39+str(max_len)+&#39d&#39                                 </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>   86</td><td>    return fmt%(i)                                             </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>   87</td><td>                                                               </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>   88</td><td># string with fixed length                                     </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>   89</td><td>def _fls(txt=None, max_len=63):                                </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>   90</td><td>    _txt = txt or &#39&#39                                           </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>   91</td><td>    if len(_txt) &lt max_len:                                    </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>   92</td><td>        return _txt + &#39 &#39*(max_len-len(_txt))                  </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>   93</td><td>    return _txt[0:max_len]                                     </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>   94</td><td>                                                               </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>   95</td><td>def render(ln_old, s_old, mark, ln_new=None, s_new=None, fli_ma</td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>   96</td><td>    if option_render_txt:                                      </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>   97</td><td>        print \                                                </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>   98</td><td>            _fli(ln_old, max_len=fli_max_len), _fls(s_old, max_</td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>   99</td><td>            mark, \                                            </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='mod'><td>  100</td><td>            _fli(ln_new, max_len=fli_max_len), _fls(s_new, max_</td><td>|</td><td>  139</td><td>                                                               </td></tr>
+<tr class='mod'><td>  101</td><td>                                                               </td><td>|</td><td>  140</td><td>    for op in ops:                                             </td></tr>
+<tr class='mod'><td>  102</td><td>    elif option_render_html:                                   </td><td>|</td><td>  141</td><td>        typ, ln_old, ln_new, l = op                            </td></tr>
+<tr class='mod'><td>  103</td><td>        if mark == &#39 &#39:                                        </td><td>|</td><td>  142</td><td>        if typ == 2:                                           </td></tr>
+<tr class='mod'><td>  104</td><td>            tr_cls = &#39sam&#39                                     </td><td>|</td><td>  143</td><td>            print &#39&lttr&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt</td></tr>
+<tr class='mod'><td>  105</td><td>        elif mark == &#39&gt&#39:                                      </td><td>|</td><td>  144</td><td>        elif typ == -1:                                        </td></tr>
+<tr class='mod'><td>  106</td><td>            tr_cls = &#39add&#39                                     </td><td>|</td><td>  145</td><td>            print &#39&lttr&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt</td></tr>
+<tr class='mod'><td>  107</td><td>        elif mark == &#39&lt&#39:                                      </td><td>|</td><td>  146</td><td>        elif typ == 0:                                         </td></tr>
+<tr class='mod'><td>  108</td><td>            tr_cls = &#39del&#39                                     </td><td>|</td><td>  147</td><td>            print &#39&lttr&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt</td></tr>
+<tr class='mod'><td>  109</td><td>        elif mark == &#39|&#39:                                      </td><td>|</td><td>  148</td><td>        elif typ == 1:                                         </td></tr>
+<tr class='mod'><td>  110</td><td>            tr_cls = &#39mod&#39                                     </td><td>|</td><td>  149</td><td>            print &#39&lttr&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt</td></tr>
+<tr class='sam'><td>  111</td><td>        else:                                                  </td><td> </td><td>  150</td><td>        else:                                                  </td></tr>
+<tr class='del'><td>  112</td><td>            print &#39ERROR&#39, &#39show never happen&#39                 </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>  113</td><td>            tr_cls = &#39&#39                                        </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>  114</td><td>                                                               </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>  115</td><td>        print &quot&lttr class=&#39%s&#39&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt&lttd&gt%s&lt/td&gt</td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='del'><td>  116</td><td>            tr_cls,                                            </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='mod'><td>  117</td><td>            _fli(ln_old, max_len=fli_max_len), _fls(s_old, max_</td><td>|</td><td>  151</td><td>            pass                                               </td></tr>
+<tr class='mod'><td>  118</td><td>            mark,                                              </td><td>|</td><td>  152</td><td>                                                               </td></tr>
+<tr class='mod'><td>  119</td><td>            _fli(ln_new, max_len=fli_max_len), _fls(s_new, max_</td><td>|</td><td>  153</td><td>    print &#39&lt/table&gt&#39                                           </td></tr>
+<tr class='mod'><td>  120</td><td>        )                                                      </td><td>|</td><td>  154</td><td>    print &#39&ltbr/&gt&#39                                              </td></tr>
+<tr class='mod'><td>  121</td><td>                                                               </td><td>|</td><td>  155</td><td>                                                               </td></tr>
+<tr class='mod'><td>  122</td><td>    else:                                                      </td><td>|</td><td>  156</td><td>if option_render_html:                                         </td></tr>
+<tr class='mod'><td>  123</td><td>        pass                                                   </td><td>|</td><td>  157</td><td>    print &#39&lttable&gt&#39                                            </td></tr>
+<tr class='mod'><td>  124</td><td>                                                               </td><td>|</td><td>  158</td><td>                                                               </td></tr>
+<tr class='sam'><td>  125</td><td>idx = 0                                                        </td><td> </td><td>  159</td><td>idx = 0                                                        </td></tr>
+<tr class='sam'><td>  126</td><td>total = len(ops)                                               </td><td> </td><td>  160</td><td>total = len(ops)                                               </td></tr>
+<tr class='mod'><td>  127</td><td>                                                               </td><td>|</td><td>  161</td><td>                                                               </td></tr>
+<tr class='sam'><td>  128</td><td>if total == 0:                                                 </td><td> </td><td>  162</td><td>if total == 0:                                                 </td></tr>
+<tr class='sam'><td>  129</td><td>    for i in xrange(1, ln_old_total+1):                        </td><td> </td><td>  163</td><td>    for i in xrange(1, ln_old_total+1):                        </td></tr>
+<tr class='sam'><td>  130</td><td>        l = l_map[i]                                           </td><td> </td><td>  164</td><td>        l = l_map[i]                                           </td></tr>
+<tr class='sam'><td>  131</td><td>        render(i, l, &#39 &#39, i, l)                                </td><td> </td><td>  165</td><td>        render(i, l, &#39 &#39, i, l)                                </td></tr>
+<tr class='mod'><td>  132</td><td>                                                               </td><td>|</td><td>  166</td><td>                                                               </td></tr>
+<tr class='sam'><td>  133</td><td>    if option_render_html:                                     </td><td> </td><td>  167</td><td>    if option_render_html:                                     </td></tr>
+<tr class='sam'><td>  134</td><td>        print &#39&lt/table&gt&#39                                       </td><td> </td><td>  168</td><td>        print &#39&lt/table&gt&#39                                       </td></tr>
+<tr class='mod'><td>  135</td><td>                                                               </td><td>|</td><td>  169</td><td>                                                               </td></tr>
+<tr class='sam'><td>  136</td><td>    sys.exit(0)                                                </td><td> </td><td>  170</td><td>    sys.exit(0)                                                </td></tr>
+<tr class='mod'><td>  137</td><td>                                                               </td><td>|</td><td>  171</td><td>                                                               </td></tr>
+<tr class='sam'><td>  138</td><td>while idx &lt total:                                             </td><td> </td><td>  172</td><td>while idx &lt total:                                             </td></tr>
+<tr class='del'><td>  139</td><td>                                                               </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='sam'><td>  140</td><td>    op = ops[idx]                                              </td><td> </td><td>  173</td><td>    op = ops[idx]                                              </td></tr>
+<tr class='sam'><td>  141</td><td>    typ, ln_old, ln_new, l = op                                </td><td> </td><td>  174</td><td>    typ, ln_old, ln_new, l = op                                </td></tr>
+<tr class='del'><td>  142</td><td>                                                               </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='mod'><td>  143</td><td>    if typ == &#39M&#39:                                             </td><td>|</td><td>  175</td><td>                                                               </td></tr>
+<tr class='mod'><td>  144</td><td>                                                               </td><td>|</td><td>  176</td><td>    if typ == 2:                # hunk meta line               </td></tr>
+<tr class='sam'><td>  145</td><td>        # fill up lines missing between hunks                  </td><td> </td><td>  177</td><td>        # fill up lines missing between hunks                  </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  178</td><td>        n = 0                                                  </td></tr>
+<tr class='sam'><td>  146</td><td>        for i in xrange(int(ln_old_last+1), int(ln_old)):      </td><td> </td><td>  179</td><td>        for i in xrange(int(ln_old_last+1), int(ln_old)):      </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  180</td><td>            n += 1                                             </td></tr>
+<tr class='sam'><td>  147</td><td>            l = l_map[i]                                       </td><td> </td><td>  181</td><td>            l = l_map[i]                                       </td></tr>
+<tr class='mod'><td>  148</td><td>            render(ln_old, l, &#39 &#39, ln_new, l)                  </td><td>|</td><td>  182</td><td>            render(ln_old_last+n, l, &#39&#39, ln_new_last + n, l)   </td></tr>
+<tr class='mod'><td>  149</td><td>                                                               </td><td>|</td><td>  183</td><td>                                                               </td></tr>
+<tr class='sam'><td>  150</td><td>        idx += 1                                               </td><td> </td><td>  184</td><td>        idx += 1                                               </td></tr>
+<tr class='sam'><td>  151</td><td>        continue                                               </td><td> </td><td>  185</td><td>        continue                                               </td></tr>
+<tr class='del'><td>  152</td><td>                                                               </td><td>-</td><td>     </td><td>                                                               </td></tr>
+<tr class='mod'><td>  153</td><td>    # &#39L&#39                                                      </td><td>|</td><td>  186</td><td>                                                               </td></tr>
+<tr class='mod'><td>  154</td><td>                                                               </td><td>|</td><td>  187</td><td>    # else, data lines                                         </td></tr>
+<tr class='sam'><td>  155</td><td>    if ln_old is not None:                                     </td><td> </td><td>  188</td><td>    if ln_old is not None:                                     </td></tr>
+<tr class='sam'><td>  156</td><td>        ln_old_last = ln_old                                   </td><td> </td><td>  189</td><td>        ln_old_last = ln_old                                   </td></tr>
+<tr class='sam'><td>  157</td><td>    if ln_new is not None:                                     </td><td> </td><td>  190</td><td>    if ln_new is not None:                                     </td></tr>
+<tr class='sam'><td>  158</td><td>        ln_new_last = ln_new                                   </td><td> </td><td>  191</td><td>        ln_new_last = ln_new                                   </td></tr>
+<tr class='mod'><td>  159</td><td>                                                               </td><td>|</td><td>  192</td><td>                                                               </td></tr>
+<tr class='mod'><td>  160</td><td>    is_flsame = ln_old and ln_new                              </td><td>|</td><td>  193</td><td>    if typ == -1:               # minus &#39-&#39                    </td></tr>
+<tr class='mod'><td>  161</td><td>    is_minus = not is_flsame and ln_old and not ln_new         </td><td>|</td><td>  194</td><td>        # consume consequent &#39-&#39 as much as possible           </td></tr>
+<tr class='mod'><td>  162</td><td>    is_plus = not is_flsame and not ln_old and ln_new          </td><td>|</td><td>  195</td><td>        idx2 = idx + 1                                         </td></tr>
+<tr class='mod'><td>  163</td><td>                                                               </td><td>|</td><td>  196</td><td>        while idx2 &lt total and ops[idx2][0] == -1:             </td></tr>
+<tr class='mod'><td>  164</td><td>    if is_minus:                                               </td><td>|</td><td>  197</td><td>            idx2 += 1                                          </td></tr>
+<tr class='mod'><td>  165</td><td>                                                               </td><td>|</td><td>  198</td><td>                                                               </td></tr>
+<tr class='mod'><td>  166</td><td>        if idx+1 == total:      # last one                     </td><td>|</td><td>  199</td><td>        if idx2 == total:       # idx2 exceeds ops, which means</td></tr>
+<tr class='mod'><td>  167</td><td>            render(ln_old, op[3], &#39&lt&#39)                         </td><td>|</td><td>  200</td><td>            for _op in ops[idx: idx2]:                         </td></tr>
+<tr class='mod'><td>  168</td><td>            break                                              </td><td>|</td><td>  201</td><td>                _typ, _lno, _lnn, _l = _op                     </td></tr>
+<tr class='mod'><td>  169</td><td>                                                               </td><td>|</td><td>  202</td><td>                                                               </td></tr>
+<tr class='mod'><td>  170</td><td>        # KEY: probe next op if current is &#39-&#39 to see if it&#39s &#39</td><td>|</td><td>  203</td><td>                if _lno: ln_old_last = _lno                    </td></tr>
+<tr class='mod'><td>  171</td><td>        next_op = ops[idx+1]                                   </td><td>|</td><td>  204</td><td>                if _lnn: ln_new_last = _lnn                    </td></tr>
+<tr class='mod'><td>  172</td><td>        next_typ, next_ln_old, next_ln_new, next_l = next_op   </td><td>|</td><td>  205</td><td>                                                               </td></tr>
+<tr class='mod'><td>  173</td><td>                                                               </td><td>|</td><td>  206</td><td>                render(_lno, _l, &#39-&#39)                          </td></tr>
+<tr class='mod'><td>  174</td><td>        next_is_flsame = next_ln_old and next_ln_new           </td><td>|</td><td>  207</td><td>                                                               </td></tr>
+<tr class='mod'><td>  175</td><td>        next_is_minus = not next_is_flsame and next_ln_old and </td><td>|</td><td>  208</td><td>            # print &#39dia: idx2 = %d, total = %d&#39%(idx2, total) </td></tr>
+<tr class='mod'><td>  176</td><td>        next_is_plus = not next_is_flsame and not next_ln_old a</td><td>|</td><td>  209</td><td>            break               # all done, just break main loo</td></tr>
+<tr class='mod'><td>  177</td><td>                                                               </td><td>|</td><td>  210</td><td>                                                               </td></tr>
+<tr class='mod'><td>  178</td><td>        if next_is_plus:                                       </td><td>|</td><td>  211</td><td>        if ops[idx2][0] == 0:   # idx2 points to first &#39 &#39 afte</td></tr>
+<tr class='mod'><td>  179</td><td>            render(ln_old, op[3], &#39|&#39, ln_new or ln_new_last+1,</td><td>|</td><td>  212</td><td>            for _op in ops[idx: idx2]:                         </td></tr>
+<tr class='mod'><td>  180</td><td>            idx += 2                                           </td><td>|</td><td>  213</td><td>                _typ, _lno, _lnn, _l = _op                     </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  214</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  215</td><td>                if _lno: ln_old_last = _lno                    </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  216</td><td>                if _lnn: ln_new_last = _lnn                    </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  217</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  218</td><td>                render(_lno, _l, &#39-&#39)                          </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  219</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  220</td><td>            # go on to next round                              </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  221</td><td>            idx = idx2                                         </td></tr>
+<tr class='sam'><td>  181</td><td>            continue                                           </td><td> </td><td>  222</td><td>            continue                                           </td></tr>
+<tr class='mod'><td>  182</td><td>        else:                                                  </td><td>|</td><td>  223</td><td>                                                               </td></tr>
+<tr class='mod'><td>  183</td><td>            render(ln_old, op[3], &#39&lt&#39)                         </td><td>|</td><td>  224</td><td>        if ops[idx2][0] == 1:   # idx2 points to first &#39+&#39 afte</td></tr>
+<tr class='mod'><td>  184</td><td>            idx += 1                                           </td><td>|</td><td>  225</td><td>            # consume consequent &#39+&#39 as much as possible       </td></tr>
+<tr class='mod'><td>  185</td><td>            continue                                           </td><td>|</td><td>  226</td><td>            idx3 = idx2 + 1                                    </td></tr>
+<tr class='mod'><td>  186</td><td>                                                               </td><td>|</td><td>  227</td><td>            while idx3 &lt total and ops[idx3][0] == 1:          </td></tr>
+<tr class='mod'><td>  187</td><td>    if is_plus:                                                </td><td>|</td><td>  228</td><td>                idx3 += 1                                      </td></tr>
+<tr class='mod'><td>  188</td><td>        render(ln_old, &#39&#39, &#39&gt&#39, ln_new, op[3])                 </td><td>|</td><td>  229</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  230</td><td>            # either idx3 is last op, or points to &#39 &#39, &#39-&#39,   </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  231</td><td>            # we all terminate this round                      </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  232</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  233</td><td>            n_minus = idx2 - idx                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  234</td><td>            n_plus = idx3 - idx2                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  235</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  236</td><td>            if n_minus &lt= n_plus:                              </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  237</td><td>                # cosume both n_minus count of &#39-&#39 ops and n_mi</td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  238</td><td>                for _i in xrange(0, n_minus):                  </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  239</td><td>                    _, _lno_l, _lnn_l, _l_l = ops[idx+_i]      </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  240</td><td>                    _, _lno_r, _lnn_r, _l_r = ops[idx2+_i]     </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  241</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  242</td><td>                    if _lno_l: ln_old_last = _lno_l            </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  243</td><td>                    if _lnn_r: ln_new_last = _lnn_r            </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  244</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  245</td><td>                    render(_lno_l, _l_l, &#39|&#39, _lnn_r, _l_r)    </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  246</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  247</td><td>                for _op in ops[idx2+n_minus:idx3]: # idx3 not c</td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  248</td><td>                    _typ, _lno, _lnn, _l = _op                 </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  249</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  250</td><td>                    if _lno: ln_old_last = _lno                </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  251</td><td>                    if _lnn: ln_new_last = _lnn                </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  252</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  253</td><td>                    render(None, &#39&#39, &#39+&#39, _lnn, _l)            </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  254</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  255</td><td>                # go on to next round                          </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  256</td><td>                idx = idx3                                     </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  257</td><td>                continue                                       </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  258</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  259</td><td>            else:               # n_minus &gt n_plus             </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  260</td><td>                for _op in ops[idx:idx+n_minus-n_plus]:        </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  261</td><td>                    _typ, _lno, _lnn, _l = _op                 </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  262</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  263</td><td>                    if _lno: ln_old_last = _lno                </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  264</td><td>                    if _lnn: ln_new_last = _lnn                </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  265</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  266</td><td>                    render(_lno, _l, &#39-&#39)                      </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  267</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  268</td><td>                # cosume both n_plus count of &#39-&#39 ops and n_min</td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  269</td><td>                _idx = idx+n_minus-n_plus                      </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  270</td><td>                for _i in xrange(0, n_plus):                   </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  271</td><td>                    _, _lno_l, _lnn_l, _l_l = ops[_idx+_i]     </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  272</td><td>                    _, _lno_r, _lnn_r, _l_r = ops[idx2+_i]     </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  273</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  274</td><td>                    if _lno_l: ln_old_last = _lno_l            </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  275</td><td>                    if _lnn_r: ln_new_last = _lnn_r            </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  276</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  277</td><td>                    render(_lno_l, _l_l, &#39|&#39, _lnn_r, _l_r)    </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  278</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  279</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  280</td><td>                # go on to next round                          </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  281</td><td>                idx = idx3                                     </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  282</td><td>                continue                                       </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  283</td><td>                                                               </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  284</td><td>    if typ == 1:                # plus &#39+&#39                     </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  285</td><td>        render(ln_old, &#39&#39, &#39+&#39, ln_new, op[3])                 </td></tr>
+<tr class='sam'><td>  189</td><td>        idx += 1                                               </td><td> </td><td>  286</td><td>        idx += 1                                               </td></tr>
+<tr class='sam'><td>  190</td><td>        continue                                               </td><td> </td><td>  287</td><td>        continue                                               </td></tr>
+<tr class='mod'><td>  191</td><td>                                                               </td><td>|</td><td>  288</td><td>                                                               </td></tr>
+<tr class='mod'><td>  192</td><td>    if is_flsame:                                              </td><td>|</td><td>  289</td><td>    if typ == 0:                # space/same &#39 &#39               </td></tr>
+<tr class='sam'><td>  193</td><td>        render(ln_old, op[3], &#39 &#39, ln_new, op[3])              </td><td> </td><td>  290</td><td>        render(ln_old, op[3], &#39 &#39, ln_new, op[3])              </td></tr>
+<tr class='sam'><td>  194</td><td>        idx += 1                                               </td><td> </td><td>  291</td><td>        idx += 1                                               </td></tr>
+<tr class='sam'><td>  195</td><td>        continue                                               </td><td> </td><td>  292</td><td>        continue                                               </td></tr>
+<tr class='mod'><td>  196</td><td>                                                               </td><td>|</td><td>  293</td><td>                                                               </td></tr>
+<tr class='sam'><td>  197</td><td># padding last parts (not included in hunk) if exists from old </td><td> </td><td>  294</td><td># padding last parts (not included in hunk) if exists from old </td></tr>
+<tr class='sam'><td>  198</td><td>if ln_old_last &gt 0:             # means have been re-assigned b</td><td> </td><td>  295</td><td>if ln_old_last &gt 0:             # means have been re-assigned b</td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  296</td><td>    n = 0                                                      </td></tr>
+<tr class='sam'><td>  199</td><td>    for i in xrange(ln_old_last+1, ln_old_total+1):            </td><td> </td><td>  297</td><td>    for i in xrange(ln_old_last+1, ln_old_total+1):            </td></tr>
+<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>  298</td><td>        n += 1                                                 </td></tr>
+<tr class='sam'><td>  200</td><td>        l = l_map[i]                                           </td><td> </td><td>  299</td><td>        l = l_map[i]                                           </td></tr>
+<tr class='mod'><td>  201</td><td>        render(i, l, &#39 &#39, i, l)                                </td><td>|</td><td>  300</td><td>        render(i, l, &#39&#39)                                       </td></tr>
+<tr class='mod'><td>  202</td><td>                                                               </td><td>|</td><td>  301</td><td>                                                               </td></tr>
+<tr class='sam'><td>  203</td><td>if option_render_html:                                         </td><td> </td><td>  302</td><td>if option_render_html:                                         </td></tr>
+<tr class='sam'><td>  204</td><td>    print &#39&lt/table&gt&#39                                           </td><td> </td><td>  303</td><td>    print &#39&lt/table&gt&#39                                           </td></tr>
+</table>

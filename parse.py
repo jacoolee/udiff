@@ -50,22 +50,22 @@ for l in f.readlines():
         ln_new = int(end)
 
         print "ln_old:", ln_old, 'ln_new:', ln_new
-        r.append(['M', ln_old, ln_new, None])
+        r.append([2, ln_old, ln_new, None])
         continue
 
     if l.startswith(' '):
         print "%02d %02d %s"%(ln_old, ln_new, l)
-        r.append(['L', ln_old, ln_new, l[1:]])
+        r.append([0, ln_old, ln_new, l[1:]])
         ln_old = ln_old + 1
         ln_new = ln_new + 1
 
     elif l.startswith('-'):
-        r.append(['L', ln_old, None, l[1:]])
+        r.append([-1, ln_old, None, l[1:]])
         print "%02d    %s"%(ln_old, l)
         ln_old = ln_old + 1
 
     elif l.startswith('+'):
-        r.append(['L', None, ln_new, l[1:]])
+        r.append([1, None, ln_new, l[1:]])
         print "   %02d %s"%(ln_new, l)
         ln_new = ln_new + 1
     else:

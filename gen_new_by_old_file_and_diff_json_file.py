@@ -39,7 +39,13 @@ ln_old_last = 1
 for op in op_seqs:
     typ, ln_old, ln_new, l = op
 
-    if typ == 'L':
+    if typ == 2:
+        # print 'dia', ln_old_last, ln_old
+
+        for i in xrange(int(ln_old_last+1), int(ln_old)):
+            print l_map[i]
+
+    else:
 
         if ln_old is not None:
             ln_old_last = ln_old
@@ -54,8 +60,3 @@ for op in op_seqs:
             if ln_new:
                 print l        # add
 
-    elif typ == 'M':
-        # print 'dia', ln_old_last, ln_old
-
-        for i in xrange(int(ln_old_last+1), int(ln_old)):
-            print l_map[i]
