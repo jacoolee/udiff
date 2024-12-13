@@ -182,8 +182,6 @@ if total == 0:
     if option_render_html:
         print '</table>'
 
-    sys.exit(0)
-
 while idx < total:
     op = ops[idx]
     typ, ln_old, ln_new, l = op
