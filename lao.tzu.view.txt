@@ -1,3 +1,10 @@
+
+--- lao	2024-12-13 15:38:02
++++ tzu	2024-12-11 20:08:39
+[4;37m                                                                                                                                               [0m 
+
+@@ -1,7 +1,6 @@ 
+
     1 The Way that can be told of is not the eternal Way;             -                                                                      
     2 The name that can be named is not the eternal name.             -                                                                      
     3 The Nameless is the origin of Heaven and Earth;                       1 The Nameless is the origin of Heaven and Earth;                
@@ -6,7 +13,10 @@
     5 Therefore let there always be non-being,                              4 Therefore let there always be non-being,                       
     6   so we may see their subtlety,                                       5   so we may see their subtlety,                                
     7 And let there always be being,                                        6 And let there always be being,                                 
-    8   so we may see their outcome.                                       7   so we may see their outcome.                                 
+[4;37m                                                                                                                                               [0m 
+
+@@ -9,3 +8,6 @@ 
+
     9 The two are the same,                                                 8 The two are the same,                                          
    10 But after they are produced,                                          9 But after they are produced,                                   
    11   they have different names.                                         10   they have different names.                                   

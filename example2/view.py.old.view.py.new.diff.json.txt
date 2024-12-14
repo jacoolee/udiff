@@ -1,3 +1,10 @@
+
+--- view.py.old	2024-12-13 15:51:53
++++ view.py.new	2024-12-13 15:52:04
+[4;37m                                                                                                                                               [0m 
+
+@@ -1,25 +1,82 @@ 
+
     1 #! /usr/bin/env python                                                1 #! /usr/bin/env python                                         
     2 # -*- coding: utf-8 -*-                                               2 # -*- coding: utf-8 -*-                                        
     3                                                                 |     3                                                                
@@ -80,9 +87,10 @@
    23 for i in sys.argv[1:]:                                               80 for i in sys.argv[1:]:                                         
    24     if i.startswith('-'):                                            81     if i.startswith('-'):                                      
    25         if i == '--html':                                            82         if i == '--html':                                      
-   26             option_render_html = True                               83             option_render_html = True                          
-   27         elif i == '--txt':                                          84         elif i == '--txt':                                     
-   28             option_render_txt = True                                85             option_render_txt = True                           
+[4;37m                                                                                                                                               [0m 
+
+@@ -29,46 +86,46 @@ 
+
    29         else:                                                        86         else:                                                  
    30             pass                                                     87             pass                                               
    31         continue                                                     88         continue                                               
@@ -129,7 +137,10 @@
    72 .type-mark {display: none; }                                        129 .type-mark {display: none; }                                   
    73 .mod {background-color: yellow; color: black; }                     130 .mod {background-color: yellow; color: black; }                
    74 .del {background-color: red; color: white;}                         131 .del {background-color: red; color: white;}                    
-   75 .sam {}                                                            132 .sam {}                                                        
+[4;37m                                                                                                                                               [0m 
+
+@@ -76,129 +133,171 @@ 
+
    76 .add {background-color: green; color: white;}                       133 .add {background-color: green; color: white;}                  
    77 </style>                                                            134 </style>                                                       
    78 """                                                                 135 """                                                            

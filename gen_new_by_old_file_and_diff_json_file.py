@@ -37,7 +37,7 @@ for l in f.readlines():
 ln_old_last = 1
 
 for op in op_seqs:
-    typ, ln_old, ln_new, l = op
+    typ, ln_old, ln_new, l, _ = op
 
     if typ == 2:
         # print 'dia', ln_old_last, ln_old

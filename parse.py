@@ -36,12 +36,26 @@ r = []
 for l in f.readlines():
     l = l.replace('\n', '')
 
+    if l.startswith('diff '):
+        print "      %s"%(l)
+        r.append([5, None, None, l, None])
+        continue
+
+    if l.startswith('index '):
+        print "      %s"%(l)
+        r.append([6, None, None, l, None])
+        continue
+
     if l.startswith('---'):
         print "      %s"%(l)
+        r.append([3, None, None, l, None])
         continue
+
     if l.startswith('+++'):
         print "      %s"%(l)
+        r.append([4, None, None, l, None])
         continue
+
     if l.startswith('@@'):
         print "      %s"%(l)
 
@@ -49,31 +63,37 @@ for l in f.readlines():
         ln_old = int(start)
         ln_new = int(end)
 
-        print "ln_old:", ln_old, 'ln_new:', ln_new
-        r.append([2, ln_old, ln_new, None])
+        start_count = int(start_count)
+        end_count = int(end_count)
+
+        # print "ln_old:", ln_old, 'ln_new:', ln_new, 'start_count:', start_count, 'end_count:', end_count
+        r.append([2, ln_old, ln_new, start_count, end_count])
         continue
 
     if l.startswith(' '):
         print "%02d %02d %s"%(ln_old, ln_new, l)
-        r.append([0, ln_old, ln_new, l[1:]])
+        r.append([0, ln_old, ln_new, l[1:], None])
         ln_old = ln_old + 1
         ln_new = ln_new + 1
+        continue
 
-    elif l.startswith('-'):
-        r.append([-1, ln_old, None, l[1:]])
+    if l.startswith('-'):
+        r.append([-1, ln_old, None, l[1:], None])
         print "%02d    %s"%(ln_old, l)
         ln_old = ln_old + 1
+        continue
 
-    elif l.startswith('+'):
-        r.append([1, None, ln_new, l[1:]])
+    if l.startswith('+'):
+        r.append([1, None, ln_new, l[1:], None])
         print "   %02d %s"%(ln_new, l)
         ln_new = ln_new + 1
-    else:
-        print 'ERROR: should never happen', ln_old, ln_new
-        pass
+        continue
+
+    # else, ignore
 
 if output_file:
     with open(output_file, 'w') as f:
         f.write(json.dumps(r))
+
 else:
     print json.dumps(r)

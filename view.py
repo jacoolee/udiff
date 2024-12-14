@@ -10,12 +10,14 @@ import json
 import color
 
 def usage():
-    print __file__, "old_file diff_json_file [--html|-l] [--txt|-t] [--json|-j] [--color|-c] [--width|-w width]"
+    print __file__, "diff_json_file [--all|-a old_file] [--html|-l] [--txt|-t] [--json|-j] [--color|-c] [--width|-w width]"
     print ''
+    print '\t--all  |-a old_file print whole content with diff and same content compared to the old_file'
     print '\t--html |-l print diff in html'
     print '\t--txt  |-t print diff in plain txt, enabled by default'
     print '\t--json |-j print diff in json'
     print '\t--color|-c show color, usable with `--txt`'
+    print '\t--nocolor|-C disable color, usable with `--txt`'
     print '\t--width|-w set char counts to be show for a diff line'
     print '\t--help |-h help'
     print
@@ -54,6 +56,35 @@ MARK_ADD = '+'
 MARK_DEL = '-'
 MARK_MOD = '|'
 MARK_NONE = ''
+
+def render_header(l):
+    print l
+
+g_is_first_diff_header_printed = False
+def render_diff_header(l):
+    global g_is_first_diff_header_printed
+    if g_is_first_diff_header_printed:
+        print '\n', l
+    else:
+        print l
+        g_is_first_diff_header_printed = True
+
+def render_file_header(l):
+    if l.startswith('---'):
+        print '\n', l
+    else:
+        print l
+
+def render_hunk_separator(op):
+    _, ln_old, ln_new, start_count, end_count = op
+    print \
+        color.UBlue if option_color else color.UWhite, \
+        _fli(None), _fls(' '*1000), \
+        ' ', \
+        _fli(None), _fls(' '*1000), \
+        color.Color_Off, \
+        '\n\n@@ -%d,%s +%d,%s @@'%(ln_old, start_count or '', ln_new, end_count or ''), \
+        '\n'
 
 def render(ln_old, s_old, mark, ln_new=None, s_new=None):
     if option_render_json:
@@ -120,6 +151,7 @@ if len(sys.argv) < 2:
 
 old_file = None
 diff_json_file = None
+
 option_render_txt = False
 option_render_json = False
 option_render_html = False
@@ -142,12 +174,23 @@ while idx < len(sys.argv):
             option_render_json = True
         elif i == '--color' or i == '-c':
             option_color = True
+        elif i == '--nocolor' or i == '-C':
+            option_color = False
+        elif i == '--all' or i == '-a':
+            try:
+                old_file = sys.argv[idx+1]
+            except Exception as e:
+                usage()
+                print i, 'expects an old_file as its argument'
+                sys.exit(-1)
+
+            idx += 1
         elif i == '--width' or i == '-w':
             try:
                 option_width = int(sys.argv[idx+1])
             except Exception as e:
                 usage()
-                print '--width expected a number'
+                print i, 'expects an number as its argument'
                 sys.exit(-1)
 
             idx += 1
@@ -158,14 +201,11 @@ while idx < len(sys.argv):
         idx += 1
 
     else:
-        if old_file is None: # old_file comes first
-            old_file = i
-        else:
-            diff_json_file = i
+        diff_json_file = i
 
         idx += 1
 
-if old_file is None or diff_json_file is None:
+if diff_json_file is None:
     usage()
 
 if not option_render_txt and not option_render_html:
@@ -179,16 +219,19 @@ with open(diff_json_file, "r") as f:
 
 ops = diff_meta
 
-f = open(old_file, "r")
+if old_file:
+    f = open(old_file, "r")
 
-l_map = {}
-ln = 0
-for l in f.readlines():
-    ln += 1                     # ln starts from 1
+    l_map = {}
+    ln = 0
+    for l in f.readlines():
+        ln += 1                     # ln starts from 1
+        l = l.replace('\n', '')
+        l_map[ln] = l
 
-    l = l.replace('\n', '')
-    l_map[ln] = l
-ln_old_total = ln
+    ln_old_total = ln
+
+    f.close()
 
 ln_old_last = 0
 ln_new_last = 0
@@ -210,7 +253,7 @@ if option_render_html:
     print '<table>'
 
     for op in ops:
-        typ, ln_old, ln_new, l = op
+        typ, ln_old, ln_new, l, _ = op
         if typ == 2:
             print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'%('meta: ln_old:', str(ln_old), 'ln_new:', str(ln_new))
         elif typ == -1:
@@ -231,25 +274,52 @@ if option_render_html:
 idx = 0
 total = len(ops)
 
-if total == 0:
-    for i in xrange(1, ln_old_total+1):
-        l = l_map[i]
-        render(i, l, MARK_SAME, i, l)
+if old_file:
+    if total == 0:
+        for i in xrange(1, ln_old_total+1):
+            l = l_map[i]
+            render(i, l, MARK_SAME, i, l)
 
-    if option_render_html:
-        print '</table>'
+        if option_render_html:
+            print '</table>'
 
 while idx < total:
     op = ops[idx]
-    typ, ln_old, ln_new, l = op
+    typ, ln_old, ln_new, l, _ = op
 
     if typ == 2:                # hunk meta line
-        # fill up lines missing between hunks
-        n = 0
-        for i in xrange(int(ln_old_last+1), int(ln_old)):
-            n += 1
-            l = l_map[i]
-            render(ln_old_last+n, l, MARK_SAME, ln_new_last + n, l)
+        if old_file:
+            # fill up lines missing between hunks
+            n = 0
+            for i in xrange(int(ln_old_last+1), int(ln_old)):
+                n += 1
+                l = l_map[i]
+                render(ln_old_last+n, l, MARK_SAME, ln_new_last + n, l)
+
+        else:
+            if option_render_txt:
+                render_hunk_separator(op)
+
+        idx += 1
+        continue
+
+    if typ == 3 or typ == 4:
+        if option_render_txt:
+            render_file_header(l)
+
+        idx += 1
+        continue
+
+    if typ == 5:
+        if option_render_txt:
+            render_diff_header(l)
+
+        idx += 1
+        continue
+
+    if typ == 6:
+        if option_render_txt:
+            render_header(l)
 
         idx += 1
         continue
@@ -280,7 +350,7 @@ while idx < total:
 
         if ops[idx2][0] == 0:   # idx2 points to first ' ' after bunch of '-'
             for _op in ops[idx: idx2]:
-                _typ, _lno, _lnn, _l = _op
+                _typ, _lno, _lnn, _l, _ = _op
 
                 if _lno: ln_old_last = _lno
                 if _lnn: ln_new_last = _lnn
@@ -306,8 +376,8 @@ while idx < total:
             if n_minus <= n_plus:
                 # cosume both n_minus count of '-' ops and n_minus count of '+' ops
                 for _i in xrange(0, n_minus):
-                    _, _lno_l, _lnn_l, _l_l = ops[idx+_i]
-                    _, _lno_r, _lnn_r, _l_r = ops[idx2+_i]
+                    _, _lno_l, _lnn_l, _l_l, _ = ops[idx+_i]
+                    _, _lno_r, _lnn_r, _l_r, _ = ops[idx2+_i]
 
                     if _lno_l: ln_old_last = _lno_l
                     if _lnn_r: ln_new_last = _lnn_r
@@ -315,7 +385,7 @@ while idx < total:
                     render(_lno_l, _l_l, MARK_MOD, _lnn_r, _l_r)
 
                 for _op in ops[idx2+n_minus:idx3]: # idx3 not cosumned
-                    _typ, _lno, _lnn, _l = _op
+                    _typ, _lno, _lnn, _l, _ = _op
 
                     if _lno: ln_old_last = _lno
                     if _lnn: ln_new_last = _lnn
@@ -328,7 +398,7 @@ while idx < total:
 
             else:               # n_minus > n_plus
                 for _op in ops[idx:idx+n_minus-n_plus]:
-                    _typ, _lno, _lnn, _l = _op
+                    _typ, _lno, _lnn, _l, _ = _op
 
                     if _lno: ln_old_last = _lno
                     if _lnn: ln_new_last = _lnn
@@ -338,8 +408,8 @@ while idx < total:
                 # cosume both n_plus count of '-' ops and n_minus count of '+' ops
                 _idx = idx+n_minus-n_plus
                 for _i in xrange(0, n_plus):
-                    _, _lno_l, _lnn_l, _l_l = ops[_idx+_i]
-                    _, _lno_r, _lnn_r, _l_r = ops[idx2+_i]
+                    _, _lno_l, _lnn_l, _l_l, _ = ops[_idx+_i]
+                    _, _lno_r, _lnn_r, _l_r, _ = ops[idx2+_i]
 
                     if _lno_l: ln_old_last = _lno_l
                     if _lnn_r: ln_new_last = _lnn_r
@@ -362,7 +432,7 @@ while idx < total:
         continue
 
 # padding last parts (not included in hunk) if exists from old file
-if ln_old_last > 0:             # means have been re-assigned by 'L' type meta
+if old_file and ln_old_last > 0:             # means have been re-assigned by 'L' type meta
     n = 0
     for i in xrange(ln_old_last+1, ln_old_total+1):
         n += 1
