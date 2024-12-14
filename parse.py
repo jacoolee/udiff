@@ -43,8 +43,8 @@ for l in ls:
         ln_old = int(start)
         ln_new = int(end)
 
-        start_count = int(start_count)
-        end_count = int(end_count)
+        start_count = int(start_count or 1)
+        end_count = int(end_count or 1)
 
         r.append([2, ln_old, ln_new, start_count, end_count])
         continue

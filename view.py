@@ -340,17 +340,18 @@ while idx < total:
         while idx2 < total and ops[idx2][0] == -1:
             idx2 += 1
 
-        if idx2 == total:       # idx2 exceeds ops, which means, all from idx is '-'
+        # idx2 exceeds ops or 3,4,5,6 matched, which means, all from idx to idx2 (exclusive) are '-'
+        if idx2 == total or ops[idx2][0] > 2:
             for _op in ops[idx: idx2]:
-                _typ, _lno, _lnn, _l = _op
+                _typ, _lno, _lnn, _l, _ = _op
 
                 if _lno: ln_old_last = _lno
                 if _lnn: ln_new_last = _lnn
 
                 render(_lno, _l, MARK_DEL)
 
-            # print 'dia: idx2 = %d, total = %d'%(idx2, total)
-            break               # all done, just break main loop
+            idx = idx2
+            continue
 
         if ops[idx2][0] == 0:   # idx2 points to first ' ' after bunch of '-'
             for _op in ops[idx: idx2]:
