@@ -7,10 +7,19 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 import json
+import color
 
 def usage():
-    print __file__, "old_file diff_json_file [--html] [--txt] [--json]"
-    sys.exit(-1)
+    print __file__, "old_file diff_json_file [--html|-l] [--txt|-t] [--json|-j] [--color|-c] [--width|-w width]"
+    print ''
+    print '\t--html |-l print diff in html'
+    print '\t--txt  |-t print diff in plain txt, enabled by default'
+    print '\t--json |-j print diff in json'
+    print '\t--color|-c show color, usable with `--txt`'
+    print '\t--width|-w set char counts to be show for a diff line'
+    print '\t--help |-h help'
+    print
+    print '\tWith first file recognized as `old_file`, and second file as `diff_json_file.`'
 
 def _fli(i=None, max_len=5):
     if i is None:
@@ -20,8 +29,11 @@ def _fli(i=None, max_len=5):
     return fmt%(i)
 
 # string with fixed length
-def _fls(txt=None, max_len=63):
+def _fls(txt=None):
+    global option_width
+    max_len = option_width or 63
     _txt = txt or ''
+
     if len(_txt) < max_len:
         return _txt + ' '*(max_len-len(_txt))
     return _txt[0:max_len]
@@ -49,10 +61,31 @@ def render(ln_old, s_old, mark, ln_new=None, s_new=None):
         json_list.append([mark, ln_old, s_old, ln_new, s_new])
 
     elif option_render_txt:
-        print \
-            _fli(ln_old), _fls(s_old), \
-            mark, \
-            _fli(ln_new), _fls(s_new)
+        if option_color:
+
+            if mark == ' ':
+                c = ''
+            elif mark == MARK_ADD:
+                c = color.On_Green
+            elif mark == MARK_DEL:
+                c = color.On_Red
+            elif mark == MARK_MOD:
+                c = color.On_Yellow
+            else:
+                c = ''
+
+            print \
+                c, \
+                _fli(ln_old), _fls(s_old), \
+                mark, \
+                _fli(ln_new), _fls(s_new), \
+                color.Color_Off
+
+        else:
+            print \
+                _fli(ln_old), _fls(s_old), \
+                mark, \
+                _fli(ln_new), _fls(s_new)
 
     elif option_render_html:
         if mark == ' ':
@@ -68,11 +101,11 @@ def render(ln_old, s_old, mark, ln_new=None, s_new=None):
 
         print "<tr class='%s'><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"%(
             tr_cls,
-            _fli(ln_old, max_len=fli_max_len),
-            html_escape(_fls(s_old, max_len=fls_max_length)),
+            _fli(ln_old),
+            html_escape(_fls(s_old)),
             mark,
-            _fli(ln_new, max_len=fli_max_len),
-            html_escape(_fls(s_new, max_len=fls_max_length))
+            _fli(ln_new),
+            html_escape(_fls(s_new))
         )
 
     else:
@@ -83,30 +116,54 @@ def render(ln_old, s_old, mark, ln_new=None, s_new=None):
 
 if len(sys.argv) < 2:
     usage()
+    sys.exit(-1)
 
 old_file = None
 diff_json_file = None
 option_render_txt = False
 option_render_json = False
 option_render_html = False
+option_color = False
+option_width = None
 
-for i in sys.argv[1:]:
+idx = 1                         # start from first parameter
+while idx < len(sys.argv):
+    i = sys.argv[idx]
     if i.startswith('-'):
-        if i == '--html':
-            option_render_html = True
-        elif i == '--txt':
-            option_render_txt = True
-        elif i == '--json':
-            option_render_json = True
-        else:
-            pass
-        continue
+        if i == '--help' or i == '-h':
+            usage()
+            sys.exit(0)
 
-    # files
-    if old_file is None: # old_file comes first
-        old_file = i
+        if i == '--html' or i == '-l':
+            option_render_html = True
+        elif i == '--txt' or i == '-t':
+            option_render_txt = True
+        elif i == '--json' or i == '-j':
+            option_render_json = True
+        elif i == '--color' or i == '-c':
+            option_color = True
+        elif i == '--width' or i == '-w':
+            try:
+                option_width = int(sys.argv[idx+1])
+            except Exception as e:
+                usage()
+                print '--width expected a number'
+                sys.exit(-1)
+
+            idx += 1
+        else:
+            print 'Error: unknown parameter:', i
+            sys.exit(-1)
+
+        idx += 1
+
     else:
-        diff_json_file = i
+        if old_file is None: # old_file comes first
+            old_file = i
+        else:
+            diff_json_file = i
+
+        idx += 1
 
 if old_file is None or diff_json_file is None:
     usage()
