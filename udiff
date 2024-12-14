@@ -1,13 +1,4 @@
 #!/usr/bin/env bash
-# set -x
 
-script_file=${BASH_SOURCE[0]}
-script_name=$(basename "${script_file}")
-script_root=$(cd $(dirname "${script_file}") && pwd)
-
-diff_file="$(mktemp)"
-diff_json_file="${diff_file}.json"
-
-git diff > "${diff_file}"
-"${script_root}"/parse.py "${diff_file}" "${diff_json_file}" &>/dev/null
-"${script_root}"/view.py "${diff_file}" "${diff_json_file}" -c $* | less -R
+script_root=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
+git --no-pager diff | "${script_root}"/parse.py | "${script_root}"/view.py -c $* | less -R

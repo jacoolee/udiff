@@ -1,6 +1,9 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# NOTICE: the side-by-side algorithm used here is a simpler one,
+# may not compatiable with common-used one that used by other view tools.
+
 from __future__ import unicode_literals
 import sys
 reload(sys)
@@ -10,18 +13,16 @@ import json
 import color
 
 def usage():
-    print __file__, "diff_json_file [--all|-a old_file] [--html|-l] [--txt|-t] [--json|-j] [--color|-c] [--width|-w width]"
-    print ''
-    print '\t--all  |-a old_file print whole content with diff and same content compared to the old_file'
-    print '\t--html |-l print diff in html'
-    print '\t--txt  |-t print diff in plain txt, enabled by default'
-    print '\t--json |-j print diff in json'
-    print '\t--color|-c show color, usable with `--txt`'
-    print '\t--nocolor|-C disable color, usable with `--txt`'
-    print '\t--width|-w set char counts to be show for a diff line'
-    print '\t--help |-h help'
-    print
-    print '\tWith first file recognized as `old_file`, and second file as `diff_json_file.`'
+    print __file__, "[diff_json_file|-] [--all|-a old_file] [--html|-l] [--txt|-t] [--json|-j] [--color|-c] [--width|-w width]"
+    print '    diff_json_file | -  reads from `diff_json_file` or stdin if `-` given'
+    print '    --all          | -a old_file print whole content with diff and same content compared to the old_file'
+    print '    --html         | -l print diff in html'
+    print '    --txt          | -t print diff in plain txt, enabled by default'
+    print '    --json         | -j print diff in json'
+    print '    --color        | -c show color, usable with `--txt`'
+    print '    --no-color     | -C disable color, usable with `--txt`'
+    print '    --width        | -w set char counts to be show for a diff line'
+    print '    --help         | -h help'
 
 def _fli(i=None, max_len=5):
     if i is None:
@@ -166,7 +167,9 @@ while idx < len(sys.argv):
             usage()
             sys.exit(0)
 
-        if i == '--html' or i == '-l':
+        if i == '-':            # use stdin as input
+            pass
+        elif i == '--html' or i == '-l':
             option_render_html = True
         elif i == '--txt' or i == '-t':
             option_render_txt = True
@@ -205,17 +208,18 @@ while idx < len(sys.argv):
 
         idx += 1
 
-if diff_json_file is None:
-    usage()
-
 if not option_render_txt and not option_render_html:
     option_render_txt = True
 
 # https://en.wikipedia.org/wiki/Diff#Unified_format
 # https://www.gnu.org/software/diffutils/manual/html_node/Detailed-Unified.html
 diff_meta = None
-with open(diff_json_file, "r") as f:
-    diff_meta = json.load(f)
+
+if diff_json_file:
+    with open(diff_json_file, "r") as f:
+        diff_meta = json.load(f)
+else:
+    diff_meta = json.load(sys.stdin)
 
 ops = diff_meta
 
