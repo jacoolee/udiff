@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
 
 script_root=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
-git --no-pager diff | "${script_root}"/parse.py | "${script_root}"/view.py -c $* | less -R
+
+view_options=
+if [ ${ENV_NO_COLOR:-0} -eq 1 ]; then view_options="${view_options} --no-color"; fi
+if [ ${ENV_WIDTH:-0} -ne 0 ]; then view_options="${view_options} --width ${ENV_WIDTH}"; fi
+
+git --no-pager diff $* | "${script_root}"/parse.py | "${script_root}"/view.py -c ${view_options} | less -R
