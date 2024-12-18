@@ -106,18 +106,18 @@ def render(ln_old, s_old, mark, ln_new=None, s_new=None):
             else:
                 c = ''
 
-            print \
-                c, \
-                _fli(ln_old), _fls(s_old), \
-                mark, \
-                _fli(ln_new), _fls(s_new), \
-                color.Color_Off
+            print '%s%s%s%s %s%s%s %s %s%s%s %s%s%s%s'%(
+                c,
+                color.Blue, c, _fli(ln_old), color.Color_Off, c, _fls(s_old),
+                mark,
+                color.Blue, c, _fli(ln_new), color.Color_Off, c, _fls(s_new),
+                color.Color_Off)
 
         else:
-            print \
-                _fli(ln_old), _fls(s_old), \
-                mark, \
-                _fli(ln_new), _fls(s_new)
+            print '%s %s %s %s %s'%(
+                _fli(ln_old), _fls(s_old),
+                mark,
+                _fli(ln_new), _fls(s_new))
 
     elif option_render_html:
         if mark == ' ':
@@ -177,7 +177,7 @@ while idx < len(sys.argv):
             option_render_json = True
         elif i == '--color' or i == '-c':
             option_color = True
-        elif i == '--nocolor' or i == '-C':
+        elif i == '--no-color' or i == '-C':
             option_color = False
         elif i == '--all' or i == '-a':
             try:
