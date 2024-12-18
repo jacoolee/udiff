@@ -84,7 +84,10 @@ def render_hunk_separator(op):
         ' ', \
         _fli(None), _fls(' '*1000), \
         color.Color_Off, \
-        '\n\n@@ -%d,%s +%d,%s @@'%(ln_old, start_count or '', ln_new, end_count or ''), \
+        '\n\n', \
+        color.Blue if option_color else color.White, \
+        '@@ -%d,%s +%d,%s @@'%(ln_old, start_count or '', ln_new, end_count or ''), \
+        color.Color_Off, \
         '\n'
 
 def render(ln_old, s_old, mark, ln_new=None, s_new=None):
