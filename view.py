@@ -109,7 +109,7 @@ def render(ln_old, s_old, mark, ln_new=None, s_new=None):
             print '%s%s%s%s %s%s%s %s %s%s%s %s%s%s%s'%(
                 c,
                 color.Blue, c, _fli(ln_old), color.Color_Off, c, _fls(s_old),
-                mark,
+                ' ',           # no need to show mark, tell from color
                 color.Blue, c, _fli(ln_new), color.Color_Off, c, _fls(s_new),
                 color.Color_Off)
 
