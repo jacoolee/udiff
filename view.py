@@ -59,36 +59,71 @@ MARK_MOD = '|'
 MARK_NONE = ''
 
 def render_header(l):
-    print l
+    if option_render_txt:
+        print l
+    elif option_render_html:
+        print '<tr><td/><td>',l,'</td><td/><td/><td/></tr>'
+    else:
+        pass
 
 g_is_first_diff_header_printed = False
 def render_diff_header(l):
     global g_is_first_diff_header_printed
+
     if g_is_first_diff_header_printed:
-        print '\n', l
+        if option_render_txt:
+            print '\n', l
+        elif option_render_html:
+            print '<tr><td> </td><td/><td/><td/><td/></tr>'
+            print '<tr><td/><td>%s</td><td/><td/><td/></tr>'%(_fls(l))
+        else:
+            pass
     else:
-        print l
+        if option_render_txt:
+            print l
+        elif option_render_html:
+            print '<tr><td/><td>%s</td><td/><td/><td/></tr>'%(_fls(l))
+        else:
+            pass
+
         g_is_first_diff_header_printed = True
 
 def render_file_header(l):
-    if l.startswith('---'):
-        print '\n', l
-    else:
-        print l
+    if option_render_txt:
+        if l.startswith('---'):
+            print '\n', l
+        else:
+            print l
+    elif option_render_html:
+        if l.startswith('---'):
+            print '<tr><td/><td>',_fls(l),'</td><td/><td/><td/></tr>'
+        else:
+            print '<tr><td/><td>',_fls(l),'</td><td/><td/><td/></tr>'
 
 def render_hunk_separator(op):
     _, ln_old, ln_new, start_count, end_count = op
-    print \
-        color.UBlue if option_color else color.UWhite, \
-        _fli(None), _fls(' '*1000), \
-        ' ', \
-        _fli(None), _fls(' '*1000), \
-        color.Color_Off, \
-        '\n\n', \
-        color.Blue if option_color else color.White, \
-        '@@ -%d,%s +%d,%s @@'%(ln_old, start_count or '', ln_new, end_count or ''), \
-        color.Color_Off, \
-        '\n'
+    if option_render_txt:
+        print \
+            color.UBlue if option_color else color.UWhite, \
+            _fli(None), _fls(' '*1000), \
+            ' ', \
+            _fli(None), _fls(' '*1000), \
+            color.Color_Off, \
+            '\n\n', \
+            color.Blue if option_color else color.White, \
+            '@@ -%d,%s +%d,%s @@'%(ln_old, start_count or '', ln_new, end_count or ''), \
+            color.Color_Off, \
+            '\n'
+
+    elif option_render_html:
+        print '<tr><td> </td><td/><td/><td/><td/></tr>'
+        print '<tr><td> </td><td/><td/><td/><td/></tr>'
+        l = '@@ -%d,%s +%d,%s @@'%(ln_old, start_count or '', ln_new, end_count or '')
+        print "<tr class='hunk_separator'><td/><td>%s</td><td/><td/><td/></tr>"%(_fls(l))
+        print '<tr><td> </td><td/><td/><td/><td/></tr>'
+
+    else:
+        pass
 
 def render(ln_old, s_old, mark, ln_new=None, s_new=None):
     if option_render_json:
@@ -112,26 +147,19 @@ def render(ln_old, s_old, mark, ln_new=None, s_new=None):
             s_old = s_old or ''
             s_new = s_new or ''
 
-            t = max(len(s_old or ''), len(s_new))
+            t = max(len(s_old), len(s_new))
+            i = 0
 
-            print '%s%s%s%s %s%s%s %s %s%s%s %s%s%s%s'%(
-                c,
-                color.Blue, c, _fli(ln_old), color.Color_Off, c, _fls(s_old),
-                ' ',
-                color.Blue, c, _fli(ln_new), color.Color_Off, c, _fls(s_new),
-                color.Color_Off
-            )
-
-            i = option_width
             while i < t:
+                i_ = i+option_width
                 print '%s%s%s%s %s%s%s %s %s%s%s %s%s%s%s'%(
                     c,
-                    color.Blue, c, _fli(None), color.Color_Off, c, _fls(s_old[i:i+option_width]),
+                    color.Blue, c, _fli(ln_old if i==0 else None), color.Color_Off, c, _fls(s_old[i:i_]),
                     ' ',
-                    color.Blue, c, _fli(None), color.Color_Off, c, _fls(s_new[i:i+option_width]),
+                    color.Blue, c, _fli(ln_new if i==0 else None), color.Color_Off, c, _fls(s_new[i:i_]),
                     color.Color_Off
                 )
-                i += option_width
+                i = i_
 
         else:
             print '%s %s %s %s %s'%(
@@ -151,14 +179,23 @@ def render(ln_old, s_old, mark, ln_new=None, s_new=None):
         else:
             tr_cls = ''
 
-        print "<tr class='%s'><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"%(
-            tr_cls,
-            _fli(ln_old),
-            html_escape(_fls(s_old)),
-            mark,
-            _fli(ln_new),
-            html_escape(_fls(s_new))
-        )
+        s_old = s_old or ''
+        s_new = s_new or ''
+
+        t = max(len(s_old), len(s_new))
+        i = 0
+
+        while i < t:
+            i_ = i+option_width
+            print "<tr class='%s'><td class='ln_old'>%s</td><td>%s</td><td>%s</td><td class='ln_new'>%s</td><td>%s</td></tr>"%(
+                tr_cls,
+                _fli(ln_old if i==0 else None),
+                html_escape(_fls(s_old[i:i_])),
+                mark,
+                _fli(ln_new if i==0 else None),
+                html_escape(_fls(s_new[i:i_]))
+            )
+            i = i_
 
     else:
         pass
@@ -265,6 +302,8 @@ if option_render_html:
 <style>
 table {-webkit-border-horizontal-spacing: 0; -webkit-border-vertical-spacing: 0; font-family: monospace; }
 td {white-space: pre; border-bottom: solid 1px gray; padding-left: 5px; }
+.hunk_separator > td { border-bottom: solid 3px blue; }
+.ln_old,.ln_new {color: gray};
 .type-mark {display: none; }
 .mod {background-color: yellow; color: black; }
 .del {background-color: red; color: white;}
@@ -273,27 +312,27 @@ td {white-space: pre; border-bottom: solid 1px gray; padding-left: 5px; }
 </style>
 """
 
+# if option_render_html:
+#     print '<table>'
+
+#     for op in ops:
+#         typ, ln_old, ln_new, l, _ = op
+#         if typ == 2:
+#             print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'%('meta: ln_old:', str(ln_old), 'ln_new:', str(ln_new))
+#         elif typ == -1:
+#             print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'%(ln_old, '', MARK_DEL, html_escape(l))
+#         elif typ == 0:
+#             print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'%(ln_old, ln_new, ' ', html_escape(l))
+#         elif typ == 1:
+#             print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'%('', ln_new, MARK_ADD, html_escape(l))
+#         else:
+#             pass
+
+#     print '</table>'
+#     print '<br/>'
+
 if option_render_html:
-    print '<table>'
-
-    for op in ops:
-        typ, ln_old, ln_new, l, _ = op
-        if typ == 2:
-            print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'%('meta: ln_old:', str(ln_old), 'ln_new:', str(ln_new))
-        elif typ == -1:
-            print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'%(ln_old, '', MARK_DEL, html_escape(l))
-        elif typ == 0:
-            print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'%(ln_old, ln_new, ' ', html_escape(l))
-        elif typ == 1:
-            print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'%('', ln_new, MARK_ADD, html_escape(l))
-        else:
-            pass
-
-    print '</table>'
-    print '<br/>'
-
-if option_render_html:
-    print '<table>'
+    print '<table class="xx">'
 
 idx = 0
 total = len(ops)
@@ -321,30 +360,23 @@ while idx < total:
                 render(ln_old_last+n, l, MARK_SAME, ln_new_last + n, l)
 
         else:
-            if option_render_txt:
-                render_hunk_separator(op)
+            render_hunk_separator(op)
 
         idx += 1
         continue
 
     if typ == 3 or typ == 4:
-        if option_render_txt:
-            render_file_header(l)
-
+        render_file_header(l)
         idx += 1
         continue
 
     if typ == 5:
-        if option_render_txt:
-            render_diff_header(l)
-
+        render_diff_header(l)
         idx += 1
         continue
 
     if typ == 6:
-        if option_render_txt:
-            render_header(l)
-
+        render_header(l)
         idx += 1
         continue
 
