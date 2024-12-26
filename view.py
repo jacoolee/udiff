@@ -116,10 +116,9 @@ def render_hunk_separator(op):
             '\n'
 
     elif option_render_html:
-        print '<tr><td> </td><td/><td/><td/><td/></tr>'
-        print '<tr><td> </td><td/><td/><td/><td/></tr>'
+        print '<tr class="hunk_separator_pre"><td> </td><td/><td/><td/><td/></tr>'
         l = '@@ -%d,%s +%d,%s @@'%(ln_old, start_count or '', ln_new, end_count or '')
-        print "<tr class='hunk_separator'><td/><td>%s</td><td/><td/><td/></tr>"%(_fls(l))
+        print "<tr><td/><td>%s</td><td/><td/><td/></tr>"%(_fls(l))
         print '<tr><td> </td><td/><td/><td/><td/></tr>'
 
     else:
@@ -302,7 +301,7 @@ if option_render_html:
 <style>
 table {-webkit-border-horizontal-spacing: 0; -webkit-border-vertical-spacing: 0; font-family: monospace; }
 td {white-space: pre; border-bottom: solid 1px gray; padding-left: 5px; }
-.hunk_separator > td { border-bottom: solid 3px blue; }
+.hunk_separator_pre > td { border-bottom: solid 3px blue; }
 .ln_old,.ln_new {color: gray};
 .type-mark {display: none; }
 .mod {background-color: yellow; color: black; }
