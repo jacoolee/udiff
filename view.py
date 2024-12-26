@@ -34,7 +34,7 @@ def _fli(i=None, max_len=5):
 # string with fixed length
 def _fls(txt=None):
     global option_width
-    max_len = option_width or 63
+    max_len = option_width
     _txt = txt or ''
 
     if len(_txt) < max_len:
@@ -109,12 +109,29 @@ def render(ln_old, s_old, mark, ln_new=None, s_new=None):
             else:
                 c = ''
 
+            s_old = s_old or ''
+            s_new = s_new or ''
+
+            t = max(len(s_old or ''), len(s_new))
+
             print '%s%s%s%s %s%s%s %s %s%s%s %s%s%s%s'%(
                 c,
                 color.Blue, c, _fli(ln_old), color.Color_Off, c, _fls(s_old),
-                ' ',           # no need to show mark, tell from color
+                ' ',
                 color.Blue, c, _fli(ln_new), color.Color_Off, c, _fls(s_new),
-                color.Color_Off)
+                color.Color_Off
+            )
+
+            i = option_width
+            while i < t:
+                print '%s%s%s%s %s%s%s %s %s%s%s %s%s%s%s'%(
+                    c,
+                    color.Blue, c, _fli(None), color.Color_Off, c, _fls(s_old[i:i+option_width]),
+                    ' ',
+                    color.Blue, c, _fli(None), color.Color_Off, c, _fls(s_new[i:i+option_width]),
+                    color.Color_Off
+                )
+                i += option_width
 
         else:
             print '%s %s %s %s %s'%(
@@ -160,7 +177,7 @@ option_render_txt = False
 option_render_json = False
 option_render_html = False
 option_color = False
-option_width = None
+option_width = 70
 
 idx = 1                         # start from first parameter
 while idx < len(sys.argv):
