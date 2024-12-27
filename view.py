@@ -69,20 +69,19 @@ def render_header(l):
 g_is_first_diff_header_printed = False
 def render_diff_header(l):
     global g_is_first_diff_header_printed
-
     if g_is_first_diff_header_printed:
         if option_render_txt:
-            print '\n', l
+            print '\n', color.On_Green, l, color.Color_Off
         elif option_render_html:
             print '<tr><td> </td><td/><td/><td/><td/></tr>'
-            print '<tr><td/><td>%s</td><td/><td/><td/></tr>'%(_fls(l))
+            print '<tr class="diff_header"><td/><td>%s</td><td/><td/><td/></tr>'%(_fls(l))
         else:
             pass
     else:
         if option_render_txt:
-            print l
+            print color.On_Green, l, color.Color_Off
         elif option_render_html:
-            print '<tr><td/><td>%s</td><td/><td/><td/></tr>'%(_fls(l))
+            print '<tr class="diff_header"><td/><td>%s</td><td/><td/><td/></tr>'%(_fls(l))
         else:
             pass
 
@@ -151,11 +150,11 @@ def render(ln_old, s_old, mark, ln_new=None, s_new=None):
 
             while i < t:
                 i_ = i+option_width
-                print '%s%s%s%s %s%s%s %s %s%s%s %s%s%s%s'%(
+                print '%s%s%s %s%s%s %s %s%s%s %s%s%s'%(
                     c,
-                    color.Blue, c, _fli(ln_old if i==0 else None), color.Color_Off, c, _fls(s_old[i:i_]),
+                    color.Blue, _fli(ln_old if i==0 else None), color.Color_Off, c, _fls(s_old[i:i_]),
                     ' ',
-                    color.Blue, c, _fli(ln_new if i==0 else None), color.Color_Off, c, _fls(s_new[i:i_]),
+                    color.Blue,  _fli(ln_new if i==0 else None), color.Color_Off, c, _fls(s_new[i:i_]),
                     color.Color_Off
                 )
                 i = i_
@@ -299,15 +298,17 @@ ln_new_last = 0
 if option_render_html:
     print """
 <style>
-table {-webkit-border-horizontal-spacing: 0; -webkit-border-vertical-spacing: 0; font-family: monospace; }
-td {white-space: pre; border-bottom: solid 1px gray; padding-left: 5px; }
-.hunk_separator_pre > td { border-bottom: solid 3px blue; }
+table {-webkit-border-horizontal-spacing: 0; -webkit-border-vertical-spacing: 0; font-family: monospace; cursor: default; }
+td {white-space: pre; padding-left: 5px; border-bottom: solid 1px transparent; }
+tr:hover > td { border-bottom: solid 1px black; }
+.diff_header { background-color: green; color: white;}
+.hunk_separator_pre:hover > td, .hunk_separator_pre > td { border-bottom: solid 1px blue; }
 .ln_old,.ln_new {color: gray};
 .type-mark {display: none; }
-.mod {background-color: yellow; color: black; }
-.del {background-color: red; color: white;}
+.mod {color: goldenrod; }
+.del {color: red;}
 .sam {}
-.add {background-color: green; color: white;}
+.add {color: green;}
 </style>
 """
 

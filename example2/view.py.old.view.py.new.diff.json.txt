@@ -1,342 +1,342 @@
 
 --- view.py.old	2024-12-13 15:51:53
 +++ view.py.new	2024-12-13 15:52:04
-[4;37m                                                                                                                                               [0m 
+[4;37m                                                                                                                                                             [0m 
 
-@@ -1,25 +1,82 @@ 
+[0;37m @@ -1,25 +1,82 @@ [0m 
 
-    1 #! /usr/bin/env python                                                1 #! /usr/bin/env python                                         
-    2 # -*- coding: utf-8 -*-                                               2 # -*- coding: utf-8 -*-                                        
-    3                                                                 |     3                                                                
-    4 from __future__ import unicode_literals                               4 from __future__ import unicode_literals                        
-    5 import sys                                                            5 import sys                                                     
-    6 reload(sys)                                                           6 reload(sys)                                                    
-    7 sys.setdefaultencoding('utf8')                                        7 sys.setdefaultencoding('utf8')                                 
-    8                                                                 |     8                                                                
-    9 import json                                                           9 import json                                                    
-   10                                                                 |    10                                                                
-   11 def usage():                                                         11 def usage():                                                   
-   12     print __file__, "old_file diff_json_file [--html] [--txt]"       12     print __file__, "old_file diff_json_file [--html] [--txt]" 
-   13     sys.exit(-1)                                                     13     sys.exit(-1)                                               
-   14                                                                 |    14                                                                
-                                                                      +    15 def _fli(i=None, max_len=5):                                   
-                                                                      +    16     if i is None:                                              
-                                                                      +    17         return ' '*max_len                                     
-                                                                      +    18                                                                
-                                                                      +    19     fmt = '%'+str(max_len)+'d'                                 
-                                                                      +    20     return fmt%(i)                                             
-                                                                      +    21                                                                
-                                                                      +    22 # string with fixed length                                     
-                                                                      +    23 def _fls(txt=None, max_len=63):                                
-                                                                      +    24     _txt = txt or ''                                           
-                                                                      +    25     if len(_txt) < max_len:                                    
-                                                                      +    26         return _txt + ' '*(max_len-len(_txt))                  
-                                                                      +    27     return _txt[0:max_len]                                     
-                                                                      +    28                                                                
-                                                                      +    29 def html_escape(txt):                                          
-                                                                      +    30     # https://stackoverflow.com/questions/7381974/which-charact
-                                                                      +    31     return txt\                                                
-                                                                      +    32         .replace('&', '&amp')\                                 
-                                                                      +    33         .replace('>', '&gt')\                                  
-                                                                      +    34         .replace('<', '&lt')\                                  
-                                                                      +    35         .replace('"', '&quot')\                                
-                                                                      +    36         .replace("'", '&#39')                                  
-                                                                      +    37                                                                
-                                                                      +    38 def render(ln_old, s_old, mark, ln_new=None, s_new=None, fli_ma
-                                                                      +    39     if option_render_txt:                                      
-                                                                      +    40         print \                                                
-                                                                      +    41             _fli(ln_old, max_len=fli_max_len), _fls(s_old, max_
-                                                                      +    42             mark, \                                            
-                                                                      +    43             _fli(ln_new, max_len=fli_max_len), _fls(s_new, max_
-                                                                      +    44                                                                
-                                                                      +    45     elif option_render_html:                                   
-                                                                      +    46         if mark == ' ':                                        
-                                                                      +    47             tr_cls = 'sam'                                     
-                                                                      +    48         elif mark == '+':                                      
-                                                                      +    49             tr_cls = 'add'                                     
-                                                                      +    50         elif mark == '-':                                      
-                                                                      +    51             tr_cls = 'del'                                     
-                                                                      +    52         elif mark == '|':                                      
-                                                                      +    53             tr_cls = 'mod'                                     
-                                                                      +    54         else:                                                  
-                                                                      +    55             tr_cls = ''                                        
-                                                                      +    56                                                                
-                                                                      +    57         print "<tr class='%s'><td>%s</td><td>%s</td><td>%s</td>
-                                                                      +    58             tr_cls,                                            
-                                                                      +    59             _fli(ln_old, max_len=fli_max_len),                 
-                                                                      +    60             html_escape(_fls(s_old, max_len=fls_max_length)),  
-                                                                      +    61             mark,                                              
-                                                                      +    62             _fli(ln_new, max_len=fli_max_len),                 
-                                                                      +    63             html_escape(_fls(s_new, max_len=fls_max_length))   
-                                                                      +    64         )                                                      
-                                                                      +    65                                                                
-                                                                      +    66     else:                                                      
-                                                                      +    67         pass                                                   
-                                                                      +    68                                                                
-                                                                      +    69 ###############################################################
-                                                                      +    70 # main                                                         
-                                                                      +    71                                                                
-   15 if len(sys.argv) < 2:                                                72 if len(sys.argv) < 2:                                          
-   16     usage()                                                          73     usage()                                                    
-   17                                                                 |    74                                                                
-   18 old_file = None                                                      75 old_file = None                                                
-   19 diff_json_file = None                                                76 diff_json_file = None                                          
-   20 option_render_txt = False                                            77 option_render_txt = False                                      
-   21 option_render_html = False                                           78 option_render_html = False                                     
-   22                                                                 |    79                                                                
-   23 for i in sys.argv[1:]:                                               80 for i in sys.argv[1:]:                                         
-   24     if i.startswith('-'):                                            81     if i.startswith('-'):                                      
-   25         if i == '--html':                                            82         if i == '--html':                                      
-[4;37m                                                                                                                                               [0m 
+    1 #! /usr/bin/env python                                                       1 #! /usr/bin/env python                                                
+    2 # -*- coding: utf-8 -*-                                                      2 # -*- coding: utf-8 -*-                                               
+    3                                                                        |     3                                                                       
+    4 from __future__ import unicode_literals                                      4 from __future__ import unicode_literals                               
+    5 import sys                                                                   5 import sys                                                            
+    6 reload(sys)                                                                  6 reload(sys)                                                           
+    7 sys.setdefaultencoding('utf8')                                               7 sys.setdefaultencoding('utf8')                                        
+    8                                                                        |     8                                                                       
+    9 import json                                                                  9 import json                                                           
+   10                                                                        |    10                                                                       
+   11 def usage():                                                                11 def usage():                                                          
+   12     print __file__, "old_file diff_json_file [--html] [--txt]"              12     print __file__, "old_file diff_json_file [--html] [--txt]"        
+   13     sys.exit(-1)                                                            13     sys.exit(-1)                                                      
+   14                                                                        |    14                                                                       
+                                                                             +    15 def _fli(i=None, max_len=5):                                          
+                                                                             +    16     if i is None:                                                     
+                                                                             +    17         return ' '*max_len                                            
+                                                                             +    18                                                                       
+                                                                             +    19     fmt = '%'+str(max_len)+'d'                                        
+                                                                             +    20     return fmt%(i)                                                    
+                                                                             +    21                                                                       
+                                                                             +    22 # string with fixed length                                            
+                                                                             +    23 def _fls(txt=None, max_len=63):                                       
+                                                                             +    24     _txt = txt or ''                                                  
+                                                                             +    25     if len(_txt) < max_len:                                           
+                                                                             +    26         return _txt + ' '*(max_len-len(_txt))                         
+                                                                             +    27     return _txt[0:max_len]                                            
+                                                                             +    28                                                                       
+                                                                             +    29 def html_escape(txt):                                                 
+                                                                             +    30     # https://stackoverflow.com/questions/7381974/which-characters-nee
+                                                                             +    31     return txt\                                                       
+                                                                             +    32         .replace('&', '&amp')\                                        
+                                                                             +    33         .replace('>', '&gt')\                                         
+                                                                             +    34         .replace('<', '&lt')\                                         
+                                                                             +    35         .replace('"', '&quot')\                                       
+                                                                             +    36         .replace("'", '&#39')                                         
+                                                                             +    37                                                                       
+                                                                             +    38 def render(ln_old, s_old, mark, ln_new=None, s_new=None, fli_max_len=5
+                                                                             +    39     if option_render_txt:                                             
+                                                                             +    40         print \                                                       
+                                                                             +    41             _fli(ln_old, max_len=fli_max_len), _fls(s_old, max_len=fls
+                                                                             +    42             mark, \                                                   
+                                                                             +    43             _fli(ln_new, max_len=fli_max_len), _fls(s_new, max_len=fls
+                                                                             +    44                                                                       
+                                                                             +    45     elif option_render_html:                                          
+                                                                             +    46         if mark == ' ':                                               
+                                                                             +    47             tr_cls = 'sam'                                            
+                                                                             +    48         elif mark == '+':                                             
+                                                                             +    49             tr_cls = 'add'                                            
+                                                                             +    50         elif mark == '-':                                             
+                                                                             +    51             tr_cls = 'del'                                            
+                                                                             +    52         elif mark == '|':                                             
+                                                                             +    53             tr_cls = 'mod'                                            
+                                                                             +    54         else:                                                         
+                                                                             +    55             tr_cls = ''                                               
+                                                                             +    56                                                                       
+                                                                             +    57         print "<tr class='%s'><td>%s</td><td>%s</td><td>%s</td><td>%s<
+                                                                             +    58             tr_cls,                                                   
+                                                                             +    59             _fli(ln_old, max_len=fli_max_len),                        
+                                                                             +    60             html_escape(_fls(s_old, max_len=fls_max_length)),         
+                                                                             +    61             mark,                                                     
+                                                                             +    62             _fli(ln_new, max_len=fli_max_len),                        
+                                                                             +    63             html_escape(_fls(s_new, max_len=fls_max_length))          
+                                                                             +    64         )                                                             
+                                                                             +    65                                                                       
+                                                                             +    66     else:                                                             
+                                                                             +    67         pass                                                          
+                                                                             +    68                                                                       
+                                                                             +    69 ################################################################      
+                                                                             +    70 # main                                                                
+                                                                             +    71                                                                       
+   15 if len(sys.argv) < 2:                                                       72 if len(sys.argv) < 2:                                                 
+   16     usage()                                                                 73     usage()                                                           
+   17                                                                        |    74                                                                       
+   18 old_file = None                                                             75 old_file = None                                                       
+   19 diff_json_file = None                                                       76 diff_json_file = None                                                 
+   20 option_render_txt = False                                                   77 option_render_txt = False                                             
+   21 option_render_html = False                                                  78 option_render_html = False                                            
+   22                                                                        |    79                                                                       
+   23 for i in sys.argv[1:]:                                                      80 for i in sys.argv[1:]:                                                
+   24     if i.startswith('-'):                                                   81     if i.startswith('-'):                                             
+   25         if i == '--html':                                                   82         if i == '--html':                                             
+[4;37m                                                                                                                                                             [0m 
 
-@@ -29,46 +86,46 @@ 
+[0;37m @@ -29,46 +86,46 @@ [0m 
 
-   29         else:                                                        86         else:                                                  
-   30             pass                                                     87             pass                                               
-   31         continue                                                     88         continue                                               
-   32                                                                 |    89                                                                
-   33     # files                                                          90     # files                                                    
-   34     if old_file is None: # old_file comes first                      91     if old_file is None: # old_file comes first                
-   35         old_file = i                                                 92         old_file = i                                           
-   36     else:                                                            93     else:                                                      
-   37         diff_json_file = i                                           94         diff_json_file = i                                     
-   38                                                                 |    95                                                                
-   39 if old_file is None or diff_json_file is None:                       96 if old_file is None or diff_json_file is None:                 
-   40     usage()                                                          97     usage()                                                    
-   41                                                                 |    98                                                                
-   42 if not option_render_txt and not option_render_html:                 99 if not option_render_txt and not option_render_html:           
-   43     option_render_txt = True                                        100     option_render_txt = True                                   
-   44                                                                 |   101                                                                
-   45 # https://en.wikipedia.org/wiki/Diff#Unified_format                 102 # https://en.wikipedia.org/wiki/Diff#Unified_format            
-   46 # https://www.gnu.org/software/diffutils/manual/html_node/Detai     103 # https://www.gnu.org/software/diffutils/manual/html_node/Detai
-   47 diff_meta = None                                                    104 diff_meta = None                                               
-   48 with open(diff_json_file, "r") as f:                                105 with open(diff_json_file, "r") as f:                           
-   49     diff_meta = json.load(f)                                        106     diff_meta = json.load(f)                                   
-   50                                                                 |   107                                                                
-   51 ops = diff_meta                                                     108 ops = diff_meta                                                
-   52                                                                 |   109                                                                
-   53 f = open(old_file, "r")                                             110 f = open(old_file, "r")                                        
-   54                                                                 |   111                                                                
-   55 l_map = {}                                                          112 l_map = {}                                                     
-   56 ln = 0                                                              113 ln = 0                                                         
-   57 for l in f.readlines():                                             114 for l in f.readlines():                                        
-   58     ln += 1                     # ln starts from 1                  115     ln += 1                     # ln starts from 1             
-   59                                                                 |   116                                                                
-   60     l = l.replace('\n', '')                                         117     l = l.replace('\n', '')                                    
-   61     l_map[ln] = l                                                   118     l_map[ln] = l                                              
-   62 ln_old_total = ln                                                   119 ln_old_total = ln                                              
-   63                                                                 |   120                                                                
-   64 ln_old_last = 0                                                     121 ln_old_last = 0                                                
-   65 ln_new_last = 0                                                     122 ln_new_last = 0                                                
-   66                                                                 |   123                                                                
-   67 if option_render_html:                                              124 if option_render_html:                                         
-   68     print """                                                       125     print """                                                  
-   69 <style>                                                             126 <style>                                                        
-   70 table {-webkit-border-horizontal-spacing: 0; -webkit-border-ver     127 table {-webkit-border-horizontal-spacing: 0; -webkit-border-ver
-   71 td {border-bottom: solid 1px gray; padding-left: 5px; }         |   128 td {white-space: pre; border-bottom: solid 1px gray; padding-le
-   72 .type-mark {display: none; }                                        129 .type-mark {display: none; }                                   
-   73 .mod {background-color: yellow; color: black; }                     130 .mod {background-color: yellow; color: black; }                
-   74 .del {background-color: red; color: white;}                         131 .del {background-color: red; color: white;}                    
-[4;37m                                                                                                                                               [0m 
+   29         else:                                                               86         else:                                                         
+   30             pass                                                            87             pass                                                      
+   31         continue                                                            88         continue                                                      
+   32                                                                        |    89                                                                       
+   33     # files                                                                 90     # files                                                           
+   34     if old_file is None: # old_file comes first                             91     if old_file is None: # old_file comes first                       
+   35         old_file = i                                                        92         old_file = i                                                  
+   36     else:                                                                   93     else:                                                             
+   37         diff_json_file = i                                                  94         diff_json_file = i                                            
+   38                                                                        |    95                                                                       
+   39 if old_file is None or diff_json_file is None:                              96 if old_file is None or diff_json_file is None:                        
+   40     usage()                                                                 97     usage()                                                           
+   41                                                                        |    98                                                                       
+   42 if not option_render_txt and not option_render_html:                        99 if not option_render_txt and not option_render_html:                  
+   43     option_render_txt = True                                               100     option_render_txt = True                                          
+   44                                                                        |   101                                                                       
+   45 # https://en.wikipedia.org/wiki/Diff#Unified_format                        102 # https://en.wikipedia.org/wiki/Diff#Unified_format                   
+   46 # https://www.gnu.org/software/diffutils/manual/html_node/Detailed-Uni     103 # https://www.gnu.org/software/diffutils/manual/html_node/Detailed-Uni
+   47 diff_meta = None                                                           104 diff_meta = None                                                      
+   48 with open(diff_json_file, "r") as f:                                       105 with open(diff_json_file, "r") as f:                                  
+   49     diff_meta = json.load(f)                                               106     diff_meta = json.load(f)                                          
+   50                                                                        |   107                                                                       
+   51 ops = diff_meta                                                            108 ops = diff_meta                                                       
+   52                                                                        |   109                                                                       
+   53 f = open(old_file, "r")                                                    110 f = open(old_file, "r")                                               
+   54                                                                        |   111                                                                       
+   55 l_map = {}                                                                 112 l_map = {}                                                            
+   56 ln = 0                                                                     113 ln = 0                                                                
+   57 for l in f.readlines():                                                    114 for l in f.readlines():                                               
+   58     ln += 1                     # ln starts from 1                         115     ln += 1                     # ln starts from 1                    
+   59                                                                        |   116                                                                       
+   60     l = l.replace('\n', '')                                                117     l = l.replace('\n', '')                                           
+   61     l_map[ln] = l                                                          118     l_map[ln] = l                                                     
+   62 ln_old_total = ln                                                          119 ln_old_total = ln                                                     
+   63                                                                        |   120                                                                       
+   64 ln_old_last = 0                                                            121 ln_old_last = 0                                                       
+   65 ln_new_last = 0                                                            122 ln_new_last = 0                                                       
+   66                                                                        |   123                                                                       
+   67 if option_render_html:                                                     124 if option_render_html:                                                
+   68     print """                                                              125     print """                                                         
+   69 <style>                                                                    126 <style>                                                               
+   70 table {-webkit-border-horizontal-spacing: 0; -webkit-border-vertical-s     127 table {-webkit-border-horizontal-spacing: 0; -webkit-border-vertical-s
+   71 td {border-bottom: solid 1px gray; padding-left: 5px; }                |   128 td {white-space: pre; border-bottom: solid 1px gray; padding-left: 5px
+   72 .type-mark {display: none; }                                               129 .type-mark {display: none; }                                          
+   73 .mod {background-color: yellow; color: black; }                            130 .mod {background-color: yellow; color: black; }                       
+   74 .del {background-color: red; color: white;}                                131 .del {background-color: red; color: white;}                           
+[4;37m                                                                                                                                                             [0m 
 
-@@ -76,129 +133,171 @@ 
+[0;37m @@ -76,129 +133,171 @@ [0m 
 
-   76 .add {background-color: green; color: white;}                       133 .add {background-color: green; color: white;}                  
-   77 </style>                                                            134 </style>                                                       
-   78 """                                                                 135 """                                                            
-                                                                      +   136                                                                
-                                                                      +   137 if option_render_html:                                         
-   79     print '<table>'                                                 138     print '<table>'                                            
-   80                                                                 -                                                                      
-   81 def _fli(i=None, max_len=3):                                    -                                                                      
-   82     if i is None:                                               -                                                                      
-   83         return ' '*max_len                                      -                                                                      
-   84                                                                 -                                                                      
-   85     fmt = '%'+str(max_len)+'d'                                  -                                                                      
-   86     return fmt%(i)                                              -                                                                      
-   87                                                                 -                                                                      
-   88 # string with fixed length                                      -                                                                      
-   89 def _fls(txt=None, max_len=63):                                 -                                                                      
-   90     _txt = txt or ''                                            -                                                                      
-   91     if len(_txt) < max_len:                                     -                                                                      
-   92         return _txt + ' '*(max_len-len(_txt))                   -                                                                      
-   93     return _txt[0:max_len]                                      -                                                                      
-   94                                                                 -                                                                      
-   95 def render(ln_old, s_old, mark, ln_new=None, s_new=None, fli_ma -                                                                      
-   96     if option_render_txt:                                       -                                                                      
-   97         print \                                                 -                                                                      
-   98             _fli(ln_old, max_len=fli_max_len), _fls(s_old, max_ -                                                                      
-   99             mark, \                                             -                                                                      
-  100             _fli(ln_new, max_len=fli_max_len), _fls(s_new, max_ |   139                                                                
-  101                                                                 |   140     for op in ops:                                             
-  102     elif option_render_html:                                    |   141         typ, ln_old, ln_new, l = op                            
-  103         if mark == ' ':                                         |   142         if typ == 2:                                           
-  104             tr_cls = 'sam'                                      |   143             print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s<
-  105         elif mark == '>':                                       |   144         elif typ == -1:                                        
-  106             tr_cls = 'add'                                      |   145             print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s<
-  107         elif mark == '<':                                       |   146         elif typ == 0:                                         
-  108             tr_cls = 'del'                                      |   147             print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s<
-  109         elif mark == '|':                                       |   148         elif typ == 1:                                         
-  110             tr_cls = 'mod'                                      |   149             print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s<
-  111         else:                                                       150         else:                                                  
-  112             print 'ERROR', 'show never happen'                  -                                                                      
-  113             tr_cls = ''                                         -                                                                      
-  114                                                                 -                                                                      
-  115         print "<tr class='%s'><td>%s</td><td>%s</td><td>%s</td> -                                                                      
-  116             tr_cls,                                             -                                                                      
-  117             _fli(ln_old, max_len=fli_max_len), _fls(s_old, max_ |   151             pass                                               
-  118             mark,                                               |   152                                                                
-  119             _fli(ln_new, max_len=fli_max_len), _fls(s_new, max_ |   153     print '</table>'                                           
-  120         )                                                       |   154     print '<br/>'                                              
-  121                                                                 |   155                                                                
-  122     else:                                                       |   156 if option_render_html:                                         
-  123         pass                                                    |   157     print '<table>'                                            
-  124                                                                 |   158                                                                
-  125 idx = 0                                                             159 idx = 0                                                        
-  126 total = len(ops)                                                    160 total = len(ops)                                               
-  127                                                                 |   161                                                                
-  128 if total == 0:                                                      162 if total == 0:                                                 
-  129     for i in xrange(1, ln_old_total+1):                             163     for i in xrange(1, ln_old_total+1):                        
-  130         l = l_map[i]                                                164         l = l_map[i]                                           
-  131         render(i, l, ' ', i, l)                                     165         render(i, l, ' ', i, l)                                
-  132                                                                 |   166                                                                
-  133     if option_render_html:                                          167     if option_render_html:                                     
-  134         print '</table>'                                            168         print '</table>'                                       
-  135                                                                 |   169                                                                
-  136     sys.exit(0)                                                     170     sys.exit(0)                                                
-  137                                                                 |   171                                                                
-  138 while idx < total:                                                  172 while idx < total:                                             
-  139                                                                 -                                                                      
-  140     op = ops[idx]                                                   173     op = ops[idx]                                              
-  141     typ, ln_old, ln_new, l = op                                     174     typ, ln_old, ln_new, l = op                                
-  142                                                                 -                                                                      
-  143     if typ == 'M':                                              |   175                                                                
-  144                                                                 |   176     if typ == 2:                # hunk meta line               
-  145         # fill up lines missing between hunks                       177         # fill up lines missing between hunks                  
-                                                                      +   178         n = 0                                                  
-  146         for i in xrange(int(ln_old_last+1), int(ln_old)):           179         for i in xrange(int(ln_old_last+1), int(ln_old)):      
-                                                                      +   180             n += 1                                             
-  147             l = l_map[i]                                            181             l = l_map[i]                                       
-  148             render(ln_old, l, ' ', ln_new, l)                   |   182             render(ln_old_last+n, l, '', ln_new_last + n, l)   
-  149                                                                 |   183                                                                
-  150         idx += 1                                                    184         idx += 1                                               
-  151         continue                                                    185         continue                                               
-  152                                                                 -                                                                      
-  153     # 'L'                                                       |   186                                                                
-  154                                                                 |   187     # else, data lines                                         
-  155     if ln_old is not None:                                          188     if ln_old is not None:                                     
-  156         ln_old_last = ln_old                                        189         ln_old_last = ln_old                                   
-  157     if ln_new is not None:                                          190     if ln_new is not None:                                     
-  158         ln_new_last = ln_new                                        191         ln_new_last = ln_new                                   
-  159                                                                 |   192                                                                
-  160     is_flsame = ln_old and ln_new                               |   193     if typ == -1:               # minus '-'                    
-  161     is_minus = not is_flsame and ln_old and not ln_new          |   194         # consume consequent '-' as much as possible           
-  162     is_plus = not is_flsame and not ln_old and ln_new           |   195         idx2 = idx + 1                                         
-  163                                                                 |   196         while idx2 < total and ops[idx2][0] == -1:             
-  164     if is_minus:                                                |   197             idx2 += 1                                          
-  165                                                                 |   198                                                                
-  166         if idx+1 == total:      # last one                      |   199         if idx2 == total:       # idx2 exceeds ops, which means
-  167             render(ln_old, op[3], '<')                          |   200             for _op in ops[idx: idx2]:                         
-  168             break                                               |   201                 _typ, _lno, _lnn, _l = _op                     
-  169                                                                 |   202                                                                
-  170         # KEY: probe next op if current is '-' to see if it's ' |   203                 if _lno: ln_old_last = _lno                    
-  171         next_op = ops[idx+1]                                    |   204                 if _lnn: ln_new_last = _lnn                    
-  172         next_typ, next_ln_old, next_ln_new, next_l = next_op    |   205                                                                
-  173                                                                 |   206                 render(_lno, _l, '-')                          
-  174         next_is_flsame = next_ln_old and next_ln_new            |   207                                                                
-  175         next_is_minus = not next_is_flsame and next_ln_old and  |   208             # print 'dia: idx2 = %d, total = %d'%(idx2, total) 
-  176         next_is_plus = not next_is_flsame and not next_ln_old a |   209             break               # all done, just break main loo
-  177                                                                 |   210                                                                
-  178         if next_is_plus:                                        |   211         if ops[idx2][0] == 0:   # idx2 points to first ' ' afte
-  179             render(ln_old, op[3], '|', ln_new or ln_new_last+1, |   212             for _op in ops[idx: idx2]:                         
-  180             idx += 2                                            |   213                 _typ, _lno, _lnn, _l = _op                     
-                                                                      +   214                                                                
-                                                                      +   215                 if _lno: ln_old_last = _lno                    
-                                                                      +   216                 if _lnn: ln_new_last = _lnn                    
-                                                                      +   217                                                                
-                                                                      +   218                 render(_lno, _l, '-')                          
-                                                                      +   219                                                                
-                                                                      +   220             # go on to next round                              
-                                                                      +   221             idx = idx2                                         
-  181             continue                                                222             continue                                           
-  182         else:                                                   |   223                                                                
-  183             render(ln_old, op[3], '<')                          |   224         if ops[idx2][0] == 1:   # idx2 points to first '+' afte
-  184             idx += 1                                            |   225             # consume consequent '+' as much as possible       
-  185             continue                                            |   226             idx3 = idx2 + 1                                    
-  186                                                                 |   227             while idx3 < total and ops[idx3][0] == 1:          
-  187     if is_plus:                                                 |   228                 idx3 += 1                                      
-  188         render(ln_old, '', '>', ln_new, op[3])                  |   229                                                                
-                                                                      +   230             # either idx3 is last op, or points to ' ', '-',   
-                                                                      +   231             # we all terminate this round                      
-                                                                      +   232                                                                
-                                                                      +   233             n_minus = idx2 - idx                               
-                                                                      +   234             n_plus = idx3 - idx2                               
-                                                                      +   235                                                                
-                                                                      +   236             if n_minus <= n_plus:                              
-                                                                      +   237                 # cosume both n_minus count of '-' ops and n_mi
-                                                                      +   238                 for _i in xrange(0, n_minus):                  
-                                                                      +   239                     _, _lno_l, _lnn_l, _l_l = ops[idx+_i]      
-                                                                      +   240                     _, _lno_r, _lnn_r, _l_r = ops[idx2+_i]     
-                                                                      +   241                                                                
-                                                                      +   242                     if _lno_l: ln_old_last = _lno_l            
-                                                                      +   243                     if _lnn_r: ln_new_last = _lnn_r            
-                                                                      +   244                                                                
-                                                                      +   245                     render(_lno_l, _l_l, '|', _lnn_r, _l_r)    
-                                                                      +   246                                                                
-                                                                      +   247                 for _op in ops[idx2+n_minus:idx3]: # idx3 not c
-                                                                      +   248                     _typ, _lno, _lnn, _l = _op                 
-                                                                      +   249                                                                
-                                                                      +   250                     if _lno: ln_old_last = _lno                
-                                                                      +   251                     if _lnn: ln_new_last = _lnn                
-                                                                      +   252                                                                
-                                                                      +   253                     render(None, '', '+', _lnn, _l)            
-                                                                      +   254                                                                
-                                                                      +   255                 # go on to next round                          
-                                                                      +   256                 idx = idx3                                     
-                                                                      +   257                 continue                                       
-                                                                      +   258                                                                
-                                                                      +   259             else:               # n_minus > n_plus             
-                                                                      +   260                 for _op in ops[idx:idx+n_minus-n_plus]:        
-                                                                      +   261                     _typ, _lno, _lnn, _l = _op                 
-                                                                      +   262                                                                
-                                                                      +   263                     if _lno: ln_old_last = _lno                
-                                                                      +   264                     if _lnn: ln_new_last = _lnn                
-                                                                      +   265                                                                
-                                                                      +   266                     render(_lno, _l, '-')                      
-                                                                      +   267                                                                
-                                                                      +   268                 # cosume both n_plus count of '-' ops and n_min
-                                                                      +   269                 _idx = idx+n_minus-n_plus                      
-                                                                      +   270                 for _i in xrange(0, n_plus):                   
-                                                                      +   271                     _, _lno_l, _lnn_l, _l_l = ops[_idx+_i]     
-                                                                      +   272                     _, _lno_r, _lnn_r, _l_r = ops[idx2+_i]     
-                                                                      +   273                                                                
-                                                                      +   274                     if _lno_l: ln_old_last = _lno_l            
-                                                                      +   275                     if _lnn_r: ln_new_last = _lnn_r            
-                                                                      +   276                                                                
-                                                                      +   277                     render(_lno_l, _l_l, '|', _lnn_r, _l_r)    
-                                                                      +   278                                                                
-                                                                      +   279                                                                
-                                                                      +   280                 # go on to next round                          
-                                                                      +   281                 idx = idx3                                     
-                                                                      +   282                 continue                                       
-                                                                      +   283                                                                
-                                                                      +   284     if typ == 1:                # plus '+'                     
-                                                                      +   285         render(ln_old, '', '+', ln_new, op[3])                 
-  189         idx += 1                                                    286         idx += 1                                               
-  190         continue                                                    287         continue                                               
-  191                                                                 |   288                                                                
-  192     if is_flsame:                                               |   289     if typ == 0:                # space/same ' '               
-  193         render(ln_old, op[3], ' ', ln_new, op[3])                   290         render(ln_old, op[3], ' ', ln_new, op[3])              
-  194         idx += 1                                                    291         idx += 1                                               
-  195         continue                                                    292         continue                                               
-  196                                                                 |   293                                                                
-  197 # padding last parts (not included in hunk) if exists from old      294 # padding last parts (not included in hunk) if exists from old 
-  198 if ln_old_last > 0:             # means have been re-assigned b     295 if ln_old_last > 0:             # means have been re-assigned b
-                                                                      +   296     n = 0                                                      
-  199     for i in xrange(ln_old_last+1, ln_old_total+1):                 297     for i in xrange(ln_old_last+1, ln_old_total+1):            
-                                                                      +   298         n += 1                                                 
-  200         l = l_map[i]                                                299         l = l_map[i]                                           
-  201         render(i, l, ' ', i, l)                                 |   300         render(i, l, '')                                       
-  202                                                                 |   301                                                                
-  203 if option_render_html:                                              302 if option_render_html:                                         
-  204     print '</table>'                                                303     print '</table>'                                           
+   76 .add {background-color: green; color: white;}                              133 .add {background-color: green; color: white;}                         
+   77 </style>                                                                   134 </style>                                                              
+   78 """                                                                        135 """                                                                   
+                                                                             +   136                                                                       
+                                                                             +   137 if option_render_html:                                                
+   79     print '<table>'                                                        138     print '<table>'                                                   
+   80                                                                        -                                                                             
+   81 def _fli(i=None, max_len=3):                                           -                                                                             
+   82     if i is None:                                                      -                                                                             
+   83         return ' '*max_len                                             -                                                                             
+   84                                                                        -                                                                             
+   85     fmt = '%'+str(max_len)+'d'                                         -                                                                             
+   86     return fmt%(i)                                                     -                                                                             
+   87                                                                        -                                                                             
+   88 # string with fixed length                                             -                                                                             
+   89 def _fls(txt=None, max_len=63):                                        -                                                                             
+   90     _txt = txt or ''                                                   -                                                                             
+   91     if len(_txt) < max_len:                                            -                                                                             
+   92         return _txt + ' '*(max_len-len(_txt))                          -                                                                             
+   93     return _txt[0:max_len]                                             -                                                                             
+   94                                                                        -                                                                             
+   95 def render(ln_old, s_old, mark, ln_new=None, s_new=None, fli_max_len=3 -                                                                             
+   96     if option_render_txt:                                              -                                                                             
+   97         print \                                                        -                                                                             
+   98             _fli(ln_old, max_len=fli_max_len), _fls(s_old, max_len=fls -                                                                             
+   99             mark, \                                                    -                                                                             
+  100             _fli(ln_new, max_len=fli_max_len), _fls(s_new, max_len=fls |   139                                                                       
+  101                                                                        |   140     for op in ops:                                                    
+  102     elif option_render_html:                                           |   141         typ, ln_old, ln_new, l = op                                   
+  103         if mark == ' ':                                                |   142         if typ == 2:                                                  
+  104             tr_cls = 'sam'                                             |   143             print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></t
+  105         elif mark == '>':                                              |   144         elif typ == -1:                                               
+  106             tr_cls = 'add'                                             |   145             print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></t
+  107         elif mark == '<':                                              |   146         elif typ == 0:                                                
+  108             tr_cls = 'del'                                             |   147             print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></t
+  109         elif mark == '|':                                              |   148         elif typ == 1:                                                
+  110             tr_cls = 'mod'                                             |   149             print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></t
+  111         else:                                                              150         else:                                                         
+  112             print 'ERROR', 'show never happen'                         -                                                                             
+  113             tr_cls = ''                                                -                                                                             
+  114                                                                        -                                                                             
+  115         print "<tr class='%s'><td>%s</td><td>%s</td><td>%s</td><td>%s< -                                                                             
+  116             tr_cls,                                                    -                                                                             
+  117             _fli(ln_old, max_len=fli_max_len), _fls(s_old, max_len=fls |   151             pass                                                      
+  118             mark,                                                      |   152                                                                       
+  119             _fli(ln_new, max_len=fli_max_len), _fls(s_new, max_len=fls |   153     print '</table>'                                                  
+  120         )                                                              |   154     print '<br/>'                                                     
+  121                                                                        |   155                                                                       
+  122     else:                                                              |   156 if option_render_html:                                                
+  123         pass                                                           |   157     print '<table>'                                                   
+  124                                                                        |   158                                                                       
+  125 idx = 0                                                                    159 idx = 0                                                               
+  126 total = len(ops)                                                           160 total = len(ops)                                                      
+  127                                                                        |   161                                                                       
+  128 if total == 0:                                                             162 if total == 0:                                                        
+  129     for i in xrange(1, ln_old_total+1):                                    163     for i in xrange(1, ln_old_total+1):                               
+  130         l = l_map[i]                                                       164         l = l_map[i]                                                  
+  131         render(i, l, ' ', i, l)                                            165         render(i, l, ' ', i, l)                                       
+  132                                                                        |   166                                                                       
+  133     if option_render_html:                                                 167     if option_render_html:                                            
+  134         print '</table>'                                                   168         print '</table>'                                              
+  135                                                                        |   169                                                                       
+  136     sys.exit(0)                                                            170     sys.exit(0)                                                       
+  137                                                                        |   171                                                                       
+  138 while idx < total:                                                         172 while idx < total:                                                    
+  139                                                                        -                                                                             
+  140     op = ops[idx]                                                          173     op = ops[idx]                                                     
+  141     typ, ln_old, ln_new, l = op                                            174     typ, ln_old, ln_new, l = op                                       
+  142                                                                        -                                                                             
+  143     if typ == 'M':                                                     |   175                                                                       
+  144                                                                        |   176     if typ == 2:                # hunk meta line                      
+  145         # fill up lines missing between hunks                              177         # fill up lines missing between hunks                         
+                                                                             +   178         n = 0                                                         
+  146         for i in xrange(int(ln_old_last+1), int(ln_old)):                  179         for i in xrange(int(ln_old_last+1), int(ln_old)):             
+                                                                             +   180             n += 1                                                    
+  147             l = l_map[i]                                                   181             l = l_map[i]                                              
+  148             render(ln_old, l, ' ', ln_new, l)                          |   182             render(ln_old_last+n, l, '', ln_new_last + n, l)          
+  149                                                                        |   183                                                                       
+  150         idx += 1                                                           184         idx += 1                                                      
+  151         continue                                                           185         continue                                                      
+  152                                                                        -                                                                             
+  153     # 'L'                                                              |   186                                                                       
+  154                                                                        |   187     # else, data lines                                                
+  155     if ln_old is not None:                                                 188     if ln_old is not None:                                            
+  156         ln_old_last = ln_old                                               189         ln_old_last = ln_old                                          
+  157     if ln_new is not None:                                                 190     if ln_new is not None:                                            
+  158         ln_new_last = ln_new                                               191         ln_new_last = ln_new                                          
+  159                                                                        |   192                                                                       
+  160     is_flsame = ln_old and ln_new                                      |   193     if typ == -1:               # minus '-'                           
+  161     is_minus = not is_flsame and ln_old and not ln_new                 |   194         # consume consequent '-' as much as possible                  
+  162     is_plus = not is_flsame and not ln_old and ln_new                  |   195         idx2 = idx + 1                                                
+  163                                                                        |   196         while idx2 < total and ops[idx2][0] == -1:                    
+  164     if is_minus:                                                       |   197             idx2 += 1                                                 
+  165                                                                        |   198                                                                       
+  166         if idx+1 == total:      # last one                             |   199         if idx2 == total:       # idx2 exceeds ops, which means, all f
+  167             render(ln_old, op[3], '<')                                 |   200             for _op in ops[idx: idx2]:                                
+  168             break                                                      |   201                 _typ, _lno, _lnn, _l = _op                            
+  169                                                                        |   202                                                                       
+  170         # KEY: probe next op if current is '-' to see if it's '+'      |   203                 if _lno: ln_old_last = _lno                           
+  171         next_op = ops[idx+1]                                           |   204                 if _lnn: ln_new_last = _lnn                           
+  172         next_typ, next_ln_old, next_ln_new, next_l = next_op           |   205                                                                       
+  173                                                                        |   206                 render(_lno, _l, '-')                                 
+  174         next_is_flsame = next_ln_old and next_ln_new                   |   207                                                                       
+  175         next_is_minus = not next_is_flsame and next_ln_old and not nex |   208             # print 'dia: idx2 = %d, total = %d'%(idx2, total)        
+  176         next_is_plus = not next_is_flsame and not next_ln_old and next |   209             break               # all done, just break main loop      
+  177                                                                        |   210                                                                       
+  178         if next_is_plus:                                               |   211         if ops[idx2][0] == 0:   # idx2 points to first ' ' after bunch
+  179             render(ln_old, op[3], '|', ln_new or ln_new_last+1, next_o |   212             for _op in ops[idx: idx2]:                                
+  180             idx += 2                                                   |   213                 _typ, _lno, _lnn, _l = _op                            
+                                                                             +   214                                                                       
+                                                                             +   215                 if _lno: ln_old_last = _lno                           
+                                                                             +   216                 if _lnn: ln_new_last = _lnn                           
+                                                                             +   217                                                                       
+                                                                             +   218                 render(_lno, _l, '-')                                 
+                                                                             +   219                                                                       
+                                                                             +   220             # go on to next round                                     
+                                                                             +   221             idx = idx2                                                
+  181             continue                                                       222             continue                                                  
+  182         else:                                                          |   223                                                                       
+  183             render(ln_old, op[3], '<')                                 |   224         if ops[idx2][0] == 1:   # idx2 points to first '+' after bunch
+  184             idx += 1                                                   |   225             # consume consequent '+' as much as possible              
+  185             continue                                                   |   226             idx3 = idx2 + 1                                           
+  186                                                                        |   227             while idx3 < total and ops[idx3][0] == 1:                 
+  187     if is_plus:                                                        |   228                 idx3 += 1                                             
+  188         render(ln_old, '', '>', ln_new, op[3])                         |   229                                                                       
+                                                                             +   230             # either idx3 is last op, or points to ' ', '-',          
+                                                                             +   231             # we all terminate this round                             
+                                                                             +   232                                                                       
+                                                                             +   233             n_minus = idx2 - idx                                      
+                                                                             +   234             n_plus = idx3 - idx2                                      
+                                                                             +   235                                                                       
+                                                                             +   236             if n_minus <= n_plus:                                     
+                                                                             +   237                 # cosume both n_minus count of '-' ops and n_minus cou
+                                                                             +   238                 for _i in xrange(0, n_minus):                         
+                                                                             +   239                     _, _lno_l, _lnn_l, _l_l = ops[idx+_i]             
+                                                                             +   240                     _, _lno_r, _lnn_r, _l_r = ops[idx2+_i]            
+                                                                             +   241                                                                       
+                                                                             +   242                     if _lno_l: ln_old_last = _lno_l                   
+                                                                             +   243                     if _lnn_r: ln_new_last = _lnn_r                   
+                                                                             +   244                                                                       
+                                                                             +   245                     render(_lno_l, _l_l, '|', _lnn_r, _l_r)           
+                                                                             +   246                                                                       
+                                                                             +   247                 for _op in ops[idx2+n_minus:idx3]: # idx3 not cosumned
+                                                                             +   248                     _typ, _lno, _lnn, _l = _op                        
+                                                                             +   249                                                                       
+                                                                             +   250                     if _lno: ln_old_last = _lno                       
+                                                                             +   251                     if _lnn: ln_new_last = _lnn                       
+                                                                             +   252                                                                       
+                                                                             +   253                     render(None, '', '+', _lnn, _l)                   
+                                                                             +   254                                                                       
+                                                                             +   255                 # go on to next round                                 
+                                                                             +   256                 idx = idx3                                            
+                                                                             +   257                 continue                                              
+                                                                             +   258                                                                       
+                                                                             +   259             else:               # n_minus > n_plus                    
+                                                                             +   260                 for _op in ops[idx:idx+n_minus-n_plus]:               
+                                                                             +   261                     _typ, _lno, _lnn, _l = _op                        
+                                                                             +   262                                                                       
+                                                                             +   263                     if _lno: ln_old_last = _lno                       
+                                                                             +   264                     if _lnn: ln_new_last = _lnn                       
+                                                                             +   265                                                                       
+                                                                             +   266                     render(_lno, _l, '-')                             
+                                                                             +   267                                                                       
+                                                                             +   268                 # cosume both n_plus count of '-' ops and n_minus coun
+                                                                             +   269                 _idx = idx+n_minus-n_plus                             
+                                                                             +   270                 for _i in xrange(0, n_plus):                          
+                                                                             +   271                     _, _lno_l, _lnn_l, _l_l = ops[_idx+_i]            
+                                                                             +   272                     _, _lno_r, _lnn_r, _l_r = ops[idx2+_i]            
+                                                                             +   273                                                                       
+                                                                             +   274                     if _lno_l: ln_old_last = _lno_l                   
+                                                                             +   275                     if _lnn_r: ln_new_last = _lnn_r                   
+                                                                             +   276                                                                       
+                                                                             +   277                     render(_lno_l, _l_l, '|', _lnn_r, _l_r)           
+                                                                             +   278                                                                       
+                                                                             +   279                                                                       
+                                                                             +   280                 # go on to next round                                 
+                                                                             +   281                 idx = idx3                                            
+                                                                             +   282                 continue                                              
+                                                                             +   283                                                                       
+                                                                             +   284     if typ == 1:                # plus '+'                            
+                                                                             +   285         render(ln_old, '', '+', ln_new, op[3])                        
+  189         idx += 1                                                           286         idx += 1                                                      
+  190         continue                                                           287         continue                                                      
+  191                                                                        |   288                                                                       
+  192     if is_flsame:                                                      |   289     if typ == 0:                # space/same ' '                      
+  193         render(ln_old, op[3], ' ', ln_new, op[3])                          290         render(ln_old, op[3], ' ', ln_new, op[3])                     
+  194         idx += 1                                                           291         idx += 1                                                      
+  195         continue                                                           292         continue                                                      
+  196                                                                        |   293                                                                       
+  197 # padding last parts (not included in hunk) if exists from old file        294 # padding last parts (not included in hunk) if exists from old file   
+  198 if ln_old_last > 0:             # means have been re-assigned by 'L' t     295 if ln_old_last > 0:             # means have been re-assigned by 'L' t
+                                                                             +   296     n = 0                                                             
+  199     for i in xrange(ln_old_last+1, ln_old_total+1):                        297     for i in xrange(ln_old_last+1, ln_old_total+1):                   
+                                                                             +   298         n += 1                                                        
+  200         l = l_map[i]                                                       299         l = l_map[i]                                                  
+  201         render(i, l, ' ', i, l)                                        |   300         render(i, l, '')                                              
+  202                                                                        |   301                                                                       
+  203 if option_render_html:                                                     302 if option_render_html:                                                
+  204     print '</table>'                                                       303     print '</table>'                                                  
