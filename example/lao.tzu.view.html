@@ -1,47 +1,38 @@
 
 <style>
-table {-webkit-border-horizontal-spacing: 0; -webkit-border-vertical-spacing: 0; font-family: monospace; }
-td {white-space: pre; border-bottom: solid 1px gray; padding-left: 5px; }
+table {-webkit-border-horizontal-spacing: 0; -webkit-border-vertical-spacing: 0; font-family: monospace; cursor: default; }
+td {white-space: pre; padding-left: 5px; border-bottom: solid 1px transparent; }
+tr:hover > td { border-bottom: solid 1px black; }
+.diff_header { background-color: green; color: white;}
+.hunk_separator_pre:hover > td, .hunk_separator_pre > td { border-bottom: solid 1px blue; }
+.ln_old,.ln_new {color: gray};
 .type-mark {display: none; }
-.mod {background-color: yellow; color: black; }
-.del {background-color: red; color: white;}
+.mod {color: goldenrod; }
+.del {color: red;}
 .sam {}
-.add {background-color: green; color: white;}
+.add {color: green;}
 </style>
 
-<table>
-<tr><td>meta: ln_old:</td><td>1</td><td>ln_new:</td><td>1</td></tr>
-<tr><td>1</td><td></td><td>-</td><td>The Way that can be told of is not the eternal Way;</td></tr>
-<tr><td>2</td><td></td><td>-</td><td>The name that can be named is not the eternal name.</td></tr>
-<tr><td>3</td><td>1</td><td> </td><td>The Nameless is the origin of Heaven and Earth;</td></tr>
-<tr><td>4</td><td></td><td>-</td><td>The Named is the mother of all things.</td></tr>
-<tr><td></td><td>2</td><td>+</td><td>The named is the mother of all things.</td></tr>
-<tr><td></td><td>3</td><td>+</td><td></td></tr>
-<tr><td>5</td><td>4</td><td> </td><td>Therefore let there always be non-being,</td></tr>
-<tr><td>6</td><td>5</td><td> </td><td>  so we may see their subtlety,</td></tr>
-<tr><td>7</td><td>6</td><td> </td><td>And let there always be being,</td></tr>
-<tr><td>meta: ln_old:</td><td>9</td><td>ln_new:</td><td>8</td></tr>
-<tr><td>9</td><td>8</td><td> </td><td>The two are the same,</td></tr>
-<tr><td>10</td><td>9</td><td> </td><td>But after they are produced,</td></tr>
-<tr><td>11</td><td>10</td><td> </td><td>  they have different names.</td></tr>
-<tr><td></td><td>11</td><td>+</td><td>They both may be called deep and profound.</td></tr>
-<tr><td></td><td>12</td><td>+</td><td>Deeper and more profound,</td></tr>
-<tr><td></td><td>13</td><td>+</td><td>The door of all subtleties!</td></tr>
-</table>
-<br/>
-<table>
-<tr class='del'><td>    1</td><td>The Way that can be told of is not the eternal Way;            </td><td>-</td><td>     </td><td>                                                               </td></tr>
-<tr class='del'><td>    2</td><td>The name that can be named is not the eternal name.            </td><td>-</td><td>     </td><td>                                                               </td></tr>
-<tr class='sam'><td>    3</td><td>The Nameless is the origin of Heaven and Earth;                </td><td> </td><td>    1</td><td>The Nameless is the origin of Heaven and Earth;                </td></tr>
-<tr class='mod'><td>    4</td><td>The Named is the mother of all things.                         </td><td>|</td><td>    2</td><td>The named is the mother of all things.                         </td></tr>
-<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>    3</td><td>                                                               </td></tr>
-<tr class='sam'><td>    5</td><td>Therefore let there always be non-being,                       </td><td> </td><td>    4</td><td>Therefore let there always be non-being,                       </td></tr>
-<tr class='sam'><td>    6</td><td>  so we may see their subtlety,                                </td><td> </td><td>    5</td><td>  so we may see their subtlety,                                </td></tr>
-<tr class='sam'><td>    7</td><td>And let there always be being,                                 </td><td> </td><td>    6</td><td>And let there always be being,                                 </td></tr>
-<tr class='sam'><td>    9</td><td>The two are the same,                                          </td><td> </td><td>    8</td><td>The two are the same,                                          </td></tr>
-<tr class='sam'><td>   10</td><td>But after they are produced,                                   </td><td> </td><td>    9</td><td>But after they are produced,                                   </td></tr>
-<tr class='sam'><td>   11</td><td>  they have different names.                                   </td><td> </td><td>   10</td><td>  they have different names.                                   </td></tr>
-<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   11</td><td>They both may be called deep and profound.                     </td></tr>
-<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   12</td><td>Deeper and more profound,                                      </td></tr>
-<tr class='add'><td>     </td><td>                                                               </td><td>+</td><td>   13</td><td>The door of all subtleties!                                    </td></tr>
+<table class="xx">
+<tr><td/><td> --- lao	2024-12-13 15:38:02                                            </td><td/><td/><td/></tr>
+<tr><td/><td> +++ tzu	2024-12-11 20:08:39                                            </td><td/><td/><td/></tr>
+<tr class="hunk_separator_pre"><td> </td><td/><td/><td/><td/></tr>
+<tr><td/><td>@@ -1,7 +1,6 @@                                                       </td><td/><td/><td/></tr>
+<tr><td> </td><td/><td/><td/><td/></tr>
+<tr class='del'><td class='ln_old'>    1</td><td>The Way that can be told of is not the eternal Way;                   </td><td>-</td><td class='ln_new'>     </td><td>                                                                      </td></tr>
+<tr class='del'><td class='ln_old'>    2</td><td>The name that can be named is not the eternal name.                   </td><td>-</td><td class='ln_new'>     </td><td>                                                                      </td></tr>
+<tr class='sam'><td class='ln_old'>    3</td><td>The Nameless is the origin of Heaven and Earth;                       </td><td> </td><td class='ln_new'>    1</td><td>The Nameless is the origin of Heaven and Earth;                       </td></tr>
+<tr class='mod'><td class='ln_old'>    4</td><td>The Named is the mother of all things.                                </td><td>|</td><td class='ln_new'>    2</td><td>The named is the mother of all things.                                </td></tr>
+<tr class='sam'><td class='ln_old'>    5</td><td>Therefore let there always be non-being,                              </td><td> </td><td class='ln_new'>    4</td><td>Therefore let there always be non-being,                              </td></tr>
+<tr class='sam'><td class='ln_old'>    6</td><td>  so we may see their subtlety,                                       </td><td> </td><td class='ln_new'>    5</td><td>  so we may see their subtlety,                                       </td></tr>
+<tr class='sam'><td class='ln_old'>    7</td><td>And let there always be being,                                        </td><td> </td><td class='ln_new'>    6</td><td>And let there always be being,                                        </td></tr>
+<tr class="hunk_separator_pre"><td> </td><td/><td/><td/><td/></tr>
+<tr><td/><td>@@ -9,3 +8,6 @@                                                       </td><td/><td/><td/></tr>
+<tr><td> </td><td/><td/><td/><td/></tr>
+<tr class='sam'><td class='ln_old'>    9</td><td>The two are the same,                                                 </td><td> </td><td class='ln_new'>    8</td><td>The two are the same,                                                 </td></tr>
+<tr class='sam'><td class='ln_old'>   10</td><td>But after they are produced,                                          </td><td> </td><td class='ln_new'>    9</td><td>But after they are produced,                                          </td></tr>
+<tr class='sam'><td class='ln_old'>   11</td><td>  they have different names.                                          </td><td> </td><td class='ln_new'>   10</td><td>  they have different names.                                          </td></tr>
+<tr class='add'><td class='ln_old'>     </td><td>                                                                      </td><td>+</td><td class='ln_new'>   11</td><td>They both may be called deep and profound.                            </td></tr>
+<tr class='add'><td class='ln_old'>     </td><td>                                                                      </td><td>+</td><td class='ln_new'>   12</td><td>Deeper and more profound,                                             </td></tr>
+<tr class='add'><td class='ln_old'>     </td><td>                                                                      </td><td>+</td><td class='ln_new'>   13</td><td>The door of all subtleties!                                           </td></tr>
 </table>
