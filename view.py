@@ -135,11 +135,11 @@ def render(ln_old, s_old, mark, ln_new=None, s_new=None):
             if mark == ' ':
                 c = ''
             elif mark == MARK_ADD:
-                c = color.On_Green
+                c = color.Green
             elif mark == MARK_DEL:
-                c = color.On_Red
+                c = color.Red
             elif mark == MARK_MOD:
-                c = color.On_Yellow
+                c = color.Yellow
             else:
                 c = ''
 
