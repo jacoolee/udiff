@@ -71,7 +71,7 @@ def render_diff_header(l):
     global g_is_first_diff_header_printed
     if g_is_first_diff_header_printed:
         if option_render_txt:
-            print '\n', color.On_Green, l, color.Color_Off
+            print color.On_Green, l, color.Color_Off
         elif option_render_html:
             print '<tr><td> </td><td/><td/><td/><td/></tr>'
             print '<tr class="diff_header"><td/><td>%s</td><td/><td/><td/></tr>'%(_fls(l))
@@ -90,7 +90,7 @@ def render_diff_header(l):
 def render_file_header(l):
     if option_render_txt:
         if l.startswith('---'):
-            print '\n', l
+            print l
         else:
             print l
     elif option_render_html:
@@ -112,17 +112,12 @@ def render_hunk_separator(op):
             color.Color_Off
         )
 
-        print
         print '@@ -%d,%s +%d,%s @@'%(ln_old, start_count or '', ln_new, end_count or ''),\
-            color.Color_Off,\
-            '\n'
+            color.Color_Off
 
     elif option_render_html:
-        print '<tr class="hunk_separator_pre"><td> </td><td/><td/><td/><td/></tr>'
-        print '<tr class="hunk_separator_post"><td> </td><td/><td/><td/><td/></tr>'
         l = '@@ -%d,%s +%d,%s @@'%(ln_old, start_count or '', ln_new, end_count or '')
-        print "<tr><td/><td>%s</td><td/><td/><td/></tr>"%(_fls(l))
-        print '<tr><td> </td><td/><td/><td/><td/></tr>'
+        print "<tr class='hunk_head'><td/><td>%s</td><td/><td/><td/></tr>"%(_fls(l))
 
     else:
         pass
@@ -271,7 +266,7 @@ def render(ln_old, s_old, mark, ln_new=None, s_new=None):
                 tr_cls,
                 _fli(ln_old if i==0 else None),
                 ol,
-                mark,
+                '', # mark,
                 _fli(ln_new if i==0 else None),
                 nl
             )
@@ -381,10 +376,9 @@ if option_render_html:
     print """
 <style>
 table {border-collapse: collapse; -webkit-border-horizontal-spacing: 0; -webkit-border-vertical-spacing: 0; font-family: monospace; cursor: default; }
-td {white-space: pre; padding-left: 5px; border-bottom: solid 1px transparent; }
-tr:hover > td { border-bottom: solid 1px black; }
+td {white-space: pre; padding-left: 5px;}
 .diff_header { background-color: green; color: white;}
-.hunk_separator_pre:hover > td, .hunk_separator_pre > td { border-bottom: solid 1px blue; }
+tr.hunk_head > td { border-top: solid 1px blue; }
 .ln_old,.ln_new {color: gray};
 .type-mark {display: none; }
 .mod {color: goldenrod; }
