@@ -102,18 +102,24 @@ def render_file_header(l):
 def render_hunk_separator(op):
     _, ln_old, ln_new, start_count, end_count = op
     if option_render_txt:
-        print \
-            color.Blue if option_color else color.White, \
-            '_'*((option_width+5)*2), \
-            color.Color_Off, \
-            '\n\n',\
-            color.Blue if option_color else color.White,\
-            '@@ -%d,%s +%d,%s @@'%(ln_old, start_count or '', ln_new, end_count or ''),\
+        c = color.Blue
+        # KEY: use same format as diff line
+        print '%s%s%s_%s%s%s_%s_%s%s%s_%s%s%s'%(
+            c,
+            c, '_____', c, c, _fls('_'*1000),
+            '_',
+            c,  '_____', c, c, _fls('_'*1000),
+            color.Color_Off
+        )
+
+        print
+        print '@@ -%d,%s +%d,%s @@'%(ln_old, start_count or '', ln_new, end_count or ''),\
             color.Color_Off,\
             '\n'
 
     elif option_render_html:
         print '<tr class="hunk_separator_pre"><td> </td><td/><td/><td/><td/></tr>'
+        print '<tr class="hunk_separator_post"><td> </td><td/><td/><td/><td/></tr>'
         l = '@@ -%d,%s +%d,%s @@'%(ln_old, start_count or '', ln_new, end_count or '')
         print "<tr><td/><td>%s</td><td/><td/><td/></tr>"%(_fls(l))
         print '<tr><td> </td><td/><td/><td/><td/></tr>'
@@ -296,7 +302,7 @@ ln_new_last = 0
 if option_render_html:
     print """
 <style>
-table {-webkit-border-horizontal-spacing: 0; -webkit-border-vertical-spacing: 0; font-family: monospace; cursor: default; }
+table {border-collapse: collapse; -webkit-border-horizontal-spacing: 0; -webkit-border-vertical-spacing: 0; font-family: monospace; cursor: default; }
 td {white-space: pre; padding-left: 5px; border-bottom: solid 1px transparent; }
 tr:hover > td { border-bottom: solid 1px black; }
 .diff_header { background-color: green; color: white;}
