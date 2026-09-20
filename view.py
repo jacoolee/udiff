@@ -103,15 +103,13 @@ def render_hunk_separator(op):
     _, ln_old, ln_new, start_count, end_count = op
     if option_render_txt:
         print \
-            color.UBlue if option_color else color.UWhite, \
-            _fli(None), _fls(' '*1000), \
-            ' ', \
-            _fli(None), _fls(' '*1000), \
+            color.Blue,\
+            '_'*((option_width+5)*2), \
             color.Color_Off, \
-            '\n\n', \
-            color.Blue if option_color else color.White, \
-            '@@ -%d,%s +%d,%s @@'%(ln_old, start_count or '', ln_new, end_count or ''), \
-            color.Color_Off, \
+            '\n\n',\
+            color.Blue if option_color else color.White,\
+            '@@ -%d,%s +%d,%s @@'%(ln_old, start_count or '', ln_new, end_count or ''),\
+            color.Color_Off,\
             '\n'
 
     elif option_render_html:
