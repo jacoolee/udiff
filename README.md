@@ -50,3 +50,7 @@ Check out [./example](./example)
 ## Recommands
 
 [https://github.com/ymattw/ydiff](https://github.com/ymattw/ydiff)
+
+## Issue
+
+The algorithm is not standard for both Pass 1 and Pass 2.
