@@ -1,5 +1,16 @@
 # Udiff - View diff content side by side
 
+![](./screenshots/terminal.png)
+
+![](./screenshots/html.png)
+
+```
+~/github/jacoolee/udiff $ udiff 36531bd f8e784f
+~/github/jacoolee/udiff $ ENV_HTML=1 udiff 36531bd f8e784f > /tmp/x.html; open /tmp/x.html
+```
+
+---
+
 ## Run directly
 
 ```
