@@ -71,7 +71,7 @@ def render_diff_header(l):
     global g_is_first_diff_header_printed
     if g_is_first_diff_header_printed:
         if option_render_txt:
-            print color.On_Green, l, color.Color_Off
+            print '\n', color.On_Green, l, color.Color_Off
         elif option_render_html:
             print '<tr><td> </td><td/><td/><td/><td/></tr>'
             print '<tr class="diff_header"><td/><td>%s</td><td/><td/><td/></tr>'%(_fls(l))
