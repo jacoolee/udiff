@@ -103,7 +103,7 @@ def render_hunk_separator(op):
     _, ln_old, ln_new, start_count, end_count = op
     if option_render_txt:
         print \
-            color.Blue,\
+            color.Blue if option_color else color.White, \
             '_'*((option_width+5)*2), \
             color.Color_Off, \
             '\n\n',\
