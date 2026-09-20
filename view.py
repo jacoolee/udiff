@@ -127,6 +127,68 @@ def render_hunk_separator(op):
     else:
         pass
 
+# TODO [2026-09-20 20:49:52]: line_diff_by_token
+
+def line_diff_by_char(ol, lenol, nl, lennl, c=''):
+    _ol = ''
+    _nl = ''
+    pretext_same=True
+    li=0
+    i=0
+
+    length = min(lenol, lennl)
+
+    while i<length:
+        if ol[i] == nl[i]:
+            if pretext_same:
+                i += 1
+                pretext_same=True
+            else:               # unsame to same (idx:i)
+                if option_render_html:
+                    _ol += html_escape(ol[li:i])+'</span>'
+                    _nl += html_escape(nl[li:i])+'</span>'
+                else:
+                    _ol += ol[li:i]+c
+                    _nl += nl[li:i]+c
+
+                li=i
+
+                i += 1
+                pretext_same=True
+        else:
+            if pretext_same:    # same to unsame (idx:i)
+                if option_render_html:
+                    _ol += html_escape(ol[li:i])+'<span class="char_old">'
+                    _nl += html_escape(nl[li:i])+'<span class="char_new">'
+                else:
+                    _ol += ol[li:i]+color.Black+ ''+color.On_Red
+                    _nl += nl[li:i]+color.Black+''+color.On_Green
+
+                li=i
+
+                i += 1
+                pretext_same=False
+            else:
+                i += 1
+                pretext_same=False
+
+    if li != i:
+        if option_render_html:
+            _ol += html_escape(ol[li:i])+'</span>'
+            _nl += html_escape(nl[li:i])+'</span>'
+        else:
+            _ol += ol[li:i]+c
+            _nl += nl[li:i]+c
+
+    if option_render_html:
+        _ol += html_escape(ol[i:])
+        _nl += html_escape(nl[i:])
+    else:
+        _ol += ol[i:]
+        _nl += nl[i:]
+
+    return _ol, _nl
+
 def render(ln_old, s_old, mark, ln_new=None, s_new=None):
     if option_render_json:
         global json_list
@@ -149,20 +211,28 @@ def render(ln_old, s_old, mark, ln_new=None, s_new=None):
             s_old = s_old or ''
             s_new = s_new or ''
 
-            t = max(len(s_old), len(s_new))
+            # at lest '1' loop turn to ensure empty line get chance to show
+            t = max(len(s_old), len(s_new), 1)
             i = 0
 
             while i < t:
                 i_ = i+option_width
 
                 # TODO [2026-09-20 17:57:01]: apply color to s_old and s_new diff parts
+                if not option_color:
+                    ol = s_old[i:i_]
+                    nl = s_new[i:i_]
+                else:
+                    _o = s_old[i:i_]
+                    _n = s_new[i:i_]
+                    ol, nl = line_diff_by_char(_fls(_o), len(_o), _fls(_n), len(_n), c)
 
                 print '%s%s%s %s%s%s %s %s%s%s %s%s%s'%(
-                    c,
-                    color.Blue, _fli(ln_old if i==0 else None), color.Color_Off, c, _fls(s_old[i:i_]),
+                    c, color.Blue, _fli(ln_old if i==0 else None),
+                    color.Color_Off, c, ol,
                     ' ',
-                    color.Blue,  _fli(ln_new if i==0 else None), color.Color_Off, c, _fls(s_new[i:i_]),
-                    color.Color_Off
+                    color.Blue,  _fli(ln_new if i==0 else None), color.Color_Off,
+                    c, nl, color.Color_Off
                 )
                 i = i_
 
@@ -187,18 +257,23 @@ def render(ln_old, s_old, mark, ln_new=None, s_new=None):
         s_old = s_old or ''
         s_new = s_new or ''
 
-        t = max(len(s_old), len(s_new))
+        t = max(len(s_old), len(s_new), 1)
         i = 0
 
         while i < t:
             i_ = i+option_width
+
+            _o = s_old[i:i_]
+            _n = s_new[i:i_]
+            ol, nl = line_diff_by_char(_fls(_o), len(_o), _fls(_n), len(_n))
+
             print "<tr class='%s'><td class='ln_old'>%s</td><td>%s</td><td>%s</td><td class='ln_new'>%s</td><td>%s</td></tr>"%(
                 tr_cls,
                 _fli(ln_old if i==0 else None),
-                html_escape(_fls(s_old[i:i_])),
+                ol,
                 mark,
                 _fli(ln_new if i==0 else None),
-                html_escape(_fls(s_new[i:i_]))
+                nl
             )
             i = i_
 
@@ -316,6 +391,8 @@ tr:hover > td { border-bottom: solid 1px black; }
 .del {color: red;}
 .sam {}
 .add {color: green;}
+.char_old {background-color: red; color: black;}
+.char_new {background-color: lightgreen; color: black;}
 </style>
 """
 
