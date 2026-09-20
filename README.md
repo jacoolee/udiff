@@ -53,4 +53,4 @@ Check out [./example](./example)
 
 ## Issue
 
-The algorithm is not standard for both Pass 1 and Pass 2.
+The algorithm is not standard for both Pass 1 and Pass 2. It's used by raw comparing.
