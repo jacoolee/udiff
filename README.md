@@ -1,11 +1,37 @@
+# Udiff - View diff content side by side
+
+## Run directly
+
 ```
-# run directly
-./udiff
+$ ./udiff
+```
 
-# put udiff directoy path in $PATH, then run anywhere:
-udiff
+## Put udiff directoy path in $PATH
 
-# use aliases in .bashrc (.bash_profile)
+```
+$ export PATH=$PATH:{YOUR_UDIFF_DIRECTORY_PATH}
+$ udiff
+```
+
+## Use aliases in ~/.bashrc
+
+```
 alias d=udiff
-alias D='ENV_HTML=1 udiff > /tmp/__x.html; open /tmp/__x.html'
+alias D='ENV_HTML=1 udiff > /tmp/x.html; open /tmp/x.html'
 ```
+
+## View git log
+
+```
+$ git log
+COMMIT_ID_C hello
+COMMIT_ID_B some modify here
+COMMIT_ID_A init
+
+$ udiff COMMIT_ID_A COMMIT_ID_B
+$ ENV_HTML=1 udiff COMMIT_ID_A COMMIT_ID_B
+```
+
+## View any diff content
+
+Check out [./example](./example)

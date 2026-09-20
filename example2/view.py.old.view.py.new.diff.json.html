@@ -1,6 +1,6 @@
 
 <style>
-table {-webkit-border-horizontal-spacing: 0; -webkit-border-vertical-spacing: 0; font-family: monospace; cursor: default; }
+table {border-collapse: collapse; -webkit-border-horizontal-spacing: 0; -webkit-border-vertical-spacing: 0; font-family: monospace; cursor: default; }
 td {white-space: pre; padding-left: 5px; border-bottom: solid 1px transparent; }
 tr:hover > td { border-bottom: solid 1px black; }
 .diff_header { background-color: green; color: white;}
@@ -17,6 +17,7 @@ tr:hover > td { border-bottom: solid 1px black; }
 <tr><td/><td> --- view.py.old	2024-12-13 15:51:53                                    </td><td/><td/><td/></tr>
 <tr><td/><td> +++ view.py.new	2024-12-13 15:52:04                                    </td><td/><td/><td/></tr>
 <tr class="hunk_separator_pre"><td> </td><td/><td/><td/><td/></tr>
+<tr class="hunk_separator_post"><td> </td><td/><td/><td/><td/></tr>
 <tr><td/><td>@@ -1,25 +1,82 @@                                                     </td><td/><td/><td/></tr>
 <tr><td> </td><td/><td/><td/><td/></tr>
 <tr class='sam'><td class='ln_old'>    1</td><td>#! /usr/bin/env python                                                </td><td> </td><td class='ln_new'>    1</td><td>#! /usr/bin/env python                                                </td></tr>
@@ -98,6 +99,7 @@ tr:hover > td { border-bottom: solid 1px black; }
 <tr class='sam'><td class='ln_old'>   24</td><td>    if i.startswith(&#39-&#39):                                             </td><td> </td><td class='ln_new'>   81</td><td>    if i.startswith(&#39-&#39):                                             </td></tr>
 <tr class='sam'><td class='ln_old'>   25</td><td>        if i == &#39--html&#39:                                             </td><td> </td><td class='ln_new'>   82</td><td>        if i == &#39--html&#39:                                             </td></tr>
 <tr class="hunk_separator_pre"><td> </td><td/><td/><td/><td/></tr>
+<tr class="hunk_separator_post"><td> </td><td/><td/><td/><td/></tr>
 <tr><td/><td>@@ -29,46 +86,46 @@                                                   </td><td/><td/><td/></tr>
 <tr><td> </td><td/><td/><td/><td/></tr>
 <tr class='sam'><td class='ln_old'>   29</td><td>        else:                                                         </td><td> </td><td class='ln_new'>   86</td><td>        else:                                                         </td></tr>
@@ -150,6 +152,7 @@ tr:hover > td { border-bottom: solid 1px black; }
 <tr class='sam'><td class='ln_old'>   73</td><td>.mod {background-color: yellow; color: black; }                       </td><td> </td><td class='ln_new'>  130</td><td>.mod {background-color: yellow; color: black; }                       </td></tr>
 <tr class='sam'><td class='ln_old'>   74</td><td>.del {background-color: red; color: white;}                           </td><td> </td><td class='ln_new'>  131</td><td>.del {background-color: red; color: white;}                           </td></tr>
 <tr class="hunk_separator_pre"><td> </td><td/><td/><td/><td/></tr>
+<tr class="hunk_separator_post"><td> </td><td/><td/><td/><td/></tr>
 <tr><td/><td>@@ -76,129 +133,171 @@                                                </td><td/><td/><td/></tr>
 <tr><td> </td><td/><td/><td/><td/></tr>
 <tr class='sam'><td class='ln_old'>   76</td><td>.add {background-color: green; color: white;}                         </td><td> </td><td class='ln_new'>  133</td><td>.add {background-color: green; color: white;}                         </td></tr>
