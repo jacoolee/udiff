@@ -46,3 +46,7 @@ $ ENV_HTML=1 udiff COMMIT_ID_A COMMIT_ID_B
 ## View any diff content
 
 Check out [./example](./example)
+
+## Recommands
+
+[https://github.com/ymattw/ydiff](https://github.com/ymattw/ydiff)
