@@ -154,6 +154,9 @@ def render(ln_old, s_old, mark, ln_new=None, s_new=None):
 
             while i < t:
                 i_ = i+option_width
+
+                # TODO [2026-09-20 17:57:01]: apply color to s_old and s_new diff parts
+
                 print '%s%s%s %s%s%s %s %s%s%s %s%s%s'%(
                     c,
                     color.Blue, _fli(ln_old if i==0 else None), color.Color_Off, c, _fls(s_old[i:i_]),
