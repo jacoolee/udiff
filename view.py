@@ -10,7 +10,218 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 import json
-import color
+
+# Reset
+Color_Off='\033[0m'       # Text Reset
+
+# Regular Colors
+Black='\033[0;30m'        # Black
+Red='\033[0;31m'          # Red
+Green='\033[0;32m'        # Green
+Yellow='\033[0;33m'       # Yellow
+Blue='\033[0;34m'         # Blue
+Purple='\033[0;35m'       # Purple
+Cyan='\033[0;36m'         # Cyan
+White='\033[0;37m'        # White
+
+# Bold
+BBlack='\033[1;30m'       # Black
+BRed='\033[1;31m'         # Red
+BGreen='\033[1;32m'       # Green
+BYellow='\033[1;33m'      # Yellow
+BBlue='\033[1;34m'        # Blue
+BPurple='\033[1;35m'      # Purple
+BCyan='\033[1;36m'        # Cyan
+BWhite='\033[1;37m'       # White
+
+# Underline
+UBlack='\033[4;30m'       # Black
+URed='\033[4;31m'         # Red
+UGreen='\033[4;32m'       # Green
+UYellow='\033[4;33m'      # Yellow
+UBlue='\033[4;34m'        # Blue
+UPurple='\033[4;35m'      # Purple
+UCyan='\033[4;36m'        # Cyan
+UWhite='\033[4;37m'       # White
+
+# Background
+On_Black='\033[40m'       # Black
+On_Red='\033[41m'         # Red
+On_Green='\033[42m'       # Green
+On_Yellow='\033[43m'      # Yellow
+On_Blue='\033[44m'        # Blue
+On_Purple='\033[45m'      # Purple
+On_Cyan='\033[46m'        # Cyan
+On_White='\033[47m'       # White
+
+# High Intensity
+IBlack='\033[0;90m'       # Black
+IRed='\033[0;91m'         # Red
+IGreen='\033[0;92m'       # Green
+IYellow='\033[0;93m'      # Yellow
+IBlue='\033[0;94m'        # Blue
+IPurple='\033[0;95m'      # Purple
+ICyan='\033[0;96m'        # Cyan
+IWhite='\033[0;97m'       # White
+
+# Bold High Intensity
+BIBlack='\033[1;90m'      # Black
+BIRed='\033[1;91m'        # Red
+BIGreen='\033[1;92m'      # Green
+BIYellow='\033[1;93m'     # Yellow
+BIBlue='\033[1;94m'       # Blue
+BIPurple='\033[1;95m'     # Purple
+BICyan='\033[1;96m'       # Cyan
+BIWhite='\033[1;97m'      # White
+
+# High Intensity backgrounds
+On_IBlack='\033[0;100m'   # Black
+On_IRed='\033[0;101m'     # Red
+On_IGreen='\033[0;102m'   # Green
+On_IYellow='\033[0;103m'  # Yellow
+On_IBlue='\033[0;104m'    # Blue
+On_IPurple='\033[0;105m'  # Purple
+On_ICyan='\033[0;106m'    # Cyan
+On_IWhite='\033[0;107m'   # White
+
+def clear_color():
+    # Reset
+    global Color_Off
+    Color_Off=''       # Text Reset
+
+    # Regular Colors
+    global Black        # Black
+    global Red          # Red
+    global Green        # Green
+    global Yellow       # Yellow
+    global Blue         # Blue
+    global Purple       # Purple
+    global Cyan         # Cyan
+    global White        # White
+
+    Black=''        # Black
+    Red=''          # Red
+    Green=''        # Green
+    Yellow=''       # Yellow
+    Blue=''         # Blue
+    Purple=''       # Purple
+    Cyan=''         # Cyan
+    White=''        # White
+
+    # Bold
+    global BBlack       # Black
+    global BRed         # Red
+    global BGreen       # Green
+    global BYellow      # Yellow
+    global BBlue        # Blue
+    global BPurple      # Purple
+    global BCyan        # Cyan
+    global BWhite       # White
+
+    BBlack=''       # Black
+    BRed=''         # Red
+    BGreen=''       # Green
+    BYellow=''      # Yellow
+    BBlue=''        # Blue
+    BPurple=''      # Purple
+    BCyan=''        # Cyan
+    BWhite=''       # White
+
+    # Underline
+    global UBlack       # Black
+    global URed         # Red
+    global UGreen       # Green
+    global UYellow      # Yellow
+    global UBlue        # Blue
+    global UPurple      # Purple
+    global UCyan        # Cyan
+    global UWhite       # White
+
+    UBlack=''       # Black
+    URed=''         # Red
+    UGreen=''       # Green
+    UYellow=''      # Yellow
+    UBlue=''        # Blue
+    UPurple=''      # Purple
+    UCyan=''        # Cyan
+    UWhite=''       # White
+
+    # Background
+    global On_Black       # Black
+    global On_Red         # Red
+    global On_Green       # Green
+    global On_Yellow      # Yellow
+    global On_Blue        # Blue
+    global On_Purple      # Purple
+    global On_Cyan        # Cyan
+    global On_White       # White
+
+    On_Black=''       # Black
+    On_Red=''         # Red
+    On_Green=''       # Green
+    On_Yellow=''      # Yellow
+    On_Blue=''        # Blue
+    On_Purple=''      # Purple
+    On_Cyan=''        # Cyan
+    On_White=''       # White
+
+    # High Intensity
+    global IBlack       # Black
+    global IRed         # Red
+    global IGreen       # Green
+    global IYellow      # Yellow
+    global IBlue        # Blue
+    global IPurple      # Purple
+    global ICyan        # Cyan
+    global IWhite       # White
+
+    IBlack=''       # Black
+    IRed=''         # Red
+    IGreen=''       # Green
+    IYellow=''      # Yellow
+    IBlue=''        # Blue
+    IPurple=''      # Purple
+    ICyan=''        # Cyan
+    IWhite=''       # White
+
+    # Bold High Intensity
+    global BIBlack      # Black
+    global BIRed        # Red
+    global BIGreen      # Green
+    global BIYellow     # Yellow
+    global BIBlue       # Blue
+    global BIPurple     # Purple
+    global BICyan       # Cyan
+    global BIWhite      # White
+
+    BIBlack=''      # Black
+    BIRed=''        # Red
+    BIGreen=''      # Green
+    BIYellow=''     # Yellow
+    BIBlue=''       # Blue
+    BIPurple=''     # Purple
+    BICyan=''       # Cyan
+    BIWhite=''      # White
+
+    # High Intensity backgrounds
+    global On_IBlack   # Black
+    global On_IRed     # Red
+    global On_IGreen   # Green
+    global On_IYellow  # Yellow
+    global On_IBlue    # Blue
+    global On_IPurple  # Purple
+    global On_ICyan    # Cyan
+    global On_IWhite   # White
+
+    On_IBlack=''   # Black
+    On_IRed=''     # Red
+    On_IGreen=''   # Green
+    On_IYellow=''  # Yellow
+    On_IBlue=''    # Blue
+    On_IPurple=''  # Purple
+    On_ICyan=''    # Cyan
+    On_IWhite=''   # White
+
 
 def usage():
     print __file__, "[diff_json_file|-] [--all|-a old_file] [--html|-l] [--txt|-t] [--json|-j] [--color|-c] [--width|-w width]"
@@ -71,7 +282,7 @@ def render_diff_header(l):
     global g_is_first_diff_header_printed
     if g_is_first_diff_header_printed:
         if option_render_txt:
-            print "%s%s%s%s"%('\n', color.On_Green, l, color.Color_Off)
+            print "%s%s%s%s"%('\n', On_Green, l, Color_Off)
         elif option_render_html:
             print '<tr><td> </td><td/><td/><td/><td/></tr>'
             print '<tr class="diff_header"><td/><td>%s</td><td/><td/><td/></tr>'%(_fls(l))
@@ -79,7 +290,7 @@ def render_diff_header(l):
             pass
     else:
         if option_render_txt:
-            print "%s%s%s"%(color.On_Green, l, color.Color_Off)
+            print "%s%s%s"%(On_Green, l, Color_Off)
         elif option_render_html:
             print '<tr class="diff_header"><td/><td>%s</td><td/><td/><td/></tr>'%(_fls(l))
         else:
@@ -102,17 +313,17 @@ def render_file_header(l):
 def render_hunk_separator(op):
     _, ln_old, ln_new, start_count, end_count = op
     if option_render_txt:
-        c = color.Blue
+        c = Blue
         # KEY: use same format as diff line
         print '%s%s%s_%s%s%s%s%s%s%s%s%s%s'%(
             c,
             c, '_____', c, c, _fls('_'*1000),
             '_',
             c,  '_____', c, c, _fls('_'*1000),
-            color.Color_Off
+            Color_Off
         )
 
-        print '@@ -%d,%s +%d,%s @@%s'%(ln_old, start_count or '', ln_new, end_count or '', color.Color_Off)
+        print '@@ -%d,%s +%d,%s @@%s'%(ln_old, start_count or '', ln_new, end_count or '', Color_Off)
 
     elif option_render_html:
         l = '@@ -%d,%s +%d,%s @@'%(ln_old, start_count or '', ln_new, end_count or '')
@@ -155,8 +366,8 @@ def line_diff_by_char(ol, lenol, nl, lennl, c=''):
                     _ol += html_escape(ol[li:i])+'<span class="char_old">'
                     _nl += html_escape(nl[li:i])+'<span class="char_new">'
                 else:
-                    _ol += ol[li:i]+color.Black+ ''+color.On_Red
-                    _nl += nl[li:i]+color.Black+''+color.On_Green
+                    _ol += ol[li:i]+Black+ ''+On_Red
+                    _nl += nl[li:i]+Black+''+On_Green
 
                 li=i
 
@@ -189,55 +400,50 @@ def render(ln_old, s_old, mark, ln_new=None, s_new=None):
         json_list.append([mark, ln_old, s_old, ln_new, s_new])
 
     elif option_render_txt:
-        if option_color:
 
-            if mark == ' ':
-                c = ''
-            elif mark == MARK_ADD:
-                c = color.Green
-            elif mark == MARK_DEL:
-                c = color.Red
-            elif mark == MARK_MOD:
-                c = color.Yellow
-            else:
-                c = ''
-
-            s_old = s_old or ''
-            s_new = s_new or ''
-
-            # at lest '1' loop turn to ensure empty line get chance to show
-            t = max(len(s_old), len(s_new), 1)
-            i = 0
-
-            while i < t:
-                i_ = i+option_width
-
-                # TODO [2026-09-20 17:57:01]: apply color to s_old and s_new diff parts
-                if not option_color:
-                    ol = s_old[i:i_]
-                    nl = s_new[i:i_]
-                else:
-                    _o = s_old[i:i_]
-                    _n = s_new[i:i_]
-                    ol, nl = line_diff_by_char(_fls(_o), len(_o), _n, len(_n), c)
-
-                print '%s%s%s %s%s%s%s%s%s%s%s%s%s'%(
-                    c, color.Blue, _fli(ln_old if i==0 else None),
-                    color.Color_Off, c, ol,
-                    '\u200B',
-                    color.Blue,  _fli(ln_new if i==0 else None) if ln_new else '', color.Color_Off,
-                    c,
-                    ' '+nl if nl else nl,
-                    color.Color_Off
-                )
-                i = i_
-
+        if mark == ' ':
+            c = ''
+        elif mark == MARK_ADD:
+            c = Green
+        elif mark == MARK_DEL:
+            c = Red
+        elif mark == MARK_MOD:
+            c = Yellow
         else:
-            print '%s %s%s%s%s'%(
-                _fli(ln_old), _fls(s_old) if ln_new else s_old,
-                ' '+mark if mark else mark,
-                ' '+_fli(ln_new) if ln_new else '',
-                ' '+s_new if s_new else '')
+            c = ''
+
+        s_old = s_old or ''
+        s_new = s_new or ''
+
+        # at lest '1' loop turn to ensure empty line get chance to show
+        t = max(len(s_old), len(s_new), 1)
+        i = 0
+
+        while i < t:
+            i_ = i+option_width
+
+            # TODO [2026-09-20 17:57:01]: apply color to s_old and s_new diff parts
+            _o = s_old[i:i_]
+            _n = s_new[i:i_]
+            ol, nl = line_diff_by_char(_fls(_o), len(_o), _n, len(_n), c)
+
+            print '%s%s%s%s %s%s%s%s%s%s%s%s%s%s'%(
+                '' if option_color else mark+' ',
+                c,
+                Blue,
+                _fli(ln_old if i==0 else None),
+                Color_Off,
+                c,
+                ol,
+                '\u200B',       # do no show tailing spaces
+                Blue,
+                _fli(ln_new if i==0 else None) if ln_new else '',
+                Color_Off,
+                c,
+                ' '+nl if nl else nl,
+                Color_Off
+            )
+            i = i_
 
     elif option_render_html:
         if mark == ' ':
@@ -313,6 +519,7 @@ while idx < len(sys.argv):
             option_color = True
         elif i == '--no-color' or i == '-C':
             option_color = False
+            clear_color()
         elif i == '--all' or i == '-a':
             try:
                 old_file = sys.argv[idx+1]
