@@ -1,0 +1,6 @@
+udiff_root=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
+
+PATH=$PATH:$udiff_root
+
+alias d=udiff
+alias D='ENV_HTML=1 udiff > /tmp/udiff.output.html; open /tmp/udiff.output.html'
