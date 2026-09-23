@@ -430,13 +430,13 @@ def render(ln_old, s_old, mark, ln_new=None, s_new=None):
             print '%s%s%s%s %s%s%s%s%s%s%s%s%s%s'%(
                 '' if option_color else mark+' ',
                 c,
-                Blue,
+                c,
                 _fli(ln_old if i==0 else None),
                 Color_Off,
                 c,
                 ol,
                 '\u200B',       # do no show tailing spaces
-                Blue,
+                c,
                 _fli(ln_new if i==0 else None) if ln_new else '',
                 Color_Off,
                 c,
