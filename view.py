@@ -394,7 +394,7 @@ def line_diff_by_char(ol, lenol, nl, lennl, c=''):
 
     return _ol, _nl
 
-def render(ln_old, s_old, mark, ln_new=None, s_new=None):
+def render_line(ln_old, s_old, mark, ln_new=None, s_new=None):
     if option_render_json:
         global json_list
         json_list.append([mark, ln_old, s_old, ln_new, s_new])
@@ -619,7 +619,7 @@ if old_file:
     if total == 0:
         for i in xrange(1, ln_old_total+1):
             l = l_map[i]
-            render(i, l, MARK_SAME, i, l)
+            render_line(i, l, MARK_SAME, i, l)
 
         if option_render_html:
             print '</table></html>'
@@ -635,7 +635,7 @@ while idx < total:
             for i in xrange(int(ln_old_last+1), int(ln_old)):
                 n += 1
                 l = l_map[i]
-                render(ln_old_last+n, l, MARK_SAME, ln_new_last + n, l)
+                render_line(ln_old_last+n, l, MARK_SAME, ln_new_last + n, l)
 
         else:
             render_hunk_separator(op)
@@ -678,7 +678,7 @@ while idx < total:
                 if _lno: ln_old_last = _lno
                 if _lnn: ln_new_last = _lnn
 
-                render(_lno, _l, MARK_DEL)
+                render_line(_lno, _l, MARK_DEL)
 
             idx = idx2
             continue
@@ -690,7 +690,7 @@ while idx < total:
                 if _lno: ln_old_last = _lno
                 if _lnn: ln_new_last = _lnn
 
-                render(_lno, _l, MARK_DEL)
+                render_line(_lno, _l, MARK_DEL)
 
             # go on to next round
             idx = idx2
@@ -717,7 +717,7 @@ while idx < total:
                     if _lno_l: ln_old_last = _lno_l
                     if _lnn_r: ln_new_last = _lnn_r
 
-                    render(_lno_l, _l_l, MARK_MOD, _lnn_r, _l_r)
+                    render_line(_lno_l, _l_l, MARK_MOD, _lnn_r, _l_r)
 
                 for _op in ops[idx2+n_minus:idx3]: # idx3 not cosumned
                     _typ, _lno, _lnn, _l, _ = _op
@@ -725,7 +725,7 @@ while idx < total:
                     if _lno: ln_old_last = _lno
                     if _lnn: ln_new_last = _lnn
 
-                    render(None, None, MARK_ADD, _lnn, _l)
+                    render_line(None, None, MARK_ADD, _lnn, _l)
 
                 # go on to next round
                 idx = idx3
@@ -738,7 +738,7 @@ while idx < total:
                     if _lno: ln_old_last = _lno
                     if _lnn: ln_new_last = _lnn
 
-                    render(_lno, _l, MARK_DEL)
+                    render_line(_lno, _l, MARK_DEL)
 
                 # cosume both n_plus count of '-' ops and n_minus count of '+' ops
                 _idx = idx+n_minus-n_plus
@@ -749,7 +749,7 @@ while idx < total:
                     if _lno_l: ln_old_last = _lno_l
                     if _lnn_r: ln_new_last = _lnn_r
 
-                    render(_lno_l, _l_l, MARK_MOD, _lnn_r, _l_r)
+                    render_line(_lno_l, _l_l, MARK_MOD, _lnn_r, _l_r)
 
 
                 # go on to next round
@@ -757,12 +757,12 @@ while idx < total:
                 continue
 
     if typ == 1:                # plus '+'
-        render(ln_old, None, MARK_ADD, ln_new, l)
+        render_line(ln_old, None, MARK_ADD, ln_new, l)
         idx += 1
         continue
 
     if typ == 0:                # space/same ' '
-        render(ln_old, l, MARK_SAME, ln_new, l)
+        render_line(ln_old, l, MARK_SAME, ln_new, l)
         idx += 1
         continue
 
@@ -772,7 +772,7 @@ if old_file and ln_old_last > 0:             # means have been re-assigned by 'L
     for i in xrange(ln_old_last+1, ln_old_total+1):
         n += 1
         l = l_map[i]
-        render(i, l, MARK_SAME, ln_new_last+n, l)
+        render_line(i, l, MARK_SAME, ln_new_last+n, l)
 
 if option_render_html:
     print '</table>'
