@@ -12,7 +12,7 @@ if [ ${ENV_WIDTH:-0} -ne 0 ]; then
     view_options="${view_options} --width ${ENV_WIDTH}"
 else
     w=$(tput cols)
-    ENV_WIDTH=$((w/2-8))
+    ENV_WIDTH=$((w/2-6))
     view_options="${view_options} --width ${ENV_WIDTH}"
 fi
 

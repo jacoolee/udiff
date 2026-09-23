@@ -71,7 +71,7 @@ def render_diff_header(l):
     global g_is_first_diff_header_printed
     if g_is_first_diff_header_printed:
         if option_render_txt:
-            print '\n', color.On_Green, l, color.Color_Off
+            print "%s%s%s%s"%('\n', color.On_Green, l, color.Color_Off)
         elif option_render_html:
             print '<tr><td> </td><td/><td/><td/><td/></tr>'
             print '<tr class="diff_header"><td/><td>%s</td><td/><td/><td/></tr>'%(_fls(l))
@@ -79,7 +79,7 @@ def render_diff_header(l):
             pass
     else:
         if option_render_txt:
-            print color.On_Green, l, color.Color_Off
+            print "%s%s%s"%(color.On_Green, l, color.Color_Off)
         elif option_render_html:
             print '<tr class="diff_header"><td/><td>%s</td><td/><td/><td/></tr>'%(_fls(l))
         else:
@@ -104,7 +104,7 @@ def render_hunk_separator(op):
     if option_render_txt:
         c = color.Blue
         # KEY: use same format as diff line
-        print '%s%s%s_%s%s%s_%s_%s%s%s_%s%s%s'%(
+        print '%s%s%s_%s%s%s%s%s%s%s%s%s%s'%(
             c,
             c, '_____', c, c, _fls('_'*1000),
             '_',
@@ -112,8 +112,7 @@ def render_hunk_separator(op):
             color.Color_Off
         )
 
-        print '@@ -%d,%s +%d,%s @@'%(ln_old, start_count or '', ln_new, end_count or ''),\
-            color.Color_Off
+        print '@@ -%d,%s +%d,%s @@%s'%(ln_old, start_count or '', ln_new, end_count or '', color.Color_Off)
 
     elif option_render_html:
         l = '@@ -%d,%s +%d,%s @@'%(ln_old, start_count or '', ln_new, end_count or '')
@@ -220,22 +219,25 @@ def render(ln_old, s_old, mark, ln_new=None, s_new=None):
                 else:
                     _o = s_old[i:i_]
                     _n = s_new[i:i_]
-                    ol, nl = line_diff_by_char(_fls(_o), len(_o), _fls(_n), len(_n), c)
+                    ol, nl = line_diff_by_char(_fls(_o), len(_o), _n, len(_n), c)
 
-                print '%s%s%s %s%s%s %s %s%s%s %s%s%s'%(
+                print '%s%s%s %s%s%s%s%s%s%s%s%s%s'%(
                     c, color.Blue, _fli(ln_old if i==0 else None),
                     color.Color_Off, c, ol,
-                    ' ',
-                    color.Blue,  _fli(ln_new if i==0 else None), color.Color_Off,
-                    c, nl, color.Color_Off
+                    '\u200B',
+                    color.Blue,  _fli(ln_new if i==0 else None) if ln_new else '', color.Color_Off,
+                    c,
+                    ' '+nl if nl else nl,
+                    color.Color_Off
                 )
                 i = i_
 
         else:
-            print '%s %s %s %s %s'%(
-                _fli(ln_old), _fls(s_old),
-                mark,
-                _fli(ln_new), _fls(s_new))
+            print '%s %s%s%s%s'%(
+                _fli(ln_old), _fls(s_old) if ln_new else s_old,
+                ' '+mark if mark else mark,
+                ' '+_fli(ln_new) if ln_new else '',
+                ' '+s_new if s_new else '')
 
     elif option_render_html:
         if mark == ' ':
@@ -260,7 +262,7 @@ def render(ln_old, s_old, mark, ln_new=None, s_new=None):
 
             _o = s_old[i:i_]
             _n = s_new[i:i_]
-            ol, nl = line_diff_by_char(_fls(_o), len(_o), _fls(_n), len(_n))
+            ol, nl = line_diff_by_char(_fls(_o), len(_o), _n, len(_n))
 
             print "<tr class='%s'><td class='ln_old'>%s</td><td>%s</td><td>%s</td><td class='ln_new'>%s</td><td>%s</td></tr>"%(
                 tr_cls,
