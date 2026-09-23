@@ -591,33 +591,14 @@ td {white-space: pre; padding-left: 5px;}
 tr.hunk_head > td { border-top: solid 1px blue; }
 .ln_old,.ln_new {color: gray};
 .type-mark {display: none; }
-.mod {color: goldenrod; }
-.del {color: red;}
+.mod, .mod .ln_old, .mod .ln_new {color: goldenrod; }
+.del, .del .ln_old {color: red;}
 .sam {}
-.add {color: green;}
+.add, .add .ln_new {color: green;}
 .char_old {background-color: red; color: black;}
 .char_new {background-color: lightgreen; color: black;}
 </style>
 """
-
-# if option_render_html:
-#     print '<table>'
-
-#     for op in ops:
-#         typ, ln_old, ln_new, l, _ = op
-#         if typ == 2:
-#             print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'%('meta: ln_old:', str(ln_old), 'ln_new:', str(ln_new))
-#         elif typ == -1:
-#             print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'%(ln_old, '', MARK_DEL, html_escape(l))
-#         elif typ == 0:
-#             print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'%(ln_old, ln_new, ' ', html_escape(l))
-#         elif typ == 1:
-#             print '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'%('', ln_new, MARK_ADD, html_escape(l))
-#         else:
-#             pass
-
-#     print '</table>'
-#     print '<br/>'
 
 if option_render_html:
     print """
