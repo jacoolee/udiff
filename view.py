@@ -584,6 +584,7 @@ ln_new_last = 0
 if option_render_html:
     print """
 <style>
+.theme-dark {background-color: #111; color: #ddd; }
 table {border-collapse: collapse; -webkit-border-horizontal-spacing: 0; -webkit-border-vertical-spacing: 0; font-family: monospace; cursor: default; }
 td {white-space: pre; padding-left: 5px;}
 .diff_header { background-color: green; color: white;}
@@ -619,7 +620,16 @@ tr.hunk_head > td { border-top: solid 1px blue; }
 #     print '<br/>'
 
 if option_render_html:
-    print '<table class="xx">'
+    print """
+<html>
+  <script>
+     document.addEventListener('DOMContentLoaded', () => {
+     const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+     document.documentElement.classList.toggle('theme-dark', dark);
+});
+  </script>
+<table>
+"""
 
 idx = 0
 total = len(ops)
@@ -631,7 +641,7 @@ if old_file:
             render(i, l, MARK_SAME, i, l)
 
         if option_render_html:
-            print '</table>'
+            print '</table></html>'
 
 while idx < total:
     op = ops[idx]
