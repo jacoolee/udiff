@@ -50,4 +50,4 @@ Check out [./example](./example)
 
 ## Tips
 
-Pass 1 is not parsed using standard algorithm, Pass 2 supports LCS (by default) and by raw-char comparing (using `--bychar`), run `./view.py --help` for more.
+Pass 1 is not parsed using standard algorithm, Pass 2 using LCS (by default).
