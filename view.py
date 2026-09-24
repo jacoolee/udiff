@@ -275,7 +275,7 @@ def render_header(l):
     if option_render_txt:
         print l
     elif option_render_html:
-        print '<tr><td/><td>',l,'</td><td/><td/><td/></tr>'
+        print '<tr><td/><td>',html_escape(l),'</td><td/><td/><td/></tr>'
     else:
         pass
 
@@ -287,14 +287,14 @@ def render_diff_header(l):
             print "%s%s%s%s"%('\n', On_Green, l, Color_Off)
         elif option_render_html:
             print '<tr><td> </td><td/><td/><td/><td/></tr>'
-            print '<tr class="diff_header"><td/><td>%s</td><td/><td/><td/></tr>'%(_fls(l))
+            print '<tr class="diff_header"><td/><td>%s</td><td/><td/><td/></tr>'%(html_escape(_fls(l)))
         else:
             pass
     else:
         if option_render_txt:
             print "%s%s%s"%(On_Green, l, Color_Off)
         elif option_render_html:
-            print '<tr class="diff_header"><td/><td>%s</td><td/><td/><td/></tr>'%(_fls(l))
+            print '<tr class="diff_header"><td/><td>%s</td><td/><td/><td/></tr>'%(html_escape(_fls(l)))
         else:
             pass
 
@@ -308,9 +308,9 @@ def render_file_header(l):
             print l
     elif option_render_html:
         if l.startswith('---'):
-            print '<tr><td/><td>',_fls(l),'</td><td/><td/><td/></tr>'
+            print '<tr><td/><td>',html_escape(_fls(l)),'</td><td/><td/><td/></tr>'
         else:
-            print '<tr><td/><td>',_fls(l),'</td><td/><td/><td/></tr>'
+            print '<tr><td/><td>',html_escape(_fls(l)),'</td><td/><td/><td/></tr>'
 
 def render_hunk_separator(op):
     _, ln_old, ln_new, start_count, end_count = op
@@ -339,7 +339,7 @@ def render_hunk_separator(op):
 
     elif option_render_html:
         l = '@@ -%d,%s +%d,%s @@'%(ln_old, start_count or '', ln_new, end_count or '')
-        print "<tr class='hunk_head'><td/><td>%s</td><td/><td/><td/></tr>"%(_fls(l))
+        print "<tr class='hunk_head'><td/><td>%s</td><td/><td/><td/></tr>"%(html_escape(_fls(l)))
 
     else:
         pass
