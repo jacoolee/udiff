@@ -9,6 +9,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
 
+import re
 import json
 
 # Reset
@@ -224,20 +225,21 @@ def clear_color():
 
 
 def usage():
-    print __file__, "[diff_json_file|-] [--all|-a old_file] [--html|-l] [--txt|-t] [--json|-j] [--color|-c] [--width|-w width]"
-    print '    diff_json_file | -  reads from `diff_json_file` or stdin if `-` given'
-    print '    --all          | -a old_file print whole content with diff and same content compared to the old_file'
-    print '    --html         | -l print diff in html'
-    print '    --txt          | -t print diff in plain txt, enabled by default'
-    print '    --json         | -j print diff in json'
-    print '    --color        | -c show color, usable with `--txt`'
-    print '    --no-color     | -C disable color, usable with `--txt`'
-    print '    --width        | -w set char counts to be show for a diff line'
-    print '    --help         | -h help'
+    print __file__, "[diff_json_file|-] [-h|--help] [--all|-a old_file] [--html|-l] [--txt|-t] [--json|-j] [--color|-c] [--no-color|-C] [--width|-w width] [--bychar|-r]"
+    print '    diff_json_file     : reads from `diff_json_file` or stdin if `-` given'
+    print '    -h | --help        : help'
+    print '    -a | --all         : old_file print whole content with diff and same content compared to the old_file'
+    print '    -l | --html        : print diff in html'
+    print '    -t | --txt         : print diff in plain txt, enabled by default'
+    print '    -j | --json        : print diff in json'
+    print '    -c | --color       : show color, usable with `--txt`'
+    print '    -C | --no-color    : disable color, usable with `--txt`'
+    print '    -w | --width width : set char counts to be show for a diff line'
+    print '    -r | --bychar      : diff old line with new line with comparing char by char, default is LCS algorithm'
 
-def _fli(i=None, max_len=5):
+def _fli(i=None, char=' ', max_len=5):
     if i is None:
-        return ' '*max_len
+        return char*max_len
 
     fmt = '%'+str(max_len)+'d'
     return fmt%(i)
@@ -252,9 +254,9 @@ def _fls(txt=None):
         return _txt + ' '*(max_len-len(_txt))
     return _txt[0:max_len]
 
-def html_escape(txt):
+def html_escape(code_text):
     # https://stackoverflow.com/questions/7381974/which-characters-need-to-be-escaped-in-html#7382028
-    return txt\
+    return code_text\
         .replace('&', '&amp')\
         .replace('>', '&gt')\
         .replace('<', '&lt')\
@@ -314,12 +316,22 @@ def render_hunk_separator(op):
     _, ln_old, ln_new, start_count, end_count = op
     if option_render_txt:
         c = Blue
-        # KEY: use same format as diff line
-        print '%s%s%s_%s%s%s%s%s%s%s%s%s%s'%(
+
+        # use same format as render_line to keep length same
+        print '%s%s%s%s_%s%s%s%s%s%s%s%s%s%s'%(
+            '',
             c,
-            c, '_____', c, c, _fls('_'*1000),
-            '_',
-            c,  '_____', c, c, _fls('_'*1000),
+            c,
+            _fli(None, '_'),
+            Color_Off,
+            c,
+            _fls('_'*1000),
+            '_',       # do no show tailing spaces
+            c,
+            _fli(None, '_'),
+            Color_Off,
+            c,
+            '_'+_fls('_'*1000),
             Color_Off
         )
 
@@ -332,7 +344,94 @@ def render_hunk_separator(op):
     else:
         pass
 
-# TODO [2026-09-20 20:49:52]: line_diff_by_token
+def line_diff_by_LCS(ol, nl, mark, c):
+
+    def tokenize_line(line):
+        """Splits a line into words and punctuation tokens to keep formatting intact."""
+
+        # This regex captures words (\w+) or any non-whitespace sequence (\S)
+        return re.findall(r'\w+|\s+|[^\w\s]', line)
+
+    def compute_lcs_matrix(old_tokens, new_tokens):
+        """Builds a classic Dynamic Programming table to **find the Longest Common Subsequence.**"""
+
+        m, n = len(old_tokens), len(new_tokens)
+        # Create an (m+1) x (n+1) matrix initialized to 0
+        dp = [[0] * (n + 1) for _ in range(m + 1)]
+
+        for i in range(1, m + 1):
+            for j in range(1, n + 1):
+                if old_tokens[i - 1] == new_tokens[j - 1]:
+                    same='=='
+                    dp[i][j] = dp[i - 1][j - 1] + 1
+                else:
+                    same='!='
+                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+        return dp
+
+    def _f(code_text):
+        return html_escape(code_text) if option_render_html else code_text
+
+    ################################################################
+    """main start"""
+    """Executes Pass 2: Tokenizes lines and backtracks through the LCS matrix."""
+
+    line_modified = mark == MARK_MOD
+
+    del_marker_prefix = Black+''+On_Red if line_modified else c
+    del_marker_postfix = c
+
+    add_marker_prefix = Black+''+On_Green if line_modified else c
+    add_marker_postfix = c
+
+    if option_render_html:
+        del_marker_prefix = '<span class="char_old">'
+        del_marker_postfix = '</span>'
+
+        add_marker_prefix = '<span class="char_new">'
+        add_marker_postfix = '</span>'
+
+    ################################################################
+
+    old_tokens = tokenize_line(ol)
+    new_tokens = tokenize_line(nl)
+
+    dp = compute_lcs_matrix(old_tokens, new_tokens)
+
+    # Backtrack from the bottom-right of the matrix to build the diff
+    i, j = len(old_tokens), len(new_tokens)
+    rst_old = []
+    rst_new = []
+
+    while i > 0 or j > 0:
+        if i > 0 and j > 0 and old_tokens[i - 1] == new_tokens[j - 1]:
+            # Token is identical in both lines
+            rst_old.append(old_tokens[i - 1])
+            rst_new.append(new_tokens[j - 1])
+
+            i -= 1
+            j -= 1
+        elif j > 0 and (i == 0 or dp[i][j - 1] >= dp[i - 1][j]):
+            # Token was inserted in the new line
+            # rst_new.append(f"{{+{new_tokens[j - 1]}+}}")
+            v = "%s%s%s"%(add_marker_prefix, _f(new_tokens[j - 1]), add_marker_postfix)
+            rst_new.append(v)
+            j -= 1
+        else:
+            # Token was deleted from the old line
+            v = "%s%s%s"%(del_marker_prefix, _f(old_tokens[i - 1]), del_marker_postfix)
+            rst_old.append(v)
+            i -= 1
+
+    # Since we backtracked from the end, reverse the list to get the correct order
+    _ol = "".join(reversed(rst_old))
+    _nl = "".join(reversed(rst_new))
+
+    if option_render_txt:
+        ol_tailing_spaces = ' '*(option_width - len(ol))
+        _ol += ol_tailing_spaces
+
+    return _ol, _nl
 
 def line_diff_by_char(ol, lenol, nl, lennl, c=''):
     _ol = ''
@@ -366,7 +465,7 @@ def line_diff_by_char(ol, lenol, nl, lennl, c=''):
                     _ol += html_escape(ol[li:i])+'<span class="char_old">'
                     _nl += html_escape(nl[li:i])+'<span class="char_new">'
                 else:
-                    _ol += ol[li:i]+Black+ ''+On_Red
+                    _ol += ol[li:i]+Black+''+On_Red
                     _nl += nl[li:i]+Black+''+On_Green
 
                 li=i
@@ -389,7 +488,8 @@ def line_diff_by_char(ol, lenol, nl, lennl, c=''):
         _ol += html_escape(ol[i:])
         _nl += html_escape(nl[i:])
     else:
-        _ol += ol[i:]
+        ol_tailing_spaces = ' '*(option_width - len(ol))
+        _ol += ol[i:] + ol_tailing_spaces
         _nl += nl[i:]
 
     return _ol, _nl
@@ -401,7 +501,7 @@ def render_line(ln_old, s_old, mark, ln_new=None, s_new=None):
 
     elif option_render_txt:
 
-        if mark == ' ':
+        if mark == MARK_SAME:
             c = ''
         elif mark == MARK_ADD:
             c = Green
@@ -425,7 +525,8 @@ def render_line(ln_old, s_old, mark, ln_new=None, s_new=None):
             # TODO [2026-09-20 17:57:01]: apply color to s_old and s_new diff parts
             _o = s_old[i:i_]
             _n = s_new[i:i_]
-            ol, nl = line_diff_by_char(_fls(_o), len(_o), _n, len(_n), c)
+
+            ol, nl = line_diff_by_LCS(_o, _n, mark, c) if option_by_lcs else line_diff_by_char(_fls(_o), len(_o), _n, len(_n), c)
 
             print '%s%s%s%s %s%s%s%s%s%s%s%s%s%s'%(
                 '' if option_color else mark+' ',
@@ -446,7 +547,7 @@ def render_line(ln_old, s_old, mark, ln_new=None, s_new=None):
             i = i_
 
     elif option_render_html:
-        if mark == ' ':
+        if mark == MARK_SAME:
             tr_cls = 'sam'
         elif mark == MARK_ADD:
             tr_cls = 'add'
@@ -468,15 +569,16 @@ def render_line(ln_old, s_old, mark, ln_new=None, s_new=None):
 
             _o = s_old[i:i_]
             _n = s_new[i:i_]
-            ol, nl = line_diff_by_char(_fls(_o), len(_o), _n, len(_n))
+
+            ol, nl = line_diff_by_LCS(_o, _n, mark, '') if option_by_cls else line_diff_by_char(_fls(_o), len(_o), _n, len(_n))
 
             print "<tr class='%s'><td class='ln_old'>%s</td><td>%s</td><td>%s</td><td class='ln_new'>%s</td><td>%s</td></tr>"%(
                 tr_cls,
                 _fli(ln_old if i==0 else None),
-                ol,
+                html_escape(ol) if mark == MARK_SAME else ol,
                 '', # mark,
                 _fli(ln_new if i==0 else None),
-                nl
+                html_escape(nl) if mark == MARK_SAME else nl
             )
             i = i_
 
@@ -498,6 +600,7 @@ option_render_json = False
 option_render_html = False
 option_color = False
 option_width = 70
+option_by_lcs = True
 
 idx = 1                         # start from first parameter
 while idx < len(sys.argv):
@@ -513,6 +616,8 @@ while idx < len(sys.argv):
             option_render_html = True
         elif i == '--txt' or i == '-t':
             option_render_txt = True
+        elif i == '--bychar' or i == '-r':
+            option_by_lcs = False
         elif i == '--json' or i == '-j':
             option_render_json = True
         elif i == '--color' or i == '-c':
