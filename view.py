@@ -85,145 +85,6 @@ On_IPurple='\033[0;105m'  # Purple
 On_ICyan='\033[0;106m'    # Cyan
 On_IWhite='\033[0;107m'   # White
 
-def clear_color():
-    # Reset
-    global Color_Off
-    Color_Off=''       # Text Reset
-
-    # Regular Colors
-    global Black        # Black
-    global Red          # Red
-    global Green        # Green
-    global Yellow       # Yellow
-    global Blue         # Blue
-    global Purple       # Purple
-    global Cyan         # Cyan
-    global White        # White
-
-    Black=''        # Black
-    Red=''          # Red
-    Green=''        # Green
-    Yellow=''       # Yellow
-    Blue=''         # Blue
-    Purple=''       # Purple
-    Cyan=''         # Cyan
-    White=''        # White
-
-    # Bold
-    global BBlack       # Black
-    global BRed         # Red
-    global BGreen       # Green
-    global BYellow      # Yellow
-    global BBlue        # Blue
-    global BPurple      # Purple
-    global BCyan        # Cyan
-    global BWhite       # White
-
-    BBlack=''       # Black
-    BRed=''         # Red
-    BGreen=''       # Green
-    BYellow=''      # Yellow
-    BBlue=''        # Blue
-    BPurple=''      # Purple
-    BCyan=''        # Cyan
-    BWhite=''       # White
-
-    # Underline
-    global UBlack       # Black
-    global URed         # Red
-    global UGreen       # Green
-    global UYellow      # Yellow
-    global UBlue        # Blue
-    global UPurple      # Purple
-    global UCyan        # Cyan
-    global UWhite       # White
-
-    UBlack=''       # Black
-    URed=''         # Red
-    UGreen=''       # Green
-    UYellow=''      # Yellow
-    UBlue=''        # Blue
-    UPurple=''      # Purple
-    UCyan=''        # Cyan
-    UWhite=''       # White
-
-    # Background
-    global On_Black       # Black
-    global On_Red         # Red
-    global On_Green       # Green
-    global On_Yellow      # Yellow
-    global On_Blue        # Blue
-    global On_Purple      # Purple
-    global On_Cyan        # Cyan
-    global On_White       # White
-
-    On_Black=''       # Black
-    On_Red=''         # Red
-    On_Green=''       # Green
-    On_Yellow=''      # Yellow
-    On_Blue=''        # Blue
-    On_Purple=''      # Purple
-    On_Cyan=''        # Cyan
-    On_White=''       # White
-
-    # High Intensity
-    global IBlack       # Black
-    global IRed         # Red
-    global IGreen       # Green
-    global IYellow      # Yellow
-    global IBlue        # Blue
-    global IPurple      # Purple
-    global ICyan        # Cyan
-    global IWhite       # White
-
-    IBlack=''       # Black
-    IRed=''         # Red
-    IGreen=''       # Green
-    IYellow=''      # Yellow
-    IBlue=''        # Blue
-    IPurple=''      # Purple
-    ICyan=''        # Cyan
-    IWhite=''       # White
-
-    # Bold High Intensity
-    global BIBlack      # Black
-    global BIRed        # Red
-    global BIGreen      # Green
-    global BIYellow     # Yellow
-    global BIBlue       # Blue
-    global BIPurple     # Purple
-    global BICyan       # Cyan
-    global BIWhite      # White
-
-    BIBlack=''      # Black
-    BIRed=''        # Red
-    BIGreen=''      # Green
-    BIYellow=''     # Yellow
-    BIBlue=''       # Blue
-    BIPurple=''     # Purple
-    BICyan=''       # Cyan
-    BIWhite=''      # White
-
-    # High Intensity backgrounds
-    global On_IBlack   # Black
-    global On_IRed     # Red
-    global On_IGreen   # Green
-    global On_IYellow  # Yellow
-    global On_IBlue    # Blue
-    global On_IPurple  # Purple
-    global On_ICyan    # Cyan
-    global On_IWhite   # White
-
-    On_IBlack=''   # Black
-    On_IRed=''     # Red
-    On_IGreen=''   # Green
-    On_IYellow=''  # Yellow
-    On_IBlue=''    # Blue
-    On_IPurple=''  # Purple
-    On_ICyan=''    # Cyan
-    On_IWhite=''   # White
-
-
 def usage():
     print __file__, "[diff_json_file|-] [-h|--help] [--all|-a old_file] [--html|-l] [--txt|-t] [--json|-j] [--color|-c] [--no-color|-C] [--width|-w width]"
     print '    diff_json_file     : reads from `diff_json_file` or stdin if `-` given'
@@ -283,7 +144,7 @@ def render_diff_header(l):
     global g_is_first_diff_header_printed
     if g_is_first_diff_header_printed:
         if option_render_txt:
-            print "%s%s%s%s"%('\n', On_Green, l, Color_Off)
+            print "%s%s%s%s"%('\n', On_Green if option_color else '', l, Color_Off if option_color else '')
         elif option_render_html:
             print '<tr><td> </td><td/><td/><td/><td/></tr>'
             print '<tr class="diff_header"><td/><td>%s</td><td/><td/><td/></tr>'%(html_escape(_fls(l)))
@@ -291,7 +152,7 @@ def render_diff_header(l):
             pass
     else:
         if option_render_txt:
-            print "%s%s%s"%(On_Green, l, Color_Off)
+            print "%s%s%s"%(On_Green if option_color else '', l, Color_Off if option_color else '')
         elif option_render_html:
             print '<tr class="diff_header"><td/><td>%s</td><td/><td/><td/></tr>'%(html_escape(_fls(l)))
         else:
@@ -314,7 +175,7 @@ def render_file_header(l):
 def render_hunk_separator(op):
     _, ln_old, ln_new, start_count, end_count = op
     if option_render_txt:
-        c = Blue
+        c = Blue if option_color else ''
 
         # use same format as render_line to keep length same
         print '%s%s%s%s_%s%s%s%s%s%s%s%s%s%s'%(
@@ -342,101 +203,6 @@ def render_hunk_separator(op):
 
     else:
         pass
-
-# def line_diff_by_LCS(ol, nl, mark, c):
-
-#     def tokenize_line(line):
-#         """Splits a line into words and punctuation tokens to keep formatting intact."""
-
-#         # by Google AI
-#         # stanard: This regex captures words (\w+) or any non-whitespace sequence (\S)
-
-#         regex_standard = r'\w+|\s+|[^\w\s]'
-#         regex_char_level = r'.' # ultra-precise
-#         regex_advanced = r'(\d+(?:\.\d+)?|==|!=|<=|>=|&&|\|\||\+\+|--|\w+|\s+|[^\w\s])'
-
-#         return re.findall(regex_standard, line)
-
-#     def compute_lcs_matrix(old_tokens, new_tokens):
-#         """Builds a classic Dynamic Programming table to **find the Longest Common Subsequence.**"""
-
-#         m, n = len(old_tokens), len(new_tokens)
-#         # Create an (m+1) x (n+1) matrix initialized to 0
-#         dp = [[0] * (n + 1) for _ in range(m + 1)]
-
-#         for i in range(1, m + 1):
-#             for j in range(1, n + 1):
-#                 if old_tokens[i - 1] == new_tokens[j - 1]:
-#                     same='=='
-#                     dp[i][j] = dp[i - 1][j - 1] + 1
-#                 else:
-#                     same='!='
-#                     dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
-#         return dp
-
-#     def _f(code_text):
-#         return html_escape(code_text) if option_render_html else code_text
-
-#     ################################################################
-#     """main start"""
-#     """Executes Pass 2: Tokenizes lines and backtracks through the LCS matrix."""
-
-#     line_modified = mark == MARK_MOD
-
-#     del_marker_prefix = Black+''+On_Red if line_modified else c
-#     del_marker_postfix = c
-
-#     add_marker_prefix = Black+''+On_Green if line_modified else c
-#     add_marker_postfix = c
-
-#     if option_render_html:
-#         del_marker_prefix = '<span class="char_old">'
-#         del_marker_postfix = '</span>'
-
-#         add_marker_prefix = '<span class="char_new">'
-#         add_marker_postfix = '</span>'
-
-#     ################################################################
-
-#     old_tokens = tokenize_line(ol)
-#     new_tokens = tokenize_line(nl)
-
-#     dp = compute_lcs_matrix(old_tokens, new_tokens)
-
-#     # Backtrack from the bottom-right of the matrix to build the diff
-#     i, j = len(old_tokens), len(new_tokens)
-#     rst_old = []
-#     rst_new = []
-
-#     while i > 0 or j > 0:
-#         if i > 0 and j > 0 and old_tokens[i - 1] == new_tokens[j - 1]:
-#             # Token is identical in both lines
-#             rst_old.append(old_tokens[i - 1])
-#             rst_new.append(new_tokens[j - 1])
-
-#             i -= 1
-#             j -= 1
-#         elif j > 0 and (i == 0 or dp[i][j - 1] >= dp[i - 1][j]):
-#             # Token was inserted in the new line
-#             # rst_new.append(f"{{+{new_tokens[j - 1]}+}}")
-#             v = "%s%s%s"%(add_marker_prefix, _f(new_tokens[j - 1]), add_marker_postfix)
-#             rst_new.append(v)
-#             j -= 1
-#         else:
-#             # Token was deleted from the old line
-#             v = "%s%s%s"%(del_marker_prefix, _f(old_tokens[i - 1]), del_marker_postfix)
-#             rst_old.append(v)
-#             i -= 1
-
-#     # Since we backtracked from the end, reverse the list to get the correct order
-#     _ol = "".join(reversed(rst_old))
-#     _nl = "".join(reversed(rst_new))
-
-#     if option_render_txt:
-#         ol_tailing_spaces = ' '*(option_width - len(ol))
-#         _ol += ol_tailing_spaces
-
-#     return _ol, _nl
 
 def parse_line_diff_by_LCS(ol, nl):
 
@@ -516,25 +282,27 @@ def render_line_diff_by_LCS(ln_old, ln_new, s_old, s_new, mark):
         return html_escape(code_text) if option_render_html else code_text
 
     c = ''
+    c_off = Color_Off if option_color else ''
     tr_cls = ''
     line_modified = mark == MARK_MOD
 
     if option_render_txt:
-        del_marker_prefix = Black+''+On_Red if line_modified else c
+        del_marker_prefix = (Black+''+On_Red if option_color else '') if line_modified else c
         del_marker_postfix = c
-        add_marker_prefix = Black+''+On_Green if line_modified else c
+        add_marker_prefix = (Black+''+On_Green if option_color else '') if line_modified else c
         add_marker_postfix = c
 
-        if mark == MARK_SAME:
-            c = ''
-        elif mark == MARK_ADD:
-            c = Green
-        elif mark == MARK_DEL:
-            c = Red
-        elif mark == MARK_MOD:
-            c = Yellow
-        else:
-            c = ''
+        if option_color:
+            if mark == MARK_SAME:
+                c = ''
+            elif mark == MARK_ADD:
+                c = Green
+            elif mark == MARK_DEL:
+                c = Red
+            elif mark == MARK_MOD:
+                c = Yellow
+            else:
+                c = ''
 
     elif option_render_html:
         del_marker_prefix = '<span class="char_old">' if line_modified else '<span>'
@@ -650,7 +418,7 @@ def render_line_diff_by_LCS(ln_old, ln_new, s_old, s_new, mark):
 
         if len_raw_ol < option_width:
             ol_tailing_spaces = ' '*(option_width - len_raw_ol)
-            ol += ol_tailing_spaces
+            ol += c_off + ol_tailing_spaces
 
         # compose nl by l2
         nl = ''
@@ -668,16 +436,16 @@ def render_line_diff_by_LCS(ln_old, ln_new, s_old, s_new, mark):
                 c,
                 c,
                 _fli(ln_old if i==0 else None),
-                Color_Off,
+                c_off,
                 c,
                 ol ,
                 '\u200B',       # do no show tailing spaces
                 c,
                 _fli(ln_new if i==0 else None) if ln_new else '',
-                Color_Off,
+                c_off,
                 c,
                 ' '+nl if nl else nl,
-                Color_Off
+                c_off
             )
 
         elif option_render_html:
@@ -740,7 +508,6 @@ while idx < len(sys.argv):
             option_color = True
         elif i == '--no-color' or i == '-C':
             option_color = False
-            clear_color()
         elif i == '--all' or i == '-a':
             try:
                 old_file = sys.argv[idx+1]
@@ -817,7 +584,7 @@ tr.hunk_head > td { border-top: solid 1px blue; }
 .sam {}
 .add, .add .ln_new {color: green;}
 .char_old {background-color: red; color: black;}
-.char_new {background-color: lightgreen; color: black;}
+.char_new {background-color: #5EA701FF; color: black;}
 </style>
 """
 
