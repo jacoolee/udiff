@@ -225,7 +225,7 @@ def clear_color():
 
 
 def usage():
-    print __file__, "[diff_json_file|-] [-h|--help] [--all|-a old_file] [--html|-l] [--txt|-t] [--json|-j] [--color|-c] [--no-color|-C] [--width|-w width] [--bychar|-r]"
+    print __file__, "[diff_json_file|-] [-h|--help] [--all|-a old_file] [--html|-l] [--txt|-t] [--json|-j] [--color|-c] [--no-color|-C] [--width|-w width]"
     print '    diff_json_file     : reads from `diff_json_file` or stdin if `-` given'
     print '    -h | --help        : help'
     print '    -a | --all         : old_file print whole content with diff and same content compared to the old_file'
@@ -235,7 +235,6 @@ def usage():
     print '    -c | --color       : show color, usable with `--txt`'
     print '    -C | --no-color    : disable color, usable with `--txt`'
     print '    -w | --width width : set char counts to be show for a diff line'
-    print '    -r | --bychar      : diff old line with new line with comparing char by char, default is LCS algorithm'
 
 def _fli(i=None, char=' ', max_len=5):
     if i is None:
@@ -697,67 +696,6 @@ def render_line_diff_by_LCS(ln_old, ln_new, s_old, s_new, mark):
         # next turn
         i = i_
 
-def render_line_diff_by_char(ol, lenol, nl, lennl, c=''):
-    _ol = ''
-    _nl = ''
-    pretext_same=True
-    li=0
-    i=0
-
-    length = min(lenol, lennl)
-
-    while i<length:
-        if ol[i] == nl[i]:
-            if pretext_same:
-                i += 1
-                pretext_same=True
-            else:               # unsame to same (idx:i)
-                if option_render_html:
-                    _ol += html_escape(ol[li:i])+'</span>'
-                    _nl += html_escape(nl[li:i])+'</span>'
-                else:
-                    _ol += ol[li:i]+c
-                    _nl += nl[li:i]+c
-
-                li=i
-
-                i += 1
-                pretext_same=True
-        else:
-            if pretext_same:    # same to unsame (idx:i)
-                if option_render_html:
-                    _ol += html_escape(ol[li:i])+'<span class="char_old">'
-                    _nl += html_escape(nl[li:i])+'<span class="char_new">'
-                else:
-                    _ol += ol[li:i]+Black+''+On_Red
-                    _nl += nl[li:i]+Black+''+On_Green
-
-                li=i
-
-                i += 1
-                pretext_same=False
-            else:
-                i += 1
-                pretext_same=False
-
-    if li != i:
-        if option_render_html:
-            _ol += html_escape(ol[li:i])+'</span>'
-            _nl += html_escape(nl[li:i])+'</span>'
-        else:
-            _ol += ol[li:i]+c
-            _nl += nl[li:i]+c
-
-    if option_render_html:
-        _ol += html_escape(ol[i:])
-        _nl += html_escape(nl[i:])
-    else:
-        ol_tailing_spaces = ' '*(option_width - len(ol))
-        _ol += ol[i:] + ol_tailing_spaces
-        _nl += nl[i:]
-
-    return _ol, _nl
-
 def render_line(ln_old, s_old, mark, ln_new=None, s_new=None):
     if option_render_json:
         global json_list
@@ -765,74 +703,6 @@ def render_line(ln_old, s_old, mark, ln_new=None, s_new=None):
 
     else:
         render_line_diff_by_LCS(ln_old, ln_new, s_old or '', s_new or '', mark)
-
-        # buggy: truncate parts of line loss complete token used by LCS
-        # # at lest '1' loop turn to ensure empty line get chance to show
-        # t = max(len(s_old), len(s_new), 1)
-        # i = 0
-
-        # while i < t:
-        #     i_ = i+option_width
-
-        #     # TODO [2026-09-20 17:57:01]: apply color to s_old and s_new diff parts
-        #     _o = s_old[i:i_]
-        #     _n = s_new[i:i_]
-
-        #     ol, nl = render_line_diff_by_LCS(i, i_, l_ol, l_nl, mark, c) if option_by_lcs else render_line_diff_by_char(_fls(_o), len(_o), _n, len(_n), c)
-
-        #     print '%s%s%s%s %s%s%s%s%s%s%s%s%s%s'%(
-        #         '' if option_color else mark+' ',
-        #         c,
-        #         c,
-        #         _fli(ln_old if i==0 else None),
-        #         Color_Off,
-        #         c,
-        #         ol,
-        #         '\u200B',       # do no show tailing spaces
-        #         c,
-        #         _fli(ln_new if i==0 else None) if ln_new else '',
-        #         Color_Off,
-        #         c,
-        #         ' '+nl if nl else nl,
-        #         Color_Off
-        #     )
-        #     i = i_
-
-    # elif option_render_html:
-    #     if mark == MARK_SAME:
-    #         tr_cls = 'sam'
-    #     elif mark == MARK_ADD:
-    #         tr_cls = 'add'
-    #     elif mark == MARK_DEL:
-    #         tr_cls = 'del'
-    #     elif mark == MARK_MOD:
-    #         tr_cls = 'mod'
-    #     else:
-    #         tr_cls = ''
-
-    #     s_old = s_old or ''
-    #     s_new = s_new or ''
-
-    #     t = max(len(s_old), len(s_new), 1)
-    #     i = 0
-
-    #     while i < t:
-    #         i_ = i+option_width
-
-    #         _o = s_old[i:i_]
-    #         _n = s_new[i:i_]
-
-    #         ol, nl = render_line_diff_by_LCS(_o, _n, mark, '') if option_by_lcs else render_line_diff_by_char(_fls(_o), len(_o), _n, len(_n))
-
-    #         print "<tr class='%s'><td class='ln_old'>%s</td><td>%s</td><td>%s</td><td class='ln_new'>%s</td><td>%s</td></tr>"%(
-    #             tr_cls,
-    #             _fli(ln_old if i==0 else None),
-    #             html_escape(ol) if mark == MARK_SAME else ol,
-    #             '', # mark,
-    #             _fli(ln_new if i==0 else None),
-    #             html_escape(nl) if mark == MARK_SAME else nl
-    #         )
-    #         i = i_
 
 ################################################################
 # main
@@ -849,7 +719,6 @@ option_render_json = False
 option_render_html = False
 option_color = False
 option_width = 70
-option_by_lcs = True
 
 idx = 1                         # start from first parameter
 while idx < len(sys.argv):
@@ -865,8 +734,6 @@ while idx < len(sys.argv):
             option_render_html = True
         elif i == '--txt' or i == '-t':
             option_render_txt = True
-        elif i == '--bychar' or i == '-r':
-            option_by_lcs = False
         elif i == '--json' or i == '-j':
             option_render_json = True
         elif i == '--color' or i == '-c':

@@ -20,10 +20,6 @@ if [ ${ENV_HTML:-0} -eq 1 ]; then
     view_options="${view_options} --html"
 fi
 
-if [ ${ENV_BY_CHAR:-0} -eq 1 ]; then
-    view_options="${view_options} --bychar"
-fi
-
 if [ ${ENV_HTML:-0} -eq 1 ]; then
     git --no-pager diff $* | "${script_root}"/parse.py | "${script_root}"/view.py ${view_options}
 else
