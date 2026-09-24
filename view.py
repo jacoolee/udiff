@@ -512,21 +512,50 @@ def parse_line_diff_by_LCS(ol, nl):
     # Since we backtracked from the end, reverse the list to get the correct order
     return list(reversed(meta_old)), list(reversed(meta_new))
 
-def render_line_diff_by_LCS(ln_old, ln_new, s_old, s_new, mark, c):
+def render_line_diff_by_LCS(ln_old, ln_new, s_old, s_new, mark):
+    def _f(code_text):
+        return html_escape(code_text) if option_render_html else code_text
+
+    c = ''
+    tr_cls = ''
     line_modified = mark == MARK_MOD
 
-    del_marker_prefix = Black+''+On_Red if line_modified else c
-    del_marker_postfix = c
+    if option_render_txt:
+        del_marker_prefix = Black+''+On_Red if line_modified else c
+        del_marker_postfix = c
+        add_marker_prefix = Black+''+On_Green if line_modified else c
+        add_marker_postfix = c
 
-    add_marker_prefix = Black+''+On_Green if line_modified else c
-    add_marker_postfix = c
+        if mark == MARK_SAME:
+            c = ''
+        elif mark == MARK_ADD:
+            c = Green
+        elif mark == MARK_DEL:
+            c = Red
+        elif mark == MARK_MOD:
+            c = Yellow
+        else:
+            c = ''
 
-    if option_render_html:
-        del_marker_prefix = '<span class="char_old">'
+    elif option_render_html:
+        del_marker_prefix = '<span class="char_old">' if line_modified else '<span>'
         del_marker_postfix = '</span>'
-
-        add_marker_prefix = '<span class="char_new">'
+        add_marker_prefix = '<span class="char_new">' if line_modified else '<span>'
         add_marker_postfix = '</span>'
+
+        if mark == MARK_SAME:
+            tr_cls = 'sam'
+        elif mark == MARK_ADD:
+            tr_cls = 'add'
+        elif mark == MARK_DEL:
+            tr_cls = 'del'
+        elif mark == MARK_MOD:
+            tr_cls = 'mod'
+        else:
+            tr_cls = ''
+
+    else:
+        pass
 
     ################################################################
 
@@ -615,7 +644,7 @@ def render_line_diff_by_LCS(ln_old, ln_new, s_old, s_new, mark, c):
             item_type, item_token = item
             ol += "%s%s%s"%(
                 c if item_type == 0 else del_marker_prefix,
-                item_token,
+                _f(item_token),
                 c if item_type == 0 else del_marker_postfix
             )
             len_raw_ol += len(item_token)
@@ -630,26 +659,40 @@ def render_line_diff_by_LCS(ln_old, ln_new, s_old, s_new, mark, c):
             item_type, item_token = item
             nl += "%s%s%s"%(
                 c if item_type == 0 else add_marker_prefix,
-                item_token,
+                _f(item_token),
                 c if item_type == 0 else add_marker_postfix
             )
 
-        print '%s%s%s%s %s%s%s%s%s%s%s%s%s%s'%(
-            '' if option_color else mark+' ',
-            c,
-            c,
-            _fli(ln_old if i==0 else None),
-            Color_Off,
-            c,
-            ol ,
-            '\u200B',       # do no show tailing spaces
-            c,
-            _fli(ln_new if i==0 else None) if ln_new else '',
-            Color_Off,
-            c,
-            ' '+nl if nl else nl,
-            Color_Off
-        )
+        if option_render_txt:
+            print '%s%s%s%s %s%s%s%s%s%s%s%s%s%s'%(
+                '' if option_color else mark+' ',
+                c,
+                c,
+                _fli(ln_old if i==0 else None),
+                Color_Off,
+                c,
+                ol ,
+                '\u200B',       # do no show tailing spaces
+                c,
+                _fli(ln_new if i==0 else None) if ln_new else '',
+                Color_Off,
+                c,
+                ' '+nl if nl else nl,
+                Color_Off
+            )
+
+        elif option_render_html:
+            print "<tr class='%s'><td class='ln_old'>%s</td><td>%s</td><td>%s</td><td class='ln_new'>%s</td><td>%s</td></tr>"%(
+                tr_cls,
+                _fli(ln_old if i==0 else None),
+                ol,
+                '', # mark,
+                _fli(ln_new if i==0 else None),
+                nl
+            )
+
+        else:
+            pass
 
         # next turn
         i = i_
@@ -720,23 +763,8 @@ def render_line(ln_old, s_old, mark, ln_new=None, s_new=None):
         global json_list
         json_list.append([mark, ln_old, s_old, ln_new, s_new])
 
-    elif option_render_txt:
-
-        if mark == MARK_SAME:
-            c = ''
-        elif mark == MARK_ADD:
-            c = Green
-        elif mark == MARK_DEL:
-            c = Red
-        elif mark == MARK_MOD:
-            c = Yellow
-        else:
-            c = ''
-
-        s_old = s_old or ''
-        s_new = s_new or ''
-
-        render_line_diff_by_LCS(ln_old, ln_new, s_old, s_new, mark, c)
+    else:
+        render_line_diff_by_LCS(ln_old, ln_new, s_old or '', s_new or '', mark)
 
         # buggy: truncate parts of line loss complete token used by LCS
         # # at lest '1' loop turn to ensure empty line get chance to show
@@ -805,9 +833,6 @@ def render_line(ln_old, s_old, mark, ln_new=None, s_new=None):
     #             html_escape(nl) if mark == MARK_SAME else nl
     #         )
     #         i = i_
-
-    # else:
-    #     pass
 
 ################################################################
 # main
