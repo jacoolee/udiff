@@ -17,18 +17,19 @@
 $ ./udiff
 ```
 
-## Put udiff directoy path in $PATH
+## For Daily Use
 
 ```
-$ export PATH=$PATH:{YOUR_UDIFF_DIRECTORY_PATH}
-$ udiff
+# load udiff.source file in your ~/.bashrc
+
+source YOUR_UDIFF_DIRPATH/udiff.source
 ```
 
-## Use aliases in ~/.bashrc
+Then, you can use `d` directly, and `D` to export html
 
 ```
-alias d=udiff
-alias D='ENV_HTML=1 udiff > /tmp/x.html; open /tmp/x.html'
+$ d
+$ D # export as html
 ```
 
 ## View git log
@@ -43,14 +44,10 @@ $ udiff COMMIT_ID_A COMMIT_ID_B
 $ ENV_HTML=1 udiff COMMIT_ID_A COMMIT_ID_B
 ```
 
-## View any diff content
+## Diff and view any files
 
 Check out [./example](./example)
 
-## Recommands
+## Tips
 
-[https://github.com/ymattw/ydiff](https://github.com/ymattw/ydiff)
-
-## Issue
-
-The algorithm is not standard for both Pass 1 and Pass 2. It's used by raw comparing.
+Pass 1 is not parsed using standard algorithm, Pass 2 supports LCS (by default) and by raw-char comparing (using `--bychar`), run `./view.py --help` for more.

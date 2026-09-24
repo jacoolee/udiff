@@ -344,13 +344,114 @@ def render_hunk_separator(op):
     else:
         pass
 
-def line_diff_by_LCS(ol, nl, mark, c):
+# def line_diff_by_LCS(ol, nl, mark, c):
+
+#     def tokenize_line(line):
+#         """Splits a line into words and punctuation tokens to keep formatting intact."""
+
+#         # by Google AI
+#         # stanard: This regex captures words (\w+) or any non-whitespace sequence (\S)
+
+#         regex_standard = r'\w+|\s+|[^\w\s]'
+#         regex_char_level = r'.' # ultra-precise
+#         regex_advanced = r'(\d+(?:\.\d+)?|==|!=|<=|>=|&&|\|\||\+\+|--|\w+|\s+|[^\w\s])'
+
+#         return re.findall(regex_standard, line)
+
+#     def compute_lcs_matrix(old_tokens, new_tokens):
+#         """Builds a classic Dynamic Programming table to **find the Longest Common Subsequence.**"""
+
+#         m, n = len(old_tokens), len(new_tokens)
+#         # Create an (m+1) x (n+1) matrix initialized to 0
+#         dp = [[0] * (n + 1) for _ in range(m + 1)]
+
+#         for i in range(1, m + 1):
+#             for j in range(1, n + 1):
+#                 if old_tokens[i - 1] == new_tokens[j - 1]:
+#                     same='=='
+#                     dp[i][j] = dp[i - 1][j - 1] + 1
+#                 else:
+#                     same='!='
+#                     dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+#         return dp
+
+#     def _f(code_text):
+#         return html_escape(code_text) if option_render_html else code_text
+
+#     ################################################################
+#     """main start"""
+#     """Executes Pass 2: Tokenizes lines and backtracks through the LCS matrix."""
+
+#     line_modified = mark == MARK_MOD
+
+#     del_marker_prefix = Black+''+On_Red if line_modified else c
+#     del_marker_postfix = c
+
+#     add_marker_prefix = Black+''+On_Green if line_modified else c
+#     add_marker_postfix = c
+
+#     if option_render_html:
+#         del_marker_prefix = '<span class="char_old">'
+#         del_marker_postfix = '</span>'
+
+#         add_marker_prefix = '<span class="char_new">'
+#         add_marker_postfix = '</span>'
+
+#     ################################################################
+
+#     old_tokens = tokenize_line(ol)
+#     new_tokens = tokenize_line(nl)
+
+#     dp = compute_lcs_matrix(old_tokens, new_tokens)
+
+#     # Backtrack from the bottom-right of the matrix to build the diff
+#     i, j = len(old_tokens), len(new_tokens)
+#     rst_old = []
+#     rst_new = []
+
+#     while i > 0 or j > 0:
+#         if i > 0 and j > 0 and old_tokens[i - 1] == new_tokens[j - 1]:
+#             # Token is identical in both lines
+#             rst_old.append(old_tokens[i - 1])
+#             rst_new.append(new_tokens[j - 1])
+
+#             i -= 1
+#             j -= 1
+#         elif j > 0 and (i == 0 or dp[i][j - 1] >= dp[i - 1][j]):
+#             # Token was inserted in the new line
+#             # rst_new.append(f"{{+{new_tokens[j - 1]}+}}")
+#             v = "%s%s%s"%(add_marker_prefix, _f(new_tokens[j - 1]), add_marker_postfix)
+#             rst_new.append(v)
+#             j -= 1
+#         else:
+#             # Token was deleted from the old line
+#             v = "%s%s%s"%(del_marker_prefix, _f(old_tokens[i - 1]), del_marker_postfix)
+#             rst_old.append(v)
+#             i -= 1
+
+#     # Since we backtracked from the end, reverse the list to get the correct order
+#     _ol = "".join(reversed(rst_old))
+#     _nl = "".join(reversed(rst_new))
+
+#     if option_render_txt:
+#         ol_tailing_spaces = ' '*(option_width - len(ol))
+#         _ol += ol_tailing_spaces
+
+#     return _ol, _nl
+
+def parse_line_diff_by_LCS(ol, nl):
 
     def tokenize_line(line):
         """Splits a line into words and punctuation tokens to keep formatting intact."""
 
-        # This regex captures words (\w+) or any non-whitespace sequence (\S)
-        return re.findall(r'\w+|\s+|[^\w\s]', line)
+        # by Google AI
+        # stanard: This regex captures words (\w+) or any non-whitespace sequence (\S)
+
+        regex_standard = r'\w+|\s+|[^\w\s]'
+        regex_char_level = r'.' # ultra-precise
+        regex_advanced = r'(\d+(?:\.\d+)?|==|!=|<=|>=|&&|\|\||\+\+|--|\w+|\s+|[^\w\s])'
+
+        return re.findall(regex_standard, line)
 
     def compute_lcs_matrix(old_tokens, new_tokens):
         """Builds a classic Dynamic Programming table to **find the Longest Common Subsequence.**"""
@@ -376,6 +477,42 @@ def line_diff_by_LCS(ol, nl, mark, c):
     """main start"""
     """Executes Pass 2: Tokenizes lines and backtracks through the LCS matrix."""
 
+    old_tokens = tokenize_line(ol)
+    new_tokens = tokenize_line(nl)
+
+    dp = compute_lcs_matrix(old_tokens, new_tokens)
+
+    # Backtrack from the bottom-right of the matrix to build the diff
+    i, j = len(old_tokens), len(new_tokens)
+    meta_old = []
+    meta_new = []
+
+    while i > 0 or j > 0:
+        if i > 0 and j > 0 and old_tokens[i - 1] == new_tokens[j - 1]:
+            # Token is identical in both lines
+            v = [0,old_tokens[i - 1]]
+            meta_old.append(v)
+            meta_new.append(v)
+
+            i -= 1
+            j -= 1
+        elif j > 0 and (i == 0 or dp[i][j - 1] >= dp[i - 1][j]):
+            # Token was inserted in the new line
+            # v = "%s%s%s"%(add_marker_prefix, _f(new_tokens[j - 1]), add_marker_postfix)
+            v = [1,new_tokens[j - 1]]
+            meta_new.append(v)
+            j -= 1
+        else:
+            # Token was deleted from the old line
+            # v = "%s%s%s"%(del_marker_prefix, _f(old_tokens[i - 1]), del_marker_postfix)
+            v = [-1,old_tokens[i - 1]]
+            meta_old.append(v)
+            i -= 1
+
+    # Since we backtracked from the end, reverse the list to get the correct order
+    return list(reversed(meta_old)), list(reversed(meta_new))
+
+def render_line_diff_by_LCS(ln_old, ln_new, s_old, s_new, mark, c):
     line_modified = mark == MARK_MOD
 
     del_marker_prefix = Black+''+On_Red if line_modified else c
@@ -393,47 +530,131 @@ def line_diff_by_LCS(ol, nl, mark, c):
 
     ################################################################
 
-    old_tokens = tokenize_line(ol)
-    new_tokens = tokenize_line(nl)
+    meta_ol, meta_nl = parse_line_diff_by_LCS(s_old, s_new)
 
-    dp = compute_lcs_matrix(old_tokens, new_tokens)
+    i = 0
+    # t should be at lest '1' loop turn to ensure empty line get chance to show
+    t = max(len(s_old), len(s_new), 1)
 
-    # Backtrack from the bottom-right of the matrix to build the diff
-    i, j = len(old_tokens), len(new_tokens)
-    rst_old = []
-    rst_new = []
+    meta_ol_item_exceed = None
+    meta_nl_item_exceed = None
 
-    while i > 0 or j > 0:
-        if i > 0 and j > 0 and old_tokens[i - 1] == new_tokens[j - 1]:
-            # Token is identical in both lines
-            rst_old.append(old_tokens[i - 1])
-            rst_new.append(new_tokens[j - 1])
+    meta_ol_idx = 0
+    meta_nl_idx = 0
 
-            i -= 1
-            j -= 1
-        elif j > 0 and (i == 0 or dp[i][j - 1] >= dp[i - 1][j]):
-            # Token was inserted in the new line
-            # rst_new.append(f"{{+{new_tokens[j - 1]}+}}")
-            v = "%s%s%s"%(add_marker_prefix, _f(new_tokens[j - 1]), add_marker_postfix)
-            rst_new.append(v)
-            j -= 1
-        else:
-            # Token was deleted from the old line
-            v = "%s%s%s"%(del_marker_prefix, _f(old_tokens[i - 1]), del_marker_postfix)
-            rst_old.append(v)
-            i -= 1
+    l1 = None                   # list of item for render part of old_line within option_width
+    l2 = None                   # list of item for render part of new_line within option_width
 
-    # Since we backtracked from the end, reverse the list to get the correct order
-    _ol = "".join(reversed(rst_old))
-    _nl = "".join(reversed(rst_new))
+    while i < t:
+        i_ = i+option_width
 
-    if option_render_txt:
-        ol_tailing_spaces = ' '*(option_width - len(ol))
-        _ol += ol_tailing_spaces
+        l1 = [meta_ol_item_exceed] if meta_ol_item_exceed else []
+        l2 = [meta_nl_item_exceed] if meta_nl_item_exceed else []
 
-    return _ol, _nl
+        # clear after used
+        meta_ol_item_exceed = None
+        meta_nl_item_exceed = None
 
-def line_diff_by_char(ol, lenol, nl, lennl, c=''):
+        # compose l1
+        len_ol = i
+        len_meta_ol = len(meta_ol)
+        while meta_ol_idx < len_meta_ol:
+            item = meta_ol[meta_ol_idx]
+            item_type, item_token = item
+            len_token = len(item_token)
+            len_ol += len_token
+            if len_ol < i_:
+                l1.append(item)
+                meta_ol_idx += 1
+                continue
+            elif len_ol == i_:   # exactly found
+                l1.append(item)
+                meta_ol_idx += 1
+                break
+            else:               # found, but len_ol exceeds i_
+                # split the item
+                len_exceed = len_ol - i_
+                idx_ = len_token - len_exceed
+                vl = [item_type, item_token[0:idx_]]
+                meta_ol_item_exceed = [item_type, item_token[idx_:]] # exceed part
+                l1.append(vl)
+                meta_ol_idx += 1
+                break
+
+        # compose l2
+        len_nl = i
+        len_meta_nl = len(meta_nl)
+        while meta_nl_idx < len_meta_nl:
+            item = meta_nl[meta_nl_idx]
+            item_type, item_token = item
+            len_token = len(item_token)
+            len_nl += len_token
+            if len_nl < i_:
+                l2.append(item)
+                meta_nl_idx += 1
+                continue
+            elif len_nl == i_:   # exactly found
+                l2.append(item)
+                meta_nl_idx += 1
+                break
+            else:               # found, but len_nl exceeds i_
+                # split the item
+                len_exceed = len_nl - i_
+                idx_ = len_token - len_exceed
+                vl = [item_type, item_token[0:idx_]]
+                meta_nl_item_exceed = [item_type, item_token[idx_:]] # exceed part
+                l2.append(vl)
+                meta_nl_idx += 1
+                break
+
+
+        # compose ol by l1
+        ol = ''
+        len_raw_ol = 0
+        for item in l1:
+            item_type, item_token = item
+            ol += "%s%s%s"%(
+                c if item_type == 0 else del_marker_prefix,
+                item_token,
+                c if item_type == 0 else del_marker_postfix
+            )
+            len_raw_ol += len(item_token)
+
+        if len_raw_ol < option_width:
+            ol_tailing_spaces = ' '*(option_width - len_raw_ol)
+            ol += ol_tailing_spaces
+
+        # compose nl by l2
+        nl = ''
+        for item in l2:
+            item_type, item_token = item
+            nl += "%s%s%s"%(
+                c if item_type == 0 else add_marker_prefix,
+                item_token,
+                c if item_type == 0 else add_marker_postfix
+            )
+
+        print '%s%s%s%s %s%s%s%s%s%s%s%s%s%s'%(
+            '' if option_color else mark+' ',
+            c,
+            c,
+            _fli(ln_old if i==0 else None),
+            Color_Off,
+            c,
+            ol ,
+            '\u200B',       # do no show tailing spaces
+            c,
+            _fli(ln_new if i==0 else None) if ln_new else '',
+            Color_Off,
+            c,
+            ' '+nl if nl else nl,
+            Color_Off
+        )
+
+        # next turn
+        i = i_
+
+def render_line_diff_by_char(ol, lenol, nl, lennl, c=''):
     _ol = ''
     _nl = ''
     pretext_same=True
@@ -515,75 +736,78 @@ def render_line(ln_old, s_old, mark, ln_new=None, s_new=None):
         s_old = s_old or ''
         s_new = s_new or ''
 
-        # at lest '1' loop turn to ensure empty line get chance to show
-        t = max(len(s_old), len(s_new), 1)
-        i = 0
+        render_line_diff_by_LCS(ln_old, ln_new, s_old, s_new, mark, c)
 
-        while i < t:
-            i_ = i+option_width
+        # buggy: truncate parts of line loss complete token used by LCS
+        # # at lest '1' loop turn to ensure empty line get chance to show
+        # t = max(len(s_old), len(s_new), 1)
+        # i = 0
 
-            # TODO [2026-09-20 17:57:01]: apply color to s_old and s_new diff parts
-            _o = s_old[i:i_]
-            _n = s_new[i:i_]
+        # while i < t:
+        #     i_ = i+option_width
 
-            ol, nl = line_diff_by_LCS(_o, _n, mark, c) if option_by_lcs else line_diff_by_char(_fls(_o), len(_o), _n, len(_n), c)
+        #     # TODO [2026-09-20 17:57:01]: apply color to s_old and s_new diff parts
+        #     _o = s_old[i:i_]
+        #     _n = s_new[i:i_]
 
-            print '%s%s%s%s %s%s%s%s%s%s%s%s%s%s'%(
-                '' if option_color else mark+' ',
-                c,
-                c,
-                _fli(ln_old if i==0 else None),
-                Color_Off,
-                c,
-                ol,
-                '\u200B',       # do no show tailing spaces
-                c,
-                _fli(ln_new if i==0 else None) if ln_new else '',
-                Color_Off,
-                c,
-                ' '+nl if nl else nl,
-                Color_Off
-            )
-            i = i_
+        #     ol, nl = render_line_diff_by_LCS(i, i_, l_ol, l_nl, mark, c) if option_by_lcs else render_line_diff_by_char(_fls(_o), len(_o), _n, len(_n), c)
 
-    elif option_render_html:
-        if mark == MARK_SAME:
-            tr_cls = 'sam'
-        elif mark == MARK_ADD:
-            tr_cls = 'add'
-        elif mark == MARK_DEL:
-            tr_cls = 'del'
-        elif mark == MARK_MOD:
-            tr_cls = 'mod'
-        else:
-            tr_cls = ''
+        #     print '%s%s%s%s %s%s%s%s%s%s%s%s%s%s'%(
+        #         '' if option_color else mark+' ',
+        #         c,
+        #         c,
+        #         _fli(ln_old if i==0 else None),
+        #         Color_Off,
+        #         c,
+        #         ol,
+        #         '\u200B',       # do no show tailing spaces
+        #         c,
+        #         _fli(ln_new if i==0 else None) if ln_new else '',
+        #         Color_Off,
+        #         c,
+        #         ' '+nl if nl else nl,
+        #         Color_Off
+        #     )
+        #     i = i_
 
-        s_old = s_old or ''
-        s_new = s_new or ''
+    # elif option_render_html:
+    #     if mark == MARK_SAME:
+    #         tr_cls = 'sam'
+    #     elif mark == MARK_ADD:
+    #         tr_cls = 'add'
+    #     elif mark == MARK_DEL:
+    #         tr_cls = 'del'
+    #     elif mark == MARK_MOD:
+    #         tr_cls = 'mod'
+    #     else:
+    #         tr_cls = ''
 
-        t = max(len(s_old), len(s_new), 1)
-        i = 0
+    #     s_old = s_old or ''
+    #     s_new = s_new or ''
 
-        while i < t:
-            i_ = i+option_width
+    #     t = max(len(s_old), len(s_new), 1)
+    #     i = 0
 
-            _o = s_old[i:i_]
-            _n = s_new[i:i_]
+    #     while i < t:
+    #         i_ = i+option_width
 
-            ol, nl = line_diff_by_LCS(_o, _n, mark, '') if option_by_cls else line_diff_by_char(_fls(_o), len(_o), _n, len(_n))
+    #         _o = s_old[i:i_]
+    #         _n = s_new[i:i_]
 
-            print "<tr class='%s'><td class='ln_old'>%s</td><td>%s</td><td>%s</td><td class='ln_new'>%s</td><td>%s</td></tr>"%(
-                tr_cls,
-                _fli(ln_old if i==0 else None),
-                html_escape(ol) if mark == MARK_SAME else ol,
-                '', # mark,
-                _fli(ln_new if i==0 else None),
-                html_escape(nl) if mark == MARK_SAME else nl
-            )
-            i = i_
+    #         ol, nl = render_line_diff_by_LCS(_o, _n, mark, '') if option_by_lcs else render_line_diff_by_char(_fls(_o), len(_o), _n, len(_n))
 
-    else:
-        pass
+    #         print "<tr class='%s'><td class='ln_old'>%s</td><td>%s</td><td>%s</td><td class='ln_new'>%s</td><td>%s</td></tr>"%(
+    #             tr_cls,
+    #             _fli(ln_old if i==0 else None),
+    #             html_escape(ol) if mark == MARK_SAME else ol,
+    #             '', # mark,
+    #             _fli(ln_new if i==0 else None),
+    #             html_escape(nl) if mark == MARK_SAME else nl
+    #         )
+    #         i = i_
+
+    # else:
+    #     pass
 
 ################################################################
 # main

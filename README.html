@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-<title>README.html<udiff></title>
+<title>README.html</title>
 
 </head>
 
@@ -20,13 +20,14 @@ content side by side</h1>
 <hr />
 <h2 id="run-directly">Run directly</h2>
 <pre><code>$ ./udiff</code></pre>
-<h2 id="put-udiff-directoy-path-in-path">Put udiff directoy path in
-$PATH</h2>
-<pre><code>$ export PATH=$PATH:{YOUR_UDIFF_DIRECTORY_PATH}
-$ udiff</code></pre>
-<h2 id="use-aliases-in-.bashrc">Use aliases in ~/.bashrc</h2>
-<pre><code>alias d=udiff
-alias D=&#39;ENV_HTML=1 udiff &gt; /tmp/x.html; open /tmp/x.html&#39;</code></pre>
+<h2 id="for-daily-use">For Daily Use</h2>
+<pre><code># load udiff.source file in your ~/.bashrc
+
+source YOUR_UDIFF_DIRPATH/udiff.source</code></pre>
+<p>Then, you can use <code>d</code> directly, and <code>D</code> to
+export html</p>
+<pre><code>$ d
+$ D # export as html</code></pre>
 <h2 id="view-git-log">View git log</h2>
 <pre><code>$ git log
 COMMIT_ID_C hello
@@ -35,14 +36,12 @@ COMMIT_ID_A init
 
 $ udiff COMMIT_ID_A COMMIT_ID_B
 $ ENV_HTML=1 udiff COMMIT_ID_A COMMIT_ID_B</code></pre>
-<h2 id="view-any-diff-content">View any diff content</h2>
+<h2 id="diff-and-view-any-files">Diff and view any files</h2>
 <p>Check out <a href="./example">./example</a></p>
-<h2 id="recommands">Recommands</h2>
-<p><a
-href="https://github.com/ymattw/ydiff">https://github.com/ymattw/ydiff</a></p>
-<h2 id="issue">Issue</h2>
-<p>The algorithm is not standard for both Pass 1 and Pass 2. It’s used
-by raw comparing.</p>
+<h2 id="tips">Tips</h2>
+<p>Pass 1 is not parsed using standard algorithm, Pass 2 supports LCS
+(by default) and by raw-char comparing (using <code>--bychar</code>),
+run <code>./view.py --help</code> for more.</p>
 
 </body>
 </html>
