@@ -162,20 +162,15 @@ def render_diff_header(l):
 
 def render_file_header(l):
     if option_render_txt:
-        if l.startswith('---'):
-            print l
-        else:
-            print l
+        print l
     elif option_render_html:
-        if l.startswith('---'):
-            print '<tr><td/><td>',html_escape(_fls(l)),'</td><td/><td/><td/></tr>'
-        else:
-            print '<tr><td/><td>',html_escape(_fls(l)),'</td><td/><td/><td/></tr>'
+        print '<tr><td/><td>',html_escape(_fls(l)),'</td><td/><td/><td/></tr>'
 
 def render_hunk_separator(op):
     _, ln_old, ln_new, start_count, end_count = op
     if option_render_txt:
         c = Blue if option_color else ''
+        c_off = Color_Off if option_color else ''
 
         # use same format as render_line to keep length same
         print '%s%s%s%s_%s%s%s%s%s%s%s%s%s%s'%(
@@ -183,19 +178,19 @@ def render_hunk_separator(op):
             c,
             c,
             _fli(None, '_'),
-            Color_Off,
+            c_off,
             c,
             _fls('_'*1000),
             '_',       # do no show tailing spaces
             c,
             _fli(None, '_'),
-            Color_Off,
+            c_off,
             c,
             '_'+_fls('_'*1000),
-            Color_Off
+            c_off
         )
 
-        print '@@ -%d,%s +%d,%s @@%s'%(ln_old, start_count or '', ln_new, end_count or '', Color_Off)
+        print '@@ -%d,%s +%d,%s @@%s'%(ln_old, start_count or '', ln_new, end_count or '', c_off)
 
     elif option_render_html:
         l = '@@ -%d,%s +%d,%s @@'%(ln_old, start_count or '', ln_new, end_count or '')
