@@ -135,26 +135,27 @@ def render_header(l):
     if option_render_txt:
         print l
     elif option_render_html:
-        print '<tr><td/><td>',html_escape(l),'</td><td/><td/><td/></tr>'
+        print '<div>%s</div>'%(html_escape(l))
     else:
         pass
 
 g_is_first_diff_header_printed = False
 def render_diff_header(l):
+    """diff --git a/file b/file"""
     global g_is_first_diff_header_printed
     if g_is_first_diff_header_printed:
         if option_render_txt:
             print "%s%s%s%s"%('\n', On_Green if option_color else '', l, Color_Off if option_color else '')
         elif option_render_html:
-            print '<tr><td> </td><td/><td/><td/><td/></tr>'
-            print '<tr class="diff_header"><td/><td>%s</td><td/><td/><td/></tr>'%(html_escape(_fls(l)))
+            print '<br/>'
+            print '<div class="diff_header">%s</div>'%(html_escape(l))
         else:
             pass
     else:
         if option_render_txt:
             print "%s%s%s"%(On_Green if option_color else '', l, Color_Off if option_color else '')
         elif option_render_html:
-            print '<tr class="diff_header"><td/><td>%s</td><td/><td/><td/></tr>'%(html_escape(_fls(l)))
+            print '<div class="diff_header">%s</div>'%(html_escape(l))
         else:
             pass
 
@@ -164,7 +165,7 @@ def render_file_header(l):
     if option_render_txt:
         print l
     elif option_render_html:
-        print '<tr><td/><td>',html_escape(_fls(l)),'</td><td/><td/><td/></tr>'
+        print '<div>%s</div>'%(html_escape(l))
 
 def render_hunk_separator(op, filename):
     _, ln_old, ln_new, start_count, end_count = op
@@ -194,7 +195,9 @@ def render_hunk_separator(op, filename):
 
     elif option_render_html:
         l = '@@ -%d,%s +%d,%s @@ %s'%(ln_old, start_count or '', ln_new, end_count or '', filename)
-        print "<tr class='hunk_head'><td/><td>%s</td><td/><td/><td/></tr>"%(html_escape(_fls(l)))
+        print "</table>"
+        print "<div class='hunk_head'>%s</div>"%(html_escape(l))
+        print "<table>"
 
     else:
         pass
@@ -229,9 +232,6 @@ def parse_line_diff_by_LCS(ol, nl):
                     same='!='
                     dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
         return dp
-
-    def _f(code_text):
-        return html_escape(code_text) if option_render_html else code_text
 
     ################################################################
     """main start"""
@@ -271,51 +271,27 @@ def parse_line_diff_by_LCS(ol, nl):
     return list(reversed(meta_old)), list(reversed(meta_new))
 
 def render_line_diff_by_LCS(ln_old, ln_new, s_old, s_new, mark):
-    def _f(code_text):
-        return html_escape(code_text) if option_render_html else code_text
-
     c = ''
     c_off = Color_Off if option_color else ''
-    tr_cls = ''
+
     line_modified = mark == MARK_MOD
 
-    if option_render_txt:
-        del_marker_prefix = (White+''+On_Red if option_color else '') if line_modified else c
-        del_marker_postfix = c
-        add_marker_prefix = (White+''+On_Green if option_color else '') if line_modified else c
-        add_marker_postfix = c
+    del_marker_prefix = (White+''+On_Red if option_color else '') if line_modified else c
+    del_marker_postfix = c
+    add_marker_prefix = (White+''+On_Green if option_color else '') if line_modified else c
+    add_marker_postfix = c
 
-        if option_color:
-            if mark == MARK_SAME:
-                c = ''
-            elif mark == MARK_ADD:
-                c = Green
-            elif mark == MARK_DEL:
-                c = Red
-            elif mark == MARK_MOD:
-                c = Yellow
-            else:
-                c = ''
-
-    elif option_render_html:
-        del_marker_prefix = '<span class="char_old">' if line_modified else '<span>'
-        del_marker_postfix = '</span>'
-        add_marker_prefix = '<span class="char_new">' if line_modified else '<span>'
-        add_marker_postfix = '</span>'
-
+    if option_color:
         if mark == MARK_SAME:
-            tr_cls = 'sam'
+            c = ''
         elif mark == MARK_ADD:
-            tr_cls = 'add'
+            c = Green
         elif mark == MARK_DEL:
-            tr_cls = 'del'
+            c = Red
         elif mark == MARK_MOD:
-            tr_cls = 'mod'
+            c = Yellow
         else:
-            tr_cls = ''
-
-    else:
-        pass
+            c = ''
 
     ################################################################
 
@@ -404,7 +380,7 @@ def render_line_diff_by_LCS(ln_old, ln_new, s_old, s_new, mark):
             item_type, item_token = item
             ol += "%s%s%s"%(
                 c if item_type == 0 else del_marker_prefix,
-                _f(item_token),
+                item_token,
                 c if item_type == 0 else del_marker_postfix
             )
             len_raw_ol += len(item_token)
@@ -419,51 +395,99 @@ def render_line_diff_by_LCS(ln_old, ln_new, s_old, s_new, mark):
             item_type, item_token = item
             nl += "%s%s%s"%(
                 c if item_type == 0 else add_marker_prefix,
-                _f(item_token),
+                item_token,
                 c if item_type == 0 else add_marker_postfix
             )
 
-        if option_render_txt:
-            print '%s%s%s%s %s%s%s%s%s%s%s%s%s%s'%(
-                '' if option_color else mark+' ',
-                c,
-                c,
-                _fli(ln_old if i==0 else None),
-                c_off,
-                c,
-                ol ,
-                '\u200B',       # do no show tailing spaces
-                c,
-                _fli(ln_new if i==0 else None) if ln_new else '',
-                c_off,
-                c,
-                ' '+nl if nl else nl,
-                c_off
-            )
-
-        elif option_render_html:
-            print "<tr class='%s'><td class='ln_old'>%s</td><td>%s</td><td>%s</td><td class='ln_new'>%s</td><td>%s</td></tr>"%(
-                tr_cls,
-                _fli(ln_old if i==0 else None),
-                ol,
-                '', # mark,
-                _fli(ln_new if i==0 else None),
-                nl
-            )
-
-        else:
-            pass
+        print '%s%s%s%s %s%s%s%s%s%s%s%s%s%s'%(
+            '' if option_color else mark+' ',
+            c,
+            c,
+            _fli(ln_old if i==0 else None),
+            c_off,
+            c,
+            ol ,
+            '\u200B',       # do no show tailing spaces
+            c,
+            _fli(ln_new if i==0 else None) if ln_new else '',
+            c_off,
+            c,
+            ' '+nl if nl else nl,
+            c_off
+        )
 
         # next turn
         i = i_
+
+def render_line_diff_by_LCS_html(ln_old, ln_new, s_old, s_new, mark):
+    def _f(code_text):
+        return html_escape(code_text) if option_render_html else code_text
+
+    tr_cls = ''
+    line_modified = mark == MARK_MOD
+
+    del_marker_prefix = '<span class="token token_old">' if line_modified else '<span class="token">'
+    del_marker_postfix = '</span>'
+    add_marker_prefix = '<span class="token token_new">' if line_modified else '<span class="token">'
+    add_marker_postfix = '</span>'
+
+    if mark == MARK_SAME:
+        tr_cls = 'sam'
+    elif mark == MARK_ADD:
+        tr_cls = 'add'
+    elif mark == MARK_DEL:
+        tr_cls = 'del'
+    elif mark == MARK_MOD:
+        tr_cls = 'mod'
+    else:
+        tr_cls = ''
+
+    ################################################################
+
+    meta_ol, meta_nl = parse_line_diff_by_LCS(s_old, s_new)
+
+    # TODO: need optimize
+    ol = ''
+    for t_type,t_text in meta_ol:
+        if t_type == 0:
+            ol += '<span class="token">%s</span>'%(html_escape(t_text))
+        elif t_type == -1:
+            ol += '<span class="token token_old">%s</span>'%(html_escape(t_text))
+        elif t_type == 1:
+            ol += '<span class="token token_new">%s</span>'%(html_escape(t_text))
+        else:
+            pass
+
+    nl = ''
+    for t_type,t_text in meta_nl:
+        if t_type == 0:
+            nl += '<span class="token">%s</span>'%(html_escape(t_text))
+        elif t_type == -1:
+            nl += '<span class="token token_old">%s</span>'%(html_escape(t_text))
+        elif t_type == 1:
+            nl += '<span class="token token_new">%s</span>'%(html_escape(t_text))
+        else:
+            pass
+
+    print "<tr class='%s'><td valign='top' class='ln_old'>%s</td><td halign='left' class='ol'>%s</td><td valign='top' class='ln_new'>%s</td><td halign='left' class='nl'>%s</td></tr>"%(
+        tr_cls,
+        _fli(ln_old),
+        ol,
+        _fli(ln_new),
+        nl
+    )
 
 def render_line(ln_old, s_old, mark, ln_new=None, s_new=None):
     if option_render_json:
         global json_list
         json_list.append([mark, ln_old, s_old, ln_new, s_new])
 
-    else:
+    elif option_render_txt:
         render_line_diff_by_LCS(ln_old, ln_new, s_old or '', s_new or '', mark)
+    elif option_render_html:
+        render_line_diff_by_LCS_html(ln_old, ln_new, s_old or '', s_new or '', mark)
+    else:
+        pass
 
 ################################################################
 # main
@@ -565,19 +589,20 @@ ln_new_last = 0
 if option_render_html:
     print """
 <style>
-.theme-dark {background-color: #111; color: #ddd; }
-table {border-collapse: collapse; -webkit-border-horizontal-spacing: 0; -webkit-border-vertical-spacing: 0; font-family: monospace; cursor: default; }
-td {white-space: pre; padding-left: 5px;}
-.diff_header { background-color: green; color: white;}
-tr.hunk_head > td { border-top: solid 1px blue; }
-.ln_old,.ln_new {color: gray};
-.type-mark {display: none; }
-.mod, .mod .ln_old, .mod .ln_new {color: goldenrod; }
-.del, .del .ln_old {color: red;}
-.sam {}
-.add, .add .ln_new {color: green;}
-.char_old {background-color: red; color: white;}
-.char_new {background-color: #5EA701FF; color: white;}
+html { font-family: monospace; font-size: 13px; }
+.theme-dark { background-color: rgb(17, 17, 17); color: rgb(221, 221, 221); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+tr { width: calc(100% - 10px); }
+.diff_header { background-color: green; color: white; }
+.hunk_head { border-top: 1px solid blue; }
+.ln_old, .ln_new { color: gray; opacity: .7; }
+.mod, .mod .ln_old, .mod .ln_new { color: goldenrod; }
+.del, .del .ln_old { color: red; }
+.add, .add .ln_new { color: green; }
+.token { white-space: pre; }
+.mod .token_old { background-color: red; color: white; }
+.mod .token_new { background-color: rgb(94, 167, 1); color: white; }
+.ol, .nl { width: 48%; word-break: break-all; }
 </style>
 """
 
