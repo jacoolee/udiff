@@ -1,0 +1,38 @@
+$ ydiff
+diff --git a/lao b/lao
+index 635ef2c..5af88a8 100644
+--- a/lao
++++ b/lao
+@@ -1,7 +1,6 @@
+ 1 The Way that can be told of is not the eternal Way;
+ 2 The name that can be named is not the eternal name.
+ 3 The Nameless is the origin of Heaven and Earth;          1 The Nameless is the origin of Heaven and Earth;
+ 4 The Named is the mother of all things.                   2 The named is the mother of all things.
+                                                            3
+ 5 Therefore let there always be non-being,                 4 Therefore let there always be non-being,
+ 6   so we may see their subtlety,                          5   so we may see their subtlety,
+ 7 And let there always be being,                           6 And let there always be being,
+@@ -9,3 +8,6 @@ And let there always be being,
+ 9 The two are the same,                                    8 The two are the same,
+10 But after they are produced,                             9 But after they are produced,
+11   they have different names.                            10   they have different names.
+                                                           11 They both may be called deep and profound.
+                                                           12 Deeper and more profound,
+                                                           13 The door of all subtleties!
+
+$ git show HEAD:lao | diff -y - lao
+The Way that can be told of is not the eternal Way;		<
+The name that can be named is not the eternal name.		<
+The Nameless is the origin of Heaven and Earth;				The Nameless is the origin of Heaven and Earth;
+The Named is the mother of all things.				|       The named is the mother of all things.
+								>
+Therefore let there always be non-being,				Therefore let there always be non-being,
+  so we may see their subtlety,						  so we may see their subtlety,
+And let there always be being,						And let there always be being,
+  so we may see their outcome.						  so we may see their outcome.
+The two are the same,							The two are the same,
+But after they are produced,						But after they are produced,
+  they have different names.						  they have different names.
+								>       They both may be called deep and profound.
+								>       Deeper and more profound,
+								>       The door of all subtleties!

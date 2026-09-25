@@ -1,0 +1,20 @@
+--- lao	2024-12-13 15:38:02
++++ tzu	2024-12-11 20:08:39
+[0;34m[0;34m______[0m[0;34m_______________________________________________________________________[0;34m_____[0m[0;34m_______________________________________________________________________[0m
+@@ -1,7 +1,6 @@[0m
+[0;31m[0;31m    1 [0m[0;31mThe Way that can be told of is not the eternal Way;[0m                   ​[0;31m[0m[0;31m[0m
+[0;31m[0;31m    2 [0m[0;31mThe name that can be named is not the eternal name.[0m                   ​[0;31m[0m[0;31m[0m
+    3 [0mThe Nameless is the origin of Heaven and Earth;[0m                       ​    1[0m The Nameless is the origin of Heaven and Earth;[0m
+[0;33m[0;33m    4 [0m[0;33m[0;33mThe[0;33m[0;33m [0;33m[0;30m[41mNamed[0;33m [0;33m[0;33mis[0;33m[0;33m [0;33m[0;33mthe[0;33m[0;33m [0;33m[0;33mmother[0;33m[0;33m [0;33m[0;33mof[0;33m[0;33m [0;33m[0;33mall[0;33m[0;33m [0;33m[0;33mthings[0;33m[0;33m.[0;33m[0m                                ​[0;33m    2[0m[0;33m [0;33mThe[0;33m[0;33m [0;33m[0;30m[42mnamed[0;33m [0;33m[0;33mis[0;33m[0;33m [0;33m[0;33mthe[0;33m[0;33m [0;33m[0;33mmother[0;33m[0;33m [0;33m[0;33mof[0;33m[0;33m [0;33m[0;33mall[0;33m[0;33m [0;33m[0;33mthings[0;33m[0;33m.[0;33m[0m
+[0;32m[0;32m      [0m[0;32m[0m                                                                      ​[0;32m    3[0m[0;32m[0m
+    5 [0mTherefore let there always be non-being,[0m                              ​    4[0m Therefore let there always be non-being,[0m
+    6 [0m  so we may see their subtlety,[0m                                       ​    5[0m   so we may see their subtlety,[0m
+    7 [0mAnd let there always be being,[0m                                        ​    6[0m And let there always be being,[0m
+[0;34m[0;34m______[0m[0;34m_______________________________________________________________________[0;34m_____[0m[0;34m_______________________________________________________________________[0m
+@@ -9,3 +8,6 @@[0m
+    9 [0mThe two are the same,[0m                                                 ​    8[0m The two are the same,[0m
+   10 [0mBut after they are produced,[0m                                          ​    9[0m But after they are produced,[0m
+   11 [0m  they have different names.[0m                                          ​   10[0m   they have different names.[0m
+[0;32m[0;32m      [0m[0;32m[0m                                                                      ​[0;32m   11[0m[0;32m They both may be called deep and profound.[0m
+[0;32m[0;32m      [0m[0;32m[0m                                                                      ​[0;32m   12[0m[0;32m Deeper and more profound,[0m
+[0;32m[0;32m      [0m[0;32m[0m                                                                      ​[0;32m   13[0m[0;32m The door of all subtleties![0m

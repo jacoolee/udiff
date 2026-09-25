@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# set -x
+
+diff -u lao tzu > lao.tzu.diff
+
+../parse.py lao.tzu.diff > lao.tzu.json
+
+# ../gen_new_by_old_file_and_diff_json_file.py lao lao.tzu.json > tzu.gen
+
+# ../view.py lao lao.tzu.json > ./lao.tzu.view.txt
+../view.py lao lao.tzu.json --color # > ./lao.tzu.view.color.txt
+# ../view.py lao lao.tzu.json --html > ./lao.tzu.view.html
+
+# ./pass1.py

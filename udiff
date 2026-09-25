@@ -21,11 +21,11 @@ if [ ${ENV_HTML:-0} -eq 1 ]; then
 fi
 
 if [ ${ENV_HTML:-0} -eq 1 ]; then
-    git --no-pager diff $* | "${script_root}"/parse.py | "${script_root}"/view.py ${view_options}
+    git --no-pager diff $* | "${script_root}"/parse2.py | "${script_root}"/view2.py ${view_options}
 else
     if [ ${ENV_OUTPUT_FILE:-''} != '' ]; then
-        git --no-pager diff $* | "${script_root}"/parse.py | "${script_root}"/view.py -c ${view_options} | tee ${ENV_OUTPUT_FILE} | less -R
+        git --no-pager diff $* | "${script_root}"/parse2.py | "${script_root}"/view2.py -c ${view_options} | tee ${ENV_OUTPUT_FILE} | less -R
     else
-        git --no-pager diff $* | "${script_root}"/parse.py | "${script_root}"/view.py -c ${view_options} | less -R
+        git --no-pager diff $* | "${script_root}"/parse2.py | "${script_root}"/view2.py -c ${view_options} | less -R
     fi
 fi
