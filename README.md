@@ -5,8 +5,8 @@
 ![](./screenshots/html.png)
 
 ```
-~/github/jacoolee/udiff $ udiff 36531bd f8e784f
-~/github/jacoolee/udiff $ ENV_HTML=1 udiff 36531bd f8e784f > /tmp/x.html; open /tmp/x.html
+$ ./udiff 36531bd f8e784f
+$ ENV_HTML=1 ./udiff 36531bd f8e784f > /tmp/udiff.output.html; open /tmp/udiff.output.html
 ```
 
 ---
@@ -22,7 +22,7 @@ $ ./udiff
 ```
 # load udiff.source file in your ~/.bashrc
 
-source YOUR_UDIFF_DIRPATH/udiff.source
+source {YOUR_UDIFF_DIRPATH}/udiff.source
 ```
 
 Then, you can use `d` directly, and `D` to export html
@@ -47,7 +47,3 @@ $ ENV_HTML=1 udiff COMMIT_ID_A COMMIT_ID_B
 ## Diff and view any files
 
 Check out [./example](./example)
-
-## Tips
-
-Pass 1 is not parsed using standard algorithm, Pass 2 using LCS (by default).

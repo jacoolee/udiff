@@ -15,15 +15,15 @@
 content side by side</h1>
 <p><img src="./screenshots/terminal.png" /></p>
 <p><img src="./screenshots/html.png" /></p>
-<pre><code>~/github/jacoolee/udiff $ udiff 36531bd f8e784f
-~/github/jacoolee/udiff $ ENV_HTML=1 udiff 36531bd f8e784f &gt; /tmp/x.html; open /tmp/x.html</code></pre>
+<pre><code>$ ./udiff 36531bd f8e784f
+$ ENV_HTML=1 ./udiff 36531bd f8e784f &gt; /tmp/udiff.output.html; open /tmp/udiff.output.html</code></pre>
 <hr />
 <h2 id="run-directly">Run directly</h2>
 <pre><code>$ ./udiff</code></pre>
 <h2 id="for-daily-use">For Daily Use</h2>
 <pre><code># load udiff.source file in your ~/.bashrc
 
-source YOUR_UDIFF_DIRPATH/udiff.source</code></pre>
+source {YOUR_UDIFF_DIRPATH}/udiff.source</code></pre>
 <p>Then, you can use <code>d</code> directly, and <code>D</code> to
 export html</p>
 <pre><code>$ d
@@ -38,9 +38,6 @@ $ udiff COMMIT_ID_A COMMIT_ID_B
 $ ENV_HTML=1 udiff COMMIT_ID_A COMMIT_ID_B</code></pre>
 <h2 id="diff-and-view-any-files">Diff and view any files</h2>
 <p>Check out <a href="./example">./example</a></p>
-<h2 id="tips">Tips</h2>
-<p>Pass 1 is not parsed using standard algorithm, Pass 2 using LCS (by
-default).</p>
 
 </body>
 </html>
