@@ -166,7 +166,7 @@ def render_file_header(l):
     elif option_render_html:
         print '<tr><td/><td>',html_escape(_fls(l)),'</td><td/><td/><td/></tr>'
 
-def render_hunk_separator(op):
+def render_hunk_separator(op, filename):
     _, ln_old, ln_new, start_count, end_count = op
     if option_render_txt:
         c = Blue if option_color else ''
@@ -190,10 +190,10 @@ def render_hunk_separator(op):
             c_off
         )
 
-        print '@@ -%d,%s +%d,%s @@%s'%(ln_old, start_count or '', ln_new, end_count or '', c_off)
+        print '@@ -%d,%s +%d,%s @@ %s%s'%(ln_old, start_count or '', ln_new, end_count or '', filename, c_off)
 
     elif option_render_html:
-        l = '@@ -%d,%s +%d,%s @@'%(ln_old, start_count or '', ln_new, end_count or '')
+        l = '@@ -%d,%s +%d,%s @@ %s'%(ln_old, start_count or '', ln_new, end_count or '', filename)
         print "<tr class='hunk_head'><td/><td>%s</td><td/><td/><td/></tr>"%(html_escape(_fls(l)))
 
     else:
@@ -258,13 +258,11 @@ def parse_line_diff_by_LCS(ol, nl):
             j -= 1
         elif j > 0 and (i == 0 or dp[i][j - 1] >= dp[i - 1][j]):
             # Token was inserted in the new line
-            # v = "%s%s%s"%(add_marker_prefix, _f(new_tokens[j - 1]), add_marker_postfix)
             v = [1,new_tokens[j - 1]]
             meta_new.append(v)
             j -= 1
         else:
             # Token was deleted from the old line
-            # v = "%s%s%s"%(del_marker_prefix, _f(old_tokens[i - 1]), del_marker_postfix)
             v = [-1,old_tokens[i - 1]]
             meta_old.append(v)
             i -= 1
@@ -282,9 +280,9 @@ def render_line_diff_by_LCS(ln_old, ln_new, s_old, s_new, mark):
     line_modified = mark == MARK_MOD
 
     if option_render_txt:
-        del_marker_prefix = (Black+''+On_Red if option_color else '') if line_modified else c
+        del_marker_prefix = (White+''+On_Red if option_color else '') if line_modified else c
         del_marker_postfix = c
-        add_marker_prefix = (Black+''+On_Green if option_color else '') if line_modified else c
+        add_marker_prefix = (White+''+On_Green if option_color else '') if line_modified else c
         add_marker_postfix = c
 
         if option_color:
@@ -545,7 +543,7 @@ if diff_json_file:
 else:
     diff_meta = json.load(sys.stdin)
 
-ops = diff_meta
+aligned_output = diff_meta
 
 if old_file:
     f = open(old_file, "r")
@@ -578,8 +576,8 @@ tr.hunk_head > td { border-top: solid 1px blue; }
 .del, .del .ln_old {color: red;}
 .sam {}
 .add, .add .ln_new {color: green;}
-.char_old {background-color: red; color: black;}
-.char_new {background-color: #5EA701FF; color: black;}
+.char_old {background-color: red; color: white;}
+.char_new {background-color: #5EA701FF; color: white;}
 </style>
 """
 
@@ -595,9 +593,6 @@ if option_render_html:
 <table>
 """
 
-idx = 0
-total = len(ops)
-
 if old_file:
     if total == 0:
         for i in xrange(1, ln_old_total+1):
@@ -607,147 +602,41 @@ if old_file:
         if option_render_html:
             print '</table></html>'
 
-while idx < total:
-    op = ops[idx]
-    typ, ln_old, ln_new, l, _ = op
 
-    if typ == 2:                # hunk meta line
-        if old_file:
-            # fill up lines missing between hunks
-            n = 0
-            for i in xrange(int(ln_old_last+1), int(ln_old)):
-                n += 1
-                l = l_map[i]
-                render_line(ln_old_last+n, l, MARK_SAME, ln_new_last + n, l)
+filename = ''
+for left, right in aligned_output:
+    l_type, l_num1, l_num2, l_text, _ = left
+    r_type, r_num1, r_num2, r_text, _ = right
 
+    if l_type == 2:
+        render_hunk_separator(left, filename)
+
+    elif l_type == 3 or l_type == 4:
+        render_file_header(l_text)
+
+    elif l_type == 5:
+        rfilename = l_text.rsplit(None, 1)[-1]
+        filename = rfilename.rsplit('/', 1)[-1]
+        render_diff_header(l_text)
+
+    elif l_type == 6:
+        render_header(l_text)
+
+    else:
+        mark = None
+
+        if l_type == 9 and r_type == 1:
+            mark = MARK_ADD
+        elif l_type == -1 and r_type == 9:
+            mark = MARK_DEL
+        elif l_type == -1 and r_type == 1:
+            mark = MARK_MOD
+        elif l_type == 0 and r_type == 0:
+            mark = MARK_SAME
         else:
-            render_hunk_separator(op)
+            mark = MARK_NONE
 
-        idx += 1
-        continue
-
-    if typ == 3 or typ == 4:
-        render_file_header(l)
-        idx += 1
-        continue
-
-    if typ == 5:
-        render_diff_header(l)
-        idx += 1
-        continue
-
-    if typ == 6:
-        render_header(l)
-        idx += 1
-        continue
-
-    # else, data lines
-    if ln_old is not None:
-        ln_old_last = ln_old
-    if ln_new is not None:
-        ln_new_last = ln_new
-
-    if typ == -1:               # minus '-'
-        # consume consequent '-' as much as possible
-        idx2 = idx + 1
-        while idx2 < total and ops[idx2][0] == -1:
-            idx2 += 1
-
-        # idx2 exceeds ops or 3,4,5,6 matched, which means, all from idx to idx2 (exclusive) are '-'
-        if idx2 == total or ops[idx2][0] > 2:
-            for _op in ops[idx: idx2]:
-                _typ, _lno, _lnn, _l, _ = _op
-
-                if _lno: ln_old_last = _lno
-                if _lnn: ln_new_last = _lnn
-
-                render_line(_lno, _l, MARK_DEL)
-
-            idx = idx2
-            continue
-
-        if ops[idx2][0] == 0:   # idx2 points to first ' ' after bunch of '-'
-            for _op in ops[idx: idx2]:
-                _typ, _lno, _lnn, _l, _ = _op
-
-                if _lno: ln_old_last = _lno
-                if _lnn: ln_new_last = _lnn
-
-                render_line(_lno, _l, MARK_DEL)
-
-            # go on to next round
-            idx = idx2
-            continue
-
-        if ops[idx2][0] == 1:   # idx2 points to first '+' after bunch of '-'
-            # consume consequent '+' as much as possible
-            idx3 = idx2 + 1
-            while idx3 < total and ops[idx3][0] == 1:
-                idx3 += 1
-
-            # either idx3 is last op, or points to ' ', '-',
-            # we all terminate this round
-
-            n_minus = idx2 - idx
-            n_plus = idx3 - idx2
-
-            if n_minus <= n_plus:
-                # cosume both n_minus count of '-' ops and n_minus count of '+' ops
-                for _i in xrange(0, n_minus):
-                    _, _lno_l, _lnn_l, _l_l, _ = ops[idx+_i]
-                    _, _lno_r, _lnn_r, _l_r, _ = ops[idx2+_i]
-
-                    if _lno_l: ln_old_last = _lno_l
-                    if _lnn_r: ln_new_last = _lnn_r
-
-                    render_line(_lno_l, _l_l, MARK_MOD, _lnn_r, _l_r)
-
-                for _op in ops[idx2+n_minus:idx3]: # idx3 not cosumned
-                    _typ, _lno, _lnn, _l, _ = _op
-
-                    if _lno: ln_old_last = _lno
-                    if _lnn: ln_new_last = _lnn
-
-                    render_line(None, None, MARK_ADD, _lnn, _l)
-
-                # go on to next round
-                idx = idx3
-                continue
-
-            else:               # n_minus > n_plus
-                for _op in ops[idx:idx+n_minus-n_plus]:
-                    _typ, _lno, _lnn, _l, _ = _op
-
-                    if _lno: ln_old_last = _lno
-                    if _lnn: ln_new_last = _lnn
-
-                    render_line(_lno, _l, MARK_DEL)
-
-                # cosume both n_plus count of '-' ops and n_minus count of '+' ops
-                _idx = idx+n_minus-n_plus
-                for _i in xrange(0, n_plus):
-                    _, _lno_l, _lnn_l, _l_l, _ = ops[_idx+_i]
-                    _, _lno_r, _lnn_r, _l_r, _ = ops[idx2+_i]
-
-                    if _lno_l: ln_old_last = _lno_l
-                    if _lnn_r: ln_new_last = _lnn_r
-
-                    render_line(_lno_l, _l_l, MARK_MOD, _lnn_r, _l_r)
-
-
-                # go on to next round
-                idx = idx3
-                continue
-
-    if typ == 1:                # plus '+'
-        render_line(ln_old, None, MARK_ADD, ln_new, l)
-        idx += 1
-        continue
-
-    if typ == 0:                # space/same ' '
-        render_line(ln_old, l, MARK_SAME, ln_new, l)
-        idx += 1
-        continue
+        render_line(l_num1, l_text, mark, r_num2, r_text)
 
 # padding last parts (not included in hunk) if exists from old file
 if old_file and ln_old_last > 0:             # means have been re-assigned by 'L' type meta
