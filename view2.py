@@ -139,27 +139,16 @@ def render_header(l):
     else:
         pass
 
-g_is_first_diff_header_printed = False
-def render_diff_header(l):
+def render_diff_header(l, is_first_diff_header):
     """diff --git a/file b/file"""
-    global g_is_first_diff_header_printed
-    if g_is_first_diff_header_printed:
-        if option_render_txt:
-            print "%s%s%s%s"%('\n', On_Green if option_color else '', l, Color_Off if option_color else '')
-        elif option_render_html:
-            print '<br/>'
-            print '<div class="diff_header">%s</div>'%(html_escape(l))
-        else:
-            pass
+    if option_render_txt:
+        print "%s%s%s%s"%('\n' if not is_first_diff_header else '', On_Purple if option_color else '', l, Color_Off if option_color else '')
+    elif option_render_html:
+        if not is_first_diff_header:
+            print "</table><br/>"
+        print '<div class="diff_header">%s</div>'%(html_escape(l))
     else:
-        if option_render_txt:
-            print "%s%s%s"%(On_Green if option_color else '', l, Color_Off if option_color else '')
-        elif option_render_html:
-            print '<div class="diff_header">%s</div>'%(html_escape(l))
-        else:
-            pass
-
-        g_is_first_diff_header_printed = True
+        pass
 
 def render_file_header(l):
     if option_render_txt:
@@ -167,7 +156,7 @@ def render_file_header(l):
     elif option_render_html:
         print '<div>%s</div>'%(html_escape(l))
 
-def render_hunk_separator(op, filename):
+def render_hunk_separator(op, filename, is_first_hunk):
     _, ln_old, ln_new, start_count, end_count = op
     if option_render_txt:
         c = Blue if option_color else ''
@@ -195,7 +184,8 @@ def render_hunk_separator(op, filename):
 
     elif option_render_html:
         l = '@@ -%d,%s +%d,%s @@ %s'%(ln_old, start_count or '', ln_new, end_count or '', filename)
-        print "</table>"
+        if not is_first_hunk:
+            print "</table>"
         print "<div class='hunk_head'>%s</div>"%(html_escape(l))
         print "<table>"
 
@@ -587,35 +577,39 @@ ln_old_last = 0
 ln_new_last = 0
 
 if option_render_html:
-    print """
-<style>
-html { font-family: monospace; font-size: 13px; }
-.theme-dark { background-color: rgb(17, 17, 17); color: rgb(221, 221, 221); }
-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-tr { width: calc(100% - 10px); }
-.diff_header { background-color: green; color: white; }
-.hunk_head { border-top: 1px solid blue; }
-.ln_old, .ln_new { color: gray; opacity: .7; }
-.mod, .mod .ln_old, .mod .ln_new { color: goldenrod; }
-.del, .del .ln_old { color: red; }
-.add, .add .ln_new { color: green; }
-.token { white-space: pre; }
-.mod .token_old { background-color: red; color: white; }
-.mod .token_new { background-color: rgb(94, 167, 1); color: white; }
-.ol, .nl { width: 48%; word-break: break-all; }
-</style>
-"""
-
-if option_render_html:
-    print """
+    print """<!DOCTYPE html>
 <html>
+  <head>
+    <style>
+      html { --tr-bg: #ccc; --font-size: 13px; font-family: monospace; font-size: var(--font-size); background-color: #EEEEF0; cursor: default; }
+      .theme-dark { --tr-bg: #333; background-color: rgb(17, 17, 17); color: rgb(221, 221, 221); }
+      table { width: 100%; border-collapse: collapse; font-size: var(--font-size); }
+      tr { width: 100%; }
+      .diff_header { background-color: purple; color: white; display: initial; }
+      .hunk_head { border-top: 1px solid blue; }
+      .ln_old, .ln_new { color: gray; opacity: .7; }
+      .mod, .mod .ln_old, .mod .ln_new { color: goldenrod; }
+      .del, .del .ln_old { color: red; }
+      .add, .add .ln_new { color: green; }
+      .token { white-space: pre; }
+      .mod .token_old { background-color: red; color: white; }
+      .mod .token_new { background-color: rgb(94, 167, 1); color: white; }
+      .ol, .nl { width: 48%; word-break: break-all; }
+</style>
   <script>
      document.addEventListener('DOMContentLoaded', () => {
+     window.scrollTo(0, 0);
      const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
      document.documentElement.classList.toggle('theme-dark', dark);
+     const clk = ({target})=>{
+         var n = target
+         while(n && n.tagName != 'TR') n = n.parentNode
+         if (n) n.style = n.style.backgroundColor? '': 'background-color: var(--tr-bg);'
+     }
+     document.addEventListener('click', clk)
 });
   </script>
-<table>
+</head>
 """
 
 if old_file:
@@ -625,24 +619,30 @@ if old_file:
             render_line(i, l, MARK_SAME, i, l)
 
         if option_render_html:
-            print '</table></html>'
+            print '</html>'
 
 
 filename = ''
+is_first_diff_header = True
+is_first_hunk = None
 for left, right in aligned_output:
     l_type, l_num1, l_num2, l_text, _ = left
     r_type, r_num1, r_num2, r_text, _ = right
 
     if l_type == 2:
-        render_hunk_separator(left, filename)
+        render_hunk_separator(left, filename, is_first_hunk)
+        is_first_hunk = False
 
     elif l_type == 3 or l_type == 4:
         render_file_header(l_text)
+        is_first_diff_header = False
 
     elif l_type == 5:
         rfilename = l_text.rsplit(None, 1)[-1]
         filename = rfilename.rsplit('/', 1)[-1]
-        render_diff_header(l_text)
+        render_diff_header(l_text, is_first_diff_header)
+        is_first_diff_header = False
+        is_first_hunk = True
 
     elif l_type == 6:
         render_header(l_text)
@@ -672,7 +672,7 @@ if old_file and ln_old_last > 0:             # means have been re-assigned by 'L
         render_line(i, l, MARK_SAME, ln_new_last+n, l)
 
 if option_render_html:
-    print '</table>'
+    print '</table></html>'
 
 if option_render_json:
     print json.dumps(json_list)

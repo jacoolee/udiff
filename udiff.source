@@ -1,6 +1,6 @@
 udiff_root=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 
-PATH=$PATH:$udiff_root
+export PATH=$PATH:$udiff_root
 
 alias d=udiff
 function D {
