@@ -3,7 +3,14 @@ udiff_root=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 export PATH=$PATH:$udiff_root
 
 alias d=udiff
+
 function D {
-    ENV_HTML=1 udiff $* > /tmp/udiff.output.html
-    open /tmp/udiff.output.html
+    d=$(pwd)
+    while [ ! -d "${d}/.git" ]; do
+        d=$(realpath "$d/..")
+    done
+    git_repo_name=$(basename $d)
+    output_html_file=/tmp/udiff."${git_repo_name}".html
+    ENV_HTML=1 ENV_HTML_TITLE="udiff.${git_repo_name}" udiff $* > "${output_html_file}"
+    open "${output_html_file}"
 }

@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python2
 # -*- coding: utf-8 -*-
 
 # NOTICE: the side-by-side algorithm used here is a simpler one,
@@ -86,7 +86,7 @@ On_ICyan='\033[0;106m'    # Cyan
 On_IWhite='\033[0;107m'   # White
 
 def usage():
-    print __file__, "[diff_json_file|-] [-h|--help] [--all|-a old_file] [--html|-l] [--txt|-t] [--json|-j] [--color|-c] [--no-color|-C] [--width|-w width]"
+    print __file__, "[diff_json_file|-] [-h|--help] [--all|-a old_file] [--html|-l] [--txt|-t] [--json|-j] [--color|-c] [--no-color|-C] [--width|-w width] [--html-title | -i title]"
     print '    diff_json_file     : reads from `diff_json_file` or stdin if `-` given'
     print '    -h | --help        : help'
     print '    -a | --all         : old_file print whole content with diff and same content compared to the old_file'
@@ -96,6 +96,7 @@ def usage():
     print '    -c | --color       : show color, usable with `--txt`'
     print '    -C | --no-color    : disable color, usable with `--txt`'
     print '    -w | --width width : set char counts to be show for a diff line'
+    print '    -i | --html-title title : set title for html, usable with `--html`'
 
 def _fli(i=None, char=' ', max_len=5):
     if i is None:
@@ -142,7 +143,7 @@ def render_header(l):
 def render_diff_header(l, is_first_diff_header):
     """diff --git a/file b/file"""
     if option_render_txt:
-        print "%s%s%s%s"%('\n' if not is_first_diff_header else '', On_Purple if option_color else '', l, Color_Off if option_color else '')
+        print "%s%s%s%s"%('\n' if not is_first_diff_header else '', On_Green if option_color else '', l, Color_Off if option_color else '')
     elif option_render_html:
         if not is_first_diff_header:
             print "</table><br/>"
@@ -494,6 +495,7 @@ option_render_json = False
 option_render_html = False
 option_color = False
 option_width = 70
+option_html_title = ''
 
 idx = 1                         # start from first parameter
 while idx < len(sys.argv):
@@ -530,6 +532,15 @@ while idx < len(sys.argv):
             except Exception as e:
                 usage()
                 print i, 'expects an number as its argument'
+                sys.exit(-1)
+
+            idx += 1
+        elif i == '--html-title' or i == '-i':
+            try:
+                option_html_title = sys.argv[idx+1]
+            except Exception as e:
+                usage()
+                print i, 'expects an title string as its argument'
                 sys.exit(-1)
 
             idx += 1
@@ -579,13 +590,14 @@ ln_new_last = 0
 if option_render_html:
     print """<!DOCTYPE html>
 <html>
-  <head>
-    <style>
-      html { --tr-bg: #ccc; --font-size: 13px; font-family: monospace; font-size: var(--font-size); background-color: #EEEEF0; cursor: default; }
+  <head>"""
+    print "<title>%s</title>"%(option_html_title if option_html_title else 'udiff')
+    print """<style>
+      html { --tr-bg: #e9e9e9; --font-size: 12px; font-family: monospace; font-size: var(--font-size); cursor: default; }
       .theme-dark { --tr-bg: #333; background-color: rgb(17, 17, 17); color: rgb(221, 221, 221); }
       table { width: 100%; border-collapse: collapse; font-size: var(--font-size); }
       tr { width: 100%; }
-      .diff_header { background-color: purple; color: white; display: initial; }
+      .diff_header { background-color: green; color: white; display: initial; }
       .hunk_head { border-top: 1px solid blue; }
       .ln_old, .ln_new { color: gray; opacity: .7; }
       .mod, .mod .ln_old, .mod .ln_new { color: goldenrod; }

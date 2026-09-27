@@ -17,7 +17,7 @@ else
 fi
 
 if [ ${ENV_HTML:-0} -eq 1 ]; then
-    view_options="${view_options} --html"
+    view_options="${view_options} --html --html-title ${ENV_HTML_TITLE:-''}"
 fi
 
 if [ ${ENV_HTML:-0} -eq 1 ]; then
