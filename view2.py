@@ -637,8 +637,8 @@ if option_render_html:
     document.addEventListener('keydown', (e) => {
       switch(e.key) {
         case 'b': window.scrollBy({ top: -window.innerHeight, behavior: 'smooth' }); break;
-        case 'j': window.scrollBy({ top: window.innerHeight/10, behavior: 'smooth' }); break;
-        case 'k': window.scrollBy({ top: -window.innerHeight/10, behavior: 'smooth' }); break;
+        case 'j': window.scrollBy({ top: window.innerHeight/4, behavior: 'smooth' }); break;
+        case 'k': window.scrollBy({ top: -window.innerHeight/4, behavior: 'smooth' }); break;
       }
     });
   </script>
