@@ -118,7 +118,7 @@ def is_similar(left_text, right_text, threshold=0.60):
     Determines if two lines match structurally based on character similarity,
     completely ignoring all spaces, tabs, and indentation.
     """
-    if left_text == right_text:
+    if left_text.strip() == right_text.strip():
         return True
 
     # Isolate textual content away from formatting junk
