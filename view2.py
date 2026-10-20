@@ -605,7 +605,7 @@ if option_render_html:
   <head>"""
     print "<title>%s</title>"%(option_html_title if option_html_title else 'udiff')
     print """<style>
-      html { --tr-bg: #e9e9e9; --font-size: 12px; font-family: monospace; font-size: var(--font-size); cursor: default; }
+      html { --tr-bg: #e9e9e9; --font-size: 12px; font-family: menlo, monospace; font-size: var(--font-size); cursor: default; }
       .theme-dark { --tr-bg: #333; background-color: rgb(17, 17, 17); color: rgb(221, 221, 221); }
       table { width: 100%; border-collapse: collapse; font-size: var(--font-size); }
       tr { width: 100%; }
@@ -636,9 +636,20 @@ if option_render_html:
   <script>
     document.addEventListener('keydown', (e) => {
       switch(e.key) {
-        case 'b': window.scrollBy({ top: -window.innerHeight, behavior: 'smooth' }); break;
-        case 'j': window.scrollBy({ top: window.innerHeight/4, behavior: 'smooth' }); break;
-        case 'k': window.scrollBy({ top: -window.innerHeight/4, behavior: 'smooth' }); break;
+        // emulate `less' hotkeys
+        case '0':
+        case 'g': window.scrollTo({ top: 0 }); break;
+        case '9':
+        case 'G': window.scrollTo({ top: Number.MAX_SAFE_INTEGER }); break;
+        case 'j': window.scrollBy({ top: 17 }); break;
+        case 'k': window.scrollBy({ top: -17 }); break;
+        case 'h': window.scrollBy({ top: -window.innerHeight/4 }); break;
+        case 'l': window.scrollBy({ top: window.innerHeight/4 }); break;
+        case 'u': window.scrollBy({ top: -window.innerHeight/2 }); break;
+        case 'n': window.scrollBy({ top: window.innerHeight/2 }); break;
+        case 'f':
+        case ' ': e.preventDefault(); window.scrollBy({ top: window.innerHeight }); break;
+        case 'b': window.scrollBy({ top: -window.innerHeight }); break;
       }
     });
   </script>
