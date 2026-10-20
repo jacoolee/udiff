@@ -97,6 +97,8 @@ def usage():
     print '    -C | --no-color    : disable color, usable with `--txt`'
     print '    -w | --width width : set char counts to be show for a diff line'
     print '    -i | --html-title title : set title for html, usable with `--html`'
+    print '    -m | --commit-title title : set comment message'
+
 
 def _fli(i=None, char=' ', max_len=5):
     if i is None:
@@ -496,6 +498,7 @@ option_render_html = False
 option_color = False
 option_width = 70
 option_html_title = ''
+option_commit_title = ''
 
 idx = 1                         # start from first parameter
 while idx < len(sys.argv):
@@ -538,6 +541,15 @@ while idx < len(sys.argv):
         elif i == '--html-title' or i == '-i':
             try:
                 option_html_title = sys.argv[idx+1]
+            except Exception as e:
+                usage()
+                print i, 'expects an title string as its argument'
+                sys.exit(-1)
+
+            idx += 1
+        elif i == '--commit-title' or i == '-m':
+            try:
+                option_commit_title = sys.argv[idx+1]
             except Exception as e:
                 usage()
                 print i, 'expects an title string as its argument'
@@ -621,8 +633,24 @@ if option_render_html:
      document.addEventListener('click', clk)
 });
   </script>
+  <script>
+    document.addEventListener('keydown', (e) => {
+      switch(e.key) {
+        case 'b': window.scrollBy({ top: -window.innerHeight, behavior: 'smooth' }); break;
+        case 'j': window.scrollBy({ top: window.innerHeight/10, behavior: 'smooth' }); break;
+        case 'k': window.scrollBy({ top: -window.innerHeight/10, behavior: 'smooth' }); break;
+      }
+    });
+  </script>
 </head>
 """
+    if option_commit_title:
+        print "<div>%s</div><br/>"%(option_commit_title)
+
+else:
+    if option_commit_title:
+        print option_commit_title+'\n'
+
 
 if old_file:
     if total == 0:

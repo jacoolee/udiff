@@ -20,12 +20,12 @@ if [ ${ENV_HTML:-0} -eq 1 ]; then
     view_options="${view_options} --html --html-title ${ENV_HTML_TITLE:-''}"
 fi
 
-if [ ${ENV_HTML:-0} -eq 1 ]; then
-    git --no-pager diff $* | "${script_root}"/parse2.py | "${script_root}"/view2.py ${view_options}
-else
+if [ ${ENV_HTML:-0} -eq 1 ]; then # text
+    git --no-pager diff $* | "${script_root}"/parse2.py | "${script_root}"/view2.py ${view_options} --commit-title "${ENV_COMMIT_TITLE}"
+else                            # html
     if [ ${ENV_OUTPUT_FILE:-''} != '' ]; then
-        git --no-pager diff $* | "${script_root}"/parse2.py | "${script_root}"/view2.py -c ${view_options} | tee ${ENV_OUTPUT_FILE} | less -R
+        git --no-pager diff $* | "${script_root}"/parse2.py | "${script_root}"/view2.py -c ${view_options} --commit-title "${ENV_COMMIT_TITLE}" | tee ${ENV_OUTPUT_FILE} | less -R
     else
-        git --no-pager diff $* | "${script_root}"/parse2.py | "${script_root}"/view2.py -c ${view_options} | less -R
+        git --no-pager diff $* | "${script_root}"/parse2.py | "${script_root}"/view2.py -c ${view_options} --commit-title "${ENV_COMMIT_TITLE}" | less -R
     fi
 fi

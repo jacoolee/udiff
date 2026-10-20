@@ -9,8 +9,12 @@ function D {
     while [ ! -d "${d}/.git" ]; do
         d=$(realpath "$d/..")
     done
+
     git_repo_name=$(basename $d)
-    output_html_file=/tmp/udiff."${git_repo_name}".html
-    ENV_HTML=1 ENV_HTML_TITLE="udiff.${git_repo_name}" udiff $* > "${output_html_file}"
+    git_branch_name=$(git rev-parse --abbrev-ref HEAD)
+    title="${git_repo_name}[${git_branch_name}]"
+    output_html_file=/tmp/${title}.html
+
+    ENV_HTML=1 ENV_HTML_TITLE=${title} udiff $* > "${output_html_file}"
     open "${output_html_file}"
 }
