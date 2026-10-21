@@ -622,7 +622,7 @@ if option_render_html:
 </style>
   <script>
      document.addEventListener('DOMContentLoaded', () => {
-     window.scrollTo(0, 0);
+     // window.scrollTo(0, 0);
      const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
      document.documentElement.classList.toggle('theme-dark', dark);
      const clk = ({target})=>{
