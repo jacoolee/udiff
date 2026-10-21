@@ -647,7 +647,6 @@ if option_render_html:
         case 'l': window.scrollBy({ top: window.innerHeight/4 }); break;
         case 'u': window.scrollBy({ top: -window.innerHeight/2 }); break;
         case 'n': window.scrollBy({ top: window.innerHeight/2 }); break;
-        case 'f':
         case ' ': e.preventDefault(); window.scrollBy({ top: window.innerHeight }); break;
         case 'b': window.scrollBy({ top: -window.innerHeight }); break;
       }
